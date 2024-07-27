@@ -1,0 +1,146 @@
+{
+    "modules": [
+        {
+            "pageId": "1",
+            "id": "1",
+            "order": 1,
+            "definitionId": "1"
+        },
+        {
+            "pageId": "2",
+            "id": "2",
+            "order": 1,
+            "definitionId": "2"
+        },
+        {
+            "pageId": "3",
+            "id": "3",
+            "order": 1,
+            "definitionId": "3"
+        }
+    ],
+    "contentTypes": [
+        {
+            "id": "1",
+            "name": "Todo",
+            "fields": [
+                {
+                    "slug": "text",
+                    "name": "Text",
+                    "type": "string"
+                },
+                {
+                    "slug": "done",
+                    "name": "Done",
+                    "type": "boolean"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "name": "OnlyValue",
+            "fields": [
+                {
+                    "slug": "value",
+                    "name": "Value",
+                    "type": "string"
+                }
+            ]
+        },
+        {
+            "id": "3",
+            "name": "Post",
+            "fields": [
+                {
+                    "slug": "title",
+                    "name": "Title",
+                    "type": "string"
+                },
+                {
+                    "slug": "description",
+                    "name": "Description",
+                    "type": "string",
+                    "input": "textarea"
+                }
+            ]
+        }
+    ],
+    "contents": [
+        {
+            "id": "1",
+            "moduleId": "1",
+            "text": "This is a text",
+            "done": false
+        },
+        {
+            "id": "2",
+            "moduleId": "1",
+            "text": "This is another text",
+            "done": false
+        },
+        {
+            "id": "3",
+            "moduleId": "1",
+            "text": "This is done text",
+            "done": true
+        },
+        {
+            "id": "4",
+            "moduleId": "2",
+            "value": "first item (value)"
+        },
+        {
+            "id": "5",
+            "moduleId": "3",
+            "title": "Post title",
+            "description": "Post description"
+        },
+        {
+            "id": "6",
+            "moduleId": "3",
+            "title": "Second post title",
+            "description": "Post 2 description"
+        }
+    ],
+    "definitions": [
+        {
+            "name": "Red",
+            "id": "1",
+            "template": "<div class=\"bg-red-200 p-4\">text + done: {text} <div>{done}</div></div>",
+            "contentType": "1"
+        },
+        {
+            "name": "Green",
+            "id": "2",
+            "template": "<div class=\"bg-green-200 p-4 border border-green-700\">value: {value}</div>",
+            "contentType": "2"
+        },
+        {
+            "name": "BlogPost",
+            "id": "3",
+            "template": "<div class=\"bg-blue-200 p-4 border border-green-700\"><div class=\"text-xl font-bold\">{title}</div><div class=\"p-4\">{description}</div></div>",
+            "contentType": "3"
+        }
+    ],
+    "pages": [
+        {
+            "id": "1",
+            "slug": "/",
+            "head": "<script src=\"https://cdn.tailwindcss.com\"></script>",
+            "title": "Home Page"
+        },
+        {
+            "id": "2",
+            "slug": "/posts",
+            "head": "<script src=\"https://cdn.tailwindcss.com\"></script>",
+            "title": "Blog posts"
+        },
+        {
+            "id": "3",
+            "slug": "/posts/:id",
+            "head": "<script src=\"https://cdn.tailwindcss.com\"></script>",
+            "title": "{post.title}",
+            "filters": ["slug:id"]
+        }
+    ]
+}
