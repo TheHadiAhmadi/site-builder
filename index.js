@@ -108,6 +108,26 @@ const handlers = {
     }
 }
 
+app.post('/api/publish', async(req, res) => {
+    // Publish html of site (or page) as SSG (without tailwind cdn)
+})
+
+app.post('/api/export', async(req, res) => {
+    // export site as json
+})
+
+app.post('/api/import', async(req, res) => {
+    // import site from json
+})
+
+app.post('/api/file/upload', async (req, res) => {
+    // upload file
+})
+
+app.post('/api/file/:id', async (req, res) => {
+    // download file
+})
+
 app.post('/api/update', async (req, res) => {
     const {handler, body} = req.body
 
