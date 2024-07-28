@@ -113,7 +113,7 @@ async function renderModule(module) {
     <div data-mode-list>
         <div data-content-header>
             <h2 data-content-title>
-                Plugin Content
+                Module Contents
             </h2>
             <div data-header-actions>
                 <button data-header-button-cancel data-header-button>Cancel</button>
