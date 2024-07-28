@@ -1,10 +1,12 @@
+import hbs from 'handlebars'
 import express from 'express'
-import {createFileDb} from 'svelite-html/db'
-import data from './data.json' assert { type: 'json' };
-
-const db = createFileDb('./data.json')
+import { db } from '#services'
+// import { news } from '#modules'
 
 let context = {}
+
+const definitions = {}
+
 const app = express()
 
 app.use(express.json())
@@ -36,42 +38,134 @@ async function getPage(slug) {
 }
 
 async function getModuleContents(id) {
-    return data.contents.filter(x => x.moduleId == id)
-}
-
-async function getModuleTemplate(id) {
-    return data.definitions.find(x => x.id == id)
+    return db('contents').query({}).then(res => res.data.filter(x => x.moduleId == id))
 }
 
 function renderTemplate(template, data) {
-    function getData(key) {
-        return key.split('.').reduce((prev, curr) => prev[curr] ?? '', data)
-    }
-    return template.replace(/\{([^}]*)\}/g, (match, p1) => getData(p1));
+    return template(data)
 }
 
 async function renderModule(module) {
     const contents = await getModuleContents(module.id)
-    const definition = await getModuleTemplate(module.definitionId)
+    const definition = definitions[module.definitionId]
 
-    const rendered = contents.map(content => {
-        const rendered = renderTemplate(definition.template, content)
-
-        return `<div data-content-id="${content.id}">${rendered}</div>`
-    }).join('')
-
+    const props = await definition.load({moduleId: module.id, contents})
+    const rendered = renderTemplate(definition.template, props);
     let previewContent = ''
 
+    const fields = definition.contentType.fields
+
+    const contentTypeAdd = `
+    <div data-mode-add>
+    <div data-content-header>
+        <h2 data-content-title>Insert Content</h2>
+            <button data-header-button-back data-header-button>Back</button>
+        </div>
+
+    <form data-form>
+        <input type="hidden" name="_handler" value="createContent"/>
+
+        ${fields.map(x => `<label data-label><span data-label-text>${x.name}</span><input data-input name="${x.slug ?? x.name}" placeholder="Enter ${x.name}"/></label>`).join('')}
+        <div data-form-actions>
+            <button type="button" data-form-button data-form-button-cancel>Cancel</button>
+            <button type="submit" data-form-button data-form-button-submit>Submit</button>
+        </div>
+    </form>
+    </div>
+
+    `
+
+    const contentTypeEdit = `
+    <div data-mode-edit>
+        <div data-content-header>
+            <h2 data-content-title>Update Content</h2>
+            <button data-header-button-back data-header-button>Back</button>
+        </div>
+
+        <form data-form>
+            <input type="hidden" name="_handler" value="updateContent"/>
+            <input data-input type="hidden" name="id" value=""/>
+            ${fields.map(x => `<label data-label><span data-label-text>${x.name}</span><input data-input name="${x.slug ?? x.name}" placeholder="Enter ${x.name}"/></label>`).join('')}
+            <div data-form-actions>
+                <button type="button" data-form-button data-form-button-cancel>Cancel</button>
+                <button type="submit" data-form-button data-form-button-submit>Submit</button>
+            </div>
+        </form>
+    </div>
+
+    `
+
+    const contentTypeDelete = `
+        <div data-delete-confirm>
+            <div data-confirm-body>
+                <h3 data-confirm-title>Remove Content</h3>
+                <p data-confirm-description>Are you sure to remove this item?</p>
+
+                <div data-confirm-actions>
+                    <button data-confirm-button-no>No</button>
+                    <button data-confirm-button-yes data-content-id="">Yes</button>
+                </div>
+            </div>
+        </div>
+    `
+
+    const contentTypeTable = `
+    <div data-mode-list>
+        <div data-content-header>
+            <h2 data-content-title>
+                Plugin Content
+            </h2>
+            <div data-header-actions>
+                <button data-header-button-cancel data-header-button>Cancel</button>
+                <button data-header-button-insert data-header-button>Insert</button>
+            </div>
+            </div>
+        <table data-table>
+            <thead>
+                <tr>
+                    ${fields.map(x=> `<th>${x.name}</th>`).join('')}
+                    <th style="width: 0;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                ${contents.map(content => `<tr>${fields.map(x => `<td>${content[x.slug]}</td>`).join('')}<td>
+                    <div data-table-actions>
+                        <button data-content-id="${content.id}" data-table-action data-table-action-edit>
+                            Edit
+                        </button>
+                        <button data-content-id="${content.id}" data-table-action data-table-action-delete>
+                            Delete
+                        </button>
+                    </div>
+                    </td></tr>`).join('')}
+            </tbody>
+        </table>
+    </div>
+    `
 
     if(context.mode === 'preview') {
-        console.log(definition, await db('contentTypes').query({}))
-        previewContent = `<div>INPUTS: ${await db('contentTypes').query({}).then(res => res.data.find(x => x.id == definition.contentType).fields.map(x => x.name).join(', '))}</div><div data-module-actions><div data-drag-icon>DRAG</div><div data-add-icon>ADD</div> </div>`
+        previewContent = `<div data-data>${contentTypeTable}${contentTypeAdd}${contentTypeEdit}${contentTypeDelete}</div><div data-module-actions><div data-drag-icon>DRAG</div><div data-data-icon>Data</div> </div>`
     }
 
-    return `<div data-module-id="${module.id}">${rendered}${previewContent}</div>`
+    return `<div data-module-id="${module.id}"><div data-module-content>${rendered}</div>${previewContent}</div>`
+}
+
+async function loadModuleDefinitions() {
+    const defs = await db('definitions').query({}).then(res => res.data)
+    
+    for(let definition of defs) {
+        if(definitions[definition.id]) return;
+
+        definitions[definition.id] = await import(definition.path).then(res => res.default)
+
+        definitions[definition.id].id = definition.id
+        definitions[definition.id].template = hbs.compile(definitions[definition.id].template)
+    }   
 }
 
 async function renderBody(body) {
+    await loadModuleDefinitions()
+
     if(context.mode === 'edit') 
         return `
     <div>
@@ -80,7 +174,7 @@ async function renderBody(body) {
         </div>
         <div data-sidebar>
             <div data-definitions>
-                ${await db('definitions').query({}).then(res => res.data.map(x => `<div data-definition-id="${x.id}">${x.name}</div>`).join(''))}
+                ${Object.keys(definitions).map(key => definitions[key]).map(x => `<div data-definition-id="${x.id}">${x.name}</div>`).join('')}
             </div>
         </div>
         <iframe class="iframe" src="${context.url.replace('mode=edit', 'mode=preview')}"></iframe>
@@ -94,8 +188,8 @@ async function renderBody(body) {
 
 const handlers = {
     async createModule(body) {
-        console.log(body)
-        const page = await db('pages').query(res => res.data.find(x => x.slug === body.slug))
+        const page = await db('pages').query().then(res => res.data.find(x => x.slug === body.slug))
+
         await db('modules').insert({
             pageId: page.id,
             definitionId: body.definitionId,
@@ -111,15 +205,37 @@ const handlers = {
             ...content
         })
     },
+    async updateContent(body) {
+        const moduleId = body.moduleId
+        const content = body.content
+
+        await db('contents').update({
+            moduleId,
+            ...content
+        })
+    },
+    async deleteContent(body) {
+        const moduleId = body.moduleId
+        const id = body.id
+
+        await db('contents').remove(id)
+    },
     async updateModules(body) {
         for(let mod of body.modules) {
             const original = await db('modules').query().then(res => res.data.find(x => x.id === mod.id))
+            console.log('before ', original, body)
+
             original.order = mod.order
+            console.log('should update to ', original)
             await db('modules').update(original)
         }
     }
 }
 
+app.get('/api/content/:id', async (req, res) => {
+
+    res.json(await db('contents').query().then(res => res.data.find(x => x.id === req.params.id)))
+})
 app.post('/api/publish', async(req, res) => {
     // Publish html of site (or page) as SSG (without tailwind cdn)
 })
@@ -160,7 +276,7 @@ app.get('/*', async (req, res) => {
     if(!page) return res.end('404')
 
     let {head, title} = page;
-    let modules = await db('modules').query().then(res => res.data.filter(x => x.pageId == page.id))
+    let modules = await db('modules').query().then(res => res.data.filter(x => x.pageId == page.id).sort((a, b) => a.order > b.order ? 1 : -1))
 
     if(context.mode === 'edit') {
         head = (head ?? '') + '<link rel="stylesheet" href="/sitebuilder.edit.css">'

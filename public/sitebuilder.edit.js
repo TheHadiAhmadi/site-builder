@@ -72,16 +72,88 @@ function initIframe() {
 
     const modules = iframeElement.contentDocument.querySelectorAll('[data-module-id]');
     modules.forEach(mod => {
-        mod.querySelector('[data-add-icon]').addEventListener('click', async () => {
-            console.log('add content clicked', mod)
-            // const i
-            const moduleId = mod.dataset.moduleId
-            // const value = prompt('enter value:')
-            alert('show edit form of this module with it\'s contentType inputs')
-                        const content = {}
-            await request('createContent', { moduleId, content })
+
+        mod.querySelector('[data-data-icon]')?.addEventListener('click', async () => {
+            mod.dataset.dataMode = 'list'
         })
+        
+        mod.querySelector('[data-header-button-insert]').addEventListener('click', () => {
+            mod.dataset.dataMode = 'add'
+        })
+
+        mod.querySelectorAll('[data-header-button-back]').forEach(el => {
+            el.addEventListener('click', () => {
+                mod.dataset.dataMode = 'list'
+            })
+        })
+
+        mod.querySelector('[data-header-button-cancel]').addEventListener('click', () => {
+            delete mod.dataset.dataMode
+        })
+        mod.querySelectorAll('[data-table-action-delete]').forEach(deleteButton => {
+            deleteButton.addEventListener('click', () => {
+                mod.querySelector('[data-delete-confirm]').classList.add('open')
+            
+                mod.querySelector('[data-confirm-button-yes]').dataset.contentId = deleteButton.dataset.contentId;
+                
+            })
+        })
+        const yesButton = mod.querySelector('[data-confirm-button-yes]')
+        const noButton = mod.querySelector('[data-confirm-button-no]')
+
+        yesButton.addEventListener('click', async () => {
+            mod.querySelector('[data-delete-confirm]').classList.remove('open')
+            await request('deleteContent', { moduleId: mod.dataset.moduleId, id: yesButton.dataset.contentId})
+        })
+
+        noButton.addEventListener('click', async () => {
+            mod.querySelector('[data-delete-confirm]').classList.remove('open')
+        })
+
+        mod.querySelectorAll('[data-table-action-edit]').forEach(editButton => {
+            editButton.addEventListener('click', async() => {
+                mod.dataset.dataMode = 'edit'
+
+                const content = await fetch(`/api/content/${editButton.dataset.contentId}`).then(res => res.json())
+
+                mod.querySelectorAll('[data-mode-edit] [data-form] [data-input]').forEach(input => {
+                    input.value = content[input.getAttribute('name')]
+                })
+
+                // fill the form
+            })
+        })
+
+        mod.querySelector('[data-delete-confirm]')
+        
+
+        mod.querySelectorAll('[data-form]').forEach(form => {
+            form.querySelector('[data-form-button-cancel]').addEventListener('click', () => {
+                mod.dataset.dataMode = 'list'
+            })
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault()
+                let formData = new FormData(form)
+
+                let object = {}
+
+                let handler;
+                for(let [key, value] of formData.entries()) {
+                    if(key === '_handler') {
+                        handler = value
+                    } else {
+                        object[key] = value
+                    }
+                }
+
+                await request(handler, {content: object, moduleId: mod.dataset.moduleId})
+            })
+        })
+
+
     })
+
 }
 
 init()

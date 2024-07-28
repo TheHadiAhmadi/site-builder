@@ -2,6 +2,10 @@
   "name": "site-builder",
   "version": "1.0.0",
   "type": "module",
+  "imports": {
+    "#services": "./services/index.js",
+    "#modules": "./modules/index.js"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,6 +16,7 @@
   "description": "",
   "dependencies": {
     "express": "^4.19.2",
+    "handlebars": "^4.7.8",
     "svelite-html": "^1.0.1-next.78"
   }
 }

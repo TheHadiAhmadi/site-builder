@@ -14,7 +14,229 @@
     display: flex;
     gap: 4px;
     position: absolute; top: 0; right: 0;
+    transition: all 0.2s ease;
     background-color: #4070f0;
+    opacity: 0;
+    color: white;
 }    
 
+[data-module-actions] > * {
+    cursor: pointer;
+}
 
+[data-module-id]:hover [data-module-actions] {
+    opacity: 1;
+}
+
+
+[data-module-id] [data-data] {
+    display: none;
+    padding: 16px;
+}
+
+[data-module-id][data-data-mode] [data-data] {
+    display: block;
+    min-height: 400px;
+    max-height: 90vh;
+}
+
+body:has([data-data-mode]) [data-module-actions] {
+    display: none;
+}
+
+[data-module-id][data-data-mode] [data-module-content] {
+    display: none;
+}
+
+[data-mode-add], [data-mode-list], [data-mode-edit] {
+    display: none;
+}
+
+[data-data-mode="list"] [data-mode-list] {
+    display: block;
+}
+
+[data-data-mode="edit"] [data-mode-edit] {
+    display: block;
+}
+
+[data-data-mode="add"] [data-mode-add] {
+    display: block;
+}
+
+[data-form] {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+[data-form-actions] {
+    display: flex;
+    transition: all 0.2s ease;
+    justify-content: end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+[data-header-button], [data-form-button] {
+    background-color: #4070f0;
+    color: white;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 16px;
+}
+
+[data-form-button-cancel] {
+    background-color: #f0f0f0;
+    color: rgb(29, 29, 29);
+    border: 1px solid #a0a0a0;
+}
+[data-form-button-submit] {
+    background-color: #4070f0;
+    color: white;
+    border: 1px solid #4070f0;
+    
+}
+
+[data-label] {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+[data-label-text] {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+[data-input] {
+    padding: 4px 16px;
+    border-radius: 4px;
+    outline: none;
+    border: 1px solid #d0d0d0;
+    background-color: white;
+}
+
+[data-content-header] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+[data-content-title] {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+[data-table] {
+    border: 1px solid #b8b8b8;
+    border-radius: 4px;
+    width: 100%;
+}
+
+
+[data-table] thead tr {
+    background-color: #d0d0d0;
+}
+[data-table] td, [data-table] th {
+    text-align: start;
+    padding: 4px 8px;
+}
+
+[data-table] td {
+    font-weight: normal;
+    padding: 4px 8px;
+}
+
+[data-table] tr {
+    border-bottom: 1px solid #b8b8b8;
+}
+
+[data-table-actions] {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+[data-table-action] {
+    border: none;
+    background-color: transparent;
+    color: #4070f0;
+    padding: 4px 8px;
+}
+[data-table-action]:hover {
+    text-decoration: underline;
+}
+
+[data-table-action-delete] {
+    color: red;
+}
+
+[data-header-actions] {
+    display: flex;
+    gap: 8px;
+}
+
+[data-header-button-cancel], [data-header-button-back] {
+    background-color: #f0f0f0;
+    color: rgb(29, 29, 29);
+    border: 1px solid #a0a0a0;
+}
+
+[data-delete-confirm] {
+    display: none;
+    background-color: #40404040;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+}
+
+[data-delete-confirm].open {
+    display: flex;
+}
+
+[data-confirm-body] {
+    padding: 1rem;
+    max-width: 80%;
+    
+    border-radius: 4px;
+    background-color: white;
+}
+
+[data-confirm-title] {
+    font-weight: bold;
+    font-size: 16px;
+}
+[data-confirm-description] {
+    color: #404040;
+    font-size: 12px;
+}
+[data-confirm-actions] {
+    padding-top: 1rem;
+    gap: 4px;
+    display: flex;
+    align-items: center;
+}
+
+[data-confirm-button-no],
+[data-confirm-button-yes] {
+    flex: 1;
+    border-radius: 4px;    
+    color: white;
+    background-color: #e93232;
+}
+
+[data-confirm-button-no] {
+    flex: 1;
+    border-radius: 4px;    
+    color: rgb(24, 24, 24);
+    background-color: #e9e9e9;
+}
