@@ -1,0 +1,20 @@
+:root {
+    --x-primary: #4070f0;
+    --x-primary-hover: #5080f5;
+}    
+[data-module-id] {
+    border: 1px solid var(--x-primary);
+    position: relative;
+    min-height: 100px;
+}
+[data-module-id]:hover {
+    border: 1px solid var(--x-primary-hover);
+}
+[data-module-actions] {
+    display: flex;
+    gap: 4px;
+    position: absolute; top: 0; right: 0;
+    background-color: #4070f0;
+}    
+
+

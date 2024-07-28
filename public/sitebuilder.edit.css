@@ -1,0 +1,42 @@
+
+body, html {
+    height: 100vh;    
+}
+
+iframe {
+    width: calc(100% - 200px);
+    right: 200px;
+    position: absolute;
+    top: 40px;
+    height: calc(100vh - 40px);
+}
+
+[data-toolbar] {
+    position: fixed;
+    top: 0;
+    right: 200px;
+    left: 0px;
+    color: white;
+    height: 40px;
+    background-color: #202020;
+}
+[data-sidebar] {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 200px;
+    background-color: #202020;
+    color: white;
+}    
+
+[data-definitions] {
+    display: flex;
+    gap: 4px;
+    flex-direction: column;
+}
+
+[data-definition-id] {
+    padding: 4px;
+    border: 1px solid #404040;
+}
