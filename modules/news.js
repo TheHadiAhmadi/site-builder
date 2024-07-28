@@ -33,8 +33,8 @@ const contentType = {
     ]
 }
 
-async function load({moduleId}) {
-    const items = await db('contents').query({}).then(res => res.data.filter(x => x.moduleId === moduleId))
+async function load({moduleId, contents}) {
+    const items = contents
 
     return { items }
 }

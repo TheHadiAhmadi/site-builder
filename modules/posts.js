@@ -17,16 +17,16 @@ export default {
             {
                 type: 'text',
                 name: 'Title',
+                slug: 'title',
             },
             {
                 type: 'text',
                 name: 'Description',
+                slug: 'description',
             },
         ]
     },
     async load({contents}) {
-        console.log('load: ', contents)
         return contents[0]
-        // return { title: 'one', description: 'description of one'}
     }
 }

@@ -144,7 +144,14 @@ async function renderModule(module) {
     `
 
     if(context.mode === 'preview') {
-        previewContent = `<div data-data>${contentTypeTable}${contentTypeAdd}${contentTypeEdit}${contentTypeDelete}</div><div data-module-actions><div data-drag-icon>DRAG</div><div data-data-icon>Data</div> </div>`
+        previewContent = `<div data-data>${contentTypeTable}${contentTypeAdd}${contentTypeEdit}${contentTypeDelete}</div><div data-module-actions>
+        <div data-drag-icon>    
+            <svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m12 22l-4.25-4.25l1.425-1.425L11 18.15V13H5.875L7.7 14.8l-1.45 1.45L2 12l4.225-4.225L7.65 9.2L5.85 11H11V5.85L9.175 7.675L7.75 6.25L12 2l4.25 4.25l-1.425 1.425L13 5.85V11h5.125L16.3 9.2l1.45-1.45L22 12l-4.25 4.25l-1.425-1.425L18.15 13H13v5.125l1.8-1.825l1.45 1.45z"/></svg>
+        </div>
+            <div data-data-icon>
+                <svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h8.925l-2 2H5v14h14v-6.95l2-2V19q0 .825-.587 1.413T19 21zm4-6v-4.25l9.175-9.175q.3-.3.675-.45t.75-.15q.4 0 .763.15t.662.45L22.425 3q.275.3.425.663T23 4.4t-.137.738t-.438.662L13.25 15zM21.025 4.4l-1.4-1.4zM11 13h1.4l5.8-5.8l-.7-.7l-.725-.7L11 11.575zm6.5-6.5l-.725-.7zl.7.7z"/></svg>
+            </div>
+        </div>`
     }
 
     return `<div data-module-id="${module.id}"><div data-module-content>${rendered}</div>${previewContent}</div>`
