@@ -1,4 +1,4 @@
-- [ ] File Upload / Download
+- [x] File Upload / Download
 - [ ] Page settings (SEO, Head, ....)
 - [ ] Global Theme Settings (tailwind config)
 - [ ] Page list management
@@ -9,6 +9,9 @@
 - [ ] Landing page example
 - [ ] Host site
 - [ ] Add more todos...
-- [ ] Confirm delete module
+- [x] Confirm delete module
+    - [ ] Choose if user wants to delete content or not.
 - [ ] Complete Toolbar items
+- [ ] Customize definition template (Code editor or textarea)
+- [ ] Datasource settings to enable loading dynamic data
 - [ ] 
