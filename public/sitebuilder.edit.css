@@ -14,7 +14,7 @@ iframe {
 [data-toolbar] {
     position: fixed;
     top: 0;
-    right: 200px;
+    right: 0;
     left: 0px;
     color: white;
     height: 40px;
@@ -22,7 +22,7 @@ iframe {
 }
 [data-sidebar] {
     position: fixed;
-    top: 0;
+    top: 40px;
     bottom: 0;
     right: 0;
     width: 200px;
@@ -31,12 +31,14 @@ iframe {
 }    
 
 [data-definitions] {
+    padding: 4px;
     display: flex;
     gap: 4px;
     flex-direction: column;
 }
 
 [data-definition-id] {
+    background-color: #242424;
     padding: 4px;
     border: 1px solid #404040;
 }

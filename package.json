@@ -17,6 +17,6 @@
   "dependencies": {
     "express": "^4.19.2",
     "handlebars": "^4.7.8",
-    "svelite-html": "^1.0.1-next.78"
+    "svelite-html": "^1.0.1-next.80"
   }
 }

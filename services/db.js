@@ -1,5 +1,6 @@
-import { createFileDb } from 'svelite-html/db'
+import { createFileDb, createMongoDb } from 'svelite-html/db'
 
-const db = createFileDb('./data.json')
+const db = createFileDb({path: './data.json'})
+// const db = createMongoDb({uri: 'mongodb://127.0.0.1:27017', db:'SiteBuilder'})
 
 export default db;

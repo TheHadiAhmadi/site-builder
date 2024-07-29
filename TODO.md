@@ -5,7 +5,10 @@
 - [ ] User management (single user, add user in setup)
 - [ ] Setup mode (initial data, create user)
 - [ ] Publish/Import/Export site/page
-- [ ] Design of editor
+- [-] Design of editor
 - [ ] Landing page example
 - [ ] Host site
 - [ ] Add more todos...
+- [ ] Confirm delete module
+- [ ] Complete Toolbar items
+- [ ] 

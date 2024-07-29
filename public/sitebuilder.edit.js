@@ -10,14 +10,19 @@ async function reloadIframe() {
 }
 
 async function request(handler, body, reload = true) {
-    await fetch('/api/update', {
+    return await fetch('/api/query', {
         method: 'POST',
         body: JSON.stringify({ handler, body }),
         headers: {
             'Content-Type': 'application/json'
         }
+    }).then(res => {
+        return res.json()
     }).then(async res => {
-        await reloadIframe()
+        if(res.reload) {
+            await reloadIframe()
+        }
+        return res;
     })
 }
 
@@ -73,63 +78,117 @@ function initIframe() {
     const modules = iframeElement.contentDocument.querySelectorAll('[data-module-id]');
     modules.forEach(mod => {
 
-        mod.querySelector('[data-data-icon]')?.addEventListener('click', async () => {
-            mod.dataset.dataMode = 'list'
+        mod.querySelector('[data-delete-icon]')?.addEventListener('click', async () => {
+            // mod.dataset.dataMode = 'list'
+            mod.querySelector('[data-module-delete]').classList.add('open')
         })
         
-        mod.querySelector('[data-header-button-insert]').addEventListener('click', () => {
-            mod.dataset.dataMode = 'add'
+        mod.querySelector('[data-module-confirm-button-no').addEventListener('click', async () => {
+            mod.querySelector('[data-module-delete]').classList.remove('open')
         })
 
-        mod.querySelectorAll('[data-header-button-back]').forEach(el => {
-            el.addEventListener('click', () => {
+        mod.querySelector('[data-module-confirm-button-yes').addEventListener('click', async () => {
+            mod.querySelector('[data-module-delete]').classList.remove('open')
+            await request('deleteModule', {moduleId: mod.dataset.moduleId})
+        })
+
+        mod.querySelector('[data-settings-icon]')?.addEventListener('click', async () => {
+            // mod.dataset.dataMode = 'list'
+            // await request('deleteModule', {moduleId: mod.dataset.moduleId})
+            mod.dataset.dataMode = 'settings'
+            // load settings and fill form
+
+
+        })
+
+
+        mod.querySelector('[data-data-icon]')?.addEventListener('click', async () => {
+            if(mod.dataset.multiple) {
                 mod.dataset.dataMode = 'list'
-            })
+            } else {
+                mod.dataset.dataMode = 'edit-single'
+
+                const contentId = mod.querySelector('[data-data-icon]').dataset.contentId
+
+                if(contentId) {
+                    // load data if have
+                    const content = await request('getContent', {contentId}).then(res => res.data[0])
+                    
+                    mod.querySelectorAll('[data-mode-edit-single] [data-form] [data-input]').forEach(input => {
+                        input.value = content[input.getAttribute('name')]
+                    })
+                } else {
+                    mod.querySelector('[data-mode-edit-single] [data-form] [name="_handler"]').value = 'createContent'
+                }
+            }
         })
 
-        mod.querySelector('[data-header-button-cancel]').addEventListener('click', () => {
-            delete mod.dataset.dataMode
-        })
-        mod.querySelectorAll('[data-table-action-delete]').forEach(deleteButton => {
-            deleteButton.addEventListener('click', () => {
-                mod.querySelector('[data-delete-confirm]').classList.add('open')
+        if(mod.dataset.multiple) {
+            mod.querySelector('[data-header-button-insert]').addEventListener('click', () => {
+                mod.dataset.dataMode = 'add'
+            })
+            mod.querySelectorAll('[data-header-button-back]').forEach(el => {
+                el.addEventListener('click', () => {
+                    mod.dataset.dataMode = 'list'
+                })
+            })
+
+            mod.querySelector('[data-table-action-delete]').addEventListener('click', () => {
+                mod.querySelector('[data-content-delete]').classList.add('open')
             
-                mod.querySelector('[data-confirm-button-yes]').dataset.contentId = deleteButton.dataset.contentId;
-                
+                mod.querySelector('[data-confirm-button-yes]').dataset.contentId = mod.querySelector('[data-table-action-delete]').dataset.contentId;
+            })
+            
+
+            const yesButton = mod.querySelector('[data-content-confirm-button-yes]')
+            const noButton = mod.querySelector('[data-content-confirm-button-no]')
+
+            yesButton.addEventListener('click', async () => {
+                mod.querySelector('[data-content-delete]').classList.remove('open')
+                await request('deleteContent', { moduleId: mod.dataset.moduleId, id: yesButton.dataset.contentId})
+            })
+
+            noButton.addEventListener('click', async () => {
+                mod.querySelector('[data-content-delete]').classList.remove('open')
+            })
+        }
+
+        mod.querySelectorAll('[data-header-button-cancel]').forEach(el => {
+            el.addEventListener('click', () => {
+                delete mod.dataset.dataMode
             })
         })
-        const yesButton = mod.querySelector('[data-confirm-button-yes]')
-        const noButton = mod.querySelector('[data-confirm-button-no]')
+        
+        mod.querySelector('[data-header-button-save]').addEventListener('click', () => {
+            // delete mod.dataset.dataMode
+            // request and update module settings
 
-        yesButton.addEventListener('click', async () => {
-            mod.querySelector('[data-delete-confirm]').classList.remove('open')
-            await request('deleteContent', { moduleId: mod.dataset.moduleId, id: yesButton.dataset.contentId})
         })
 
-        noButton.addEventListener('click', async () => {
-            mod.querySelector('[data-delete-confirm]').classList.remove('open')
-        })
 
         mod.querySelectorAll('[data-table-action-edit]').forEach(editButton => {
             editButton.addEventListener('click', async() => {
                 mod.dataset.dataMode = 'edit'
 
-                const content = await fetch(`/api/content/${editButton.dataset.contentId}`).then(res => res.json())
-
+                const content = await request('getContent', {contentId: editButton.dataset.contentId})
+ 
                 mod.querySelectorAll('[data-mode-edit] [data-form] [data-input]').forEach(input => {
                     input.value = content[input.getAttribute('name')]
                 })
-
-                // fill the form
             })
         })
 
-        mod.querySelector('[data-delete-confirm]')
-        
-
         mod.querySelectorAll('[data-form]').forEach(form => {
-            form.querySelector('[data-form-button-cancel]').addEventListener('click', () => {
-                mod.dataset.dataMode = 'list'
+            form.querySelectorAll('[data-form-button-cancel]').forEach(el => {
+
+                el.addEventListener('click', () => {
+                    // mod.dataset.dataMode = 'list'
+                    if(el.dataset.target) {
+                        mod.dataset.dataMode = el.dataset.target
+                    } else {
+                        delete mod.dataset.dataMode
+                    }
+                })
             })
 
             form.addEventListener('submit', async (e) => {
@@ -150,7 +209,6 @@ function initIframe() {
                 await request(handler, {content: object, moduleId: mod.dataset.moduleId})
             })
         })
-
 
     })
 
