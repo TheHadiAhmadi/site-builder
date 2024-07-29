@@ -1,8 +1,10 @@
 import hbs from 'handlebars'
 import express from 'express'
+import multer from 'multer'
 import { db } from '#services'
 import handlers from './handlers.js'
-// import { news } from '#modules'
+import {existsSync} from 'node:fs'
+import {mkdir, writeFile} from 'node:fs/promises'
 
 let context = {}
 
@@ -12,19 +14,25 @@ const app = express()
 
 app.use(express.json())
 app.use(express.static('./public'))
+app.use('/files', express.static('./uploads'))
 
-const template = ({head, title, body}) => `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    ${head}
-    <title>${title}</title>
-</head>
-<body>
-    ${body}
-</body>
-</html>`
+const layouts = {
+    default: hbs.compile(`<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com"></script>
+        {{{head}}}
+        <title>{{title}}</title>
+    </head>
+    <body>
+        <div>
+            {{{body}}}
+        </div>
+    </body>
+    </html>`)
+}
 
 async function getPage(slug) {
     if(!slug.startsWith('/')) {
@@ -51,20 +59,14 @@ async function renderModule(module) {
     const contents = await getModuleContents(module.id)
     const definition = definitions[module.definitionId]
 
-    const props = await definition.load({moduleId: module.id, contents})
+    const props = await definition.load({moduleId: module.id, contents}) ?? {}
 
-
-    console.log('all', module.id,  await db('moduleSettings').query().filter('moduleId', '=', module.id).all())
     props.settings = {}
     const settings = await db('moduleSettings').query().filter('moduleId', '=', module.id).first() ?? {};
 
     for(let item of definition.settings?.fields ?? []) {
-        console.log({settings})
-        
         props.settings[item.slug] = settings.value?.[item.slug] ?? item.defaultValue
     }
-
-    console.log(props)
 
     const rendered = renderTemplate(definition.template, props);
     let previewContent = ''
@@ -109,8 +111,8 @@ async function renderModule(module) {
             </div>
         </form>
     </div>
-
     `
+
     const contentTypeEditSingle = `
     <div data-mode-edit-single>
         <div data-content-header>
@@ -165,10 +167,10 @@ async function renderModule(module) {
             </h2>
             <div data-header-actions>
                 <button data-header-button-cancel data-target="" data-header-button>Cancel</button>
-                <button data-header-button-save data-header-button>Save</button>
             </div>
         </div>    
 
+        ${definition.settings?.fields?.length ? `
         <form data-form>
             <input type="hidden" name="_handler" value="saveModuleSettings"/>
             ${(definition.settings?.fields??[]).map(x => `<label data-label><span data-label-text>${x.name}</span><input data-input name="${x.slug ?? x.name}" placeholder="Enter ${x.name}"/></label>`).join('')}
@@ -176,8 +178,8 @@ async function renderModule(module) {
                 <button type="button" data-form-button data-target="" data-form-button-cancel>Cancel</button>
                 <button type="submit" data-form-button data-form-button-submit>Submit</button>
             </div>
-        </form>
-    
+        </form>    
+        `: ``}
     </div>`
 
     const contentTypeTable = `
@@ -212,7 +214,7 @@ async function renderModule(module) {
                         </td></tr>`).join('')}
                 </tbody>
             </table>
-            `) : '<div data-empty-table><div data-empty-table-title>No Items!</div><div data-empty-table-description>There is no content for this plugin yet!</div></div>'}
+            `) : '<div data-empty-table><div data-empty-table-title>No Items!</div><div data-empty-table-description>There is no content for this module yet!</div></div>'}
     </div>
     `
     const moduleActions = `<div data-module-actions>
@@ -292,7 +294,29 @@ app.post('/api/import', async(req, res) => {
 })
 
 app.post('/api/file/upload', async (req, res) => {
-    // upload file
+    var mult = multer({})
+    var middl = mult.any()
+    
+    await new Promise(resolve => {
+        middl(req, res, () => {
+            resolve()
+        })
+    })
+
+    if(!existsSync('./uploads')) {
+        await mkdir('./uploads')
+    }
+
+    const result = await db('files').insert({
+        // id,
+        name: req.body.name
+    })
+    
+    await writeFile('./uploads/' + result.id, req.files[0].buffer)
+
+    res.json({
+        id: result.id
+    })
 })
 
 app.post('/api/file/:id', async (req, res) => {
@@ -331,7 +355,7 @@ app.get('/*', async (req, res) => {
         head = (head ?? '') + '<link rel="stylesheet" href="/sitebuilder.preview.css">'
     }
 
-    const html = template({
+    const html = renderTemplate(layouts['default'], {
         head, 
         body: await renderBody(modules), 
         title

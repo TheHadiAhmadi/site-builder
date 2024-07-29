@@ -34,7 +34,7 @@ export default {
     async loadModuleSettings(body) {
         const moduleId = body.moduleId
 
-        const res = await db('moduleSettings').filter('moduleId', '=', moduleId).first()
+        const res = await db('moduleSettings').query().filter('moduleId', '=', moduleId).first()
         if(res) {
             return res.value
         } else {

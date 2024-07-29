@@ -97,7 +97,11 @@ function initIframe() {
             // await request('deleteModule', {moduleId: mod.dataset.moduleId})
             mod.dataset.dataMode = 'settings'
             // load settings and fill form
+            const settings = await request('loadModuleSettings', {moduleId: mod.dataset.moduleId})
 
+            mod.querySelectorAll('[data-mode-settings] [data-form] [data-input]').forEach(input => {
+                input.value = settings[input.getAttribute('name')]
+            })
 
         })
 
@@ -133,10 +137,12 @@ function initIframe() {
                 })
             })
 
-            mod.querySelector('[data-table-action-delete]').addEventListener('click', () => {
-                mod.querySelector('[data-content-delete]').classList.add('open')
-            
-                mod.querySelector('[data-confirm-button-yes]').dataset.contentId = mod.querySelector('[data-table-action-delete]').dataset.contentId;
+            mod.querySelectorAll('[data-table-action-delete]').forEach(el => {
+                el.addEventListener('click', () => {
+                    mod.querySelector('[data-content-delete]').classList.add('open')
+                
+                    mod.querySelector('[data-content-confirm-button-yes]').dataset.contentId = el.dataset.contentId;
+                })
             })
             
 
@@ -158,19 +164,12 @@ function initIframe() {
                 delete mod.dataset.dataMode
             })
         })
-        
-        mod.querySelector('[data-header-button-save]').addEventListener('click', () => {
-            // delete mod.dataset.dataMode
-            // request and update module settings
-
-        })
-
 
         mod.querySelectorAll('[data-table-action-edit]').forEach(editButton => {
             editButton.addEventListener('click', async() => {
                 mod.dataset.dataMode = 'edit'
 
-                const content = await request('getContent', {contentId: editButton.dataset.contentId})
+                const content = await request('getContent', {contentId: editButton.dataset.contentId}).then(res => res.data[0])
  
                 mod.querySelectorAll('[data-mode-edit] [data-form] [data-input]').forEach(input => {
                     input.value = content[input.getAttribute('name')]

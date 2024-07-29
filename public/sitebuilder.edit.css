@@ -5,10 +5,11 @@ body, html {
 
 iframe {
     width: calc(100% - 200px);
-    right: 200px;
+    left: 200px;
     position: absolute;
     top: 40px;
     height: calc(100vh - 40px);
+    border: 1px solid #dddddd;
 }
 
 [data-toolbar] {
@@ -16,29 +17,38 @@ iframe {
     top: 0;
     right: 0;
     left: 0px;
-    color: white;
+    color: black;
     height: 40px;
-    background-color: #202020;
+    background-color: #f1f1f1;
+    /* border-bottom: 1px solid #eee; */
 }
+
 [data-sidebar] {
     position: fixed;
     top: 40px;
     bottom: 0;
-    right: 0;
+    left: 0;
     width: 200px;
-    background-color: #202020;
-    color: white;
+    background-color: #f1f1f1;
+    color: black;
 }    
 
 [data-definitions] {
-    padding: 4px;
+    padding: 8px;
     display: flex;
     gap: 4px;
     flex-direction: column;
 }
 
 [data-definition-id] {
-    background-color: #242424;
-    padding: 4px;
-    border: 1px solid #404040;
+    cursor: pointer;
+    background-color: #f7f7f7;
+    padding: 8px;
+    color: #404040f0;
+    font-weight: bold;
+    border: 1px solid #dddddd;
+}
+[data-definition-id]:hover {
+    background-color: #fafafa;
+    box-shadow: 0 1px 8px -8px black;
 }

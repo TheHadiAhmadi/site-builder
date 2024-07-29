@@ -2,12 +2,12 @@ import { db } from '#services'
 
 const template = `
 <div class="flex flex-col p-4 gap-4">
-    <h1 class="font-bold">Latest News</h1>
-    <div class="flex-flex-col gap-2 border-b">
+    <h1 class="font-bold">{{settings.title}}</h1>
+    <div class="flex flex-col gap-{{settings.space_between_items}}">
         {{#each items}}
-            <div class="p-2 bg-gray-100 border border-b-0">
+            <div class="p-2 {{#if ../settings.show_borders}} border -mt-1 {{/if}}">
                 <div class="text-xl font-bold">{{this.title}}</div>
-                <div class="text-lg text-gray-700">{{this.description}}</div>
+                <div class="text-sm text-gray-800">{{this.description}}</div>
             </div>
         {{/each}}
     </div>
@@ -39,20 +39,33 @@ async function load({moduleId, contents}) {
     return { items }
 }
 
-async function action(req) {
-    if(req.type === 'insert') {
-        await db('contents').insert(req.body)
-    } else if(req.type === 'delete') {
-        await db('contents').remove({id: req.body})
-    } else if(req.type === 'update') {
-        await db('contents').update(req.body)
-    }
+const settings = {
+    fields: [
+        {
+            name: 'Show borders',
+            slug: 'show_borders',
+            type: 'text',
+            defaultValue: true
+        },
+        {
+            name: 'Title',
+            slug: 'title',
+            type: 'text',
+            defaultValue: 'News'
+        },
+        {
+            name: 'Space between items',
+            slug: 'space_between_items',
+            type: 'text',
+            defaultValue: '4'
+        }
+    ]
 }
 
 export default {
     name: 'News',
     template,
     contentType,
+    settings,
     load,
-    action
 }
