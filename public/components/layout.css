@@ -1,0 +1,23 @@
+[data-content-header] {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+[data-header-title] {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+[data-header-actions] {
+    display: flex;
+    gap: 8px;
+}
+
+[data-page] {
+    padding: 1rem;
+    border: 1px solid #dddddd;
+    background-color: #f2f5fc;
+    height: 100%;
+}

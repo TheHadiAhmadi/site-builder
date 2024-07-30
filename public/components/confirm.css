@@ -1,0 +1,39 @@
+
+[data-delete-confirm] {
+    display: none;
+    background-color: #40404040;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+}
+
+[data-delete-confirm].open {
+    display: flex;
+}
+
+[data-confirm-body] {
+    padding: 1rem;
+    max-width: 80%;
+    
+    border-radius: 4px;
+    background-color: white;
+}
+
+[data-confirm-title] {
+    font-weight: bold;
+    font-size: 16px;
+}
+[data-confirm-description] {
+    color: #404040;
+    font-size: 12px;
+}
+[data-confirm-actions] {
+    padding-top: 1rem;
+    gap: 4px;
+    display: flex;
+    align-items: center;
+}

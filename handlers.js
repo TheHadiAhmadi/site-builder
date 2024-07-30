@@ -72,5 +72,27 @@ export default {
             original.order = mod.order
             await db('modules').update(original)
         }
-    }
+    },
+    async createDefinition(body) {
+        body.settings ??= []
+        body.contentType ??= []
+        await db('definitions').insert(body)
+
+        return {
+            pageReload: true
+        }
+    },
+    async updateDefinition(body) {
+        body.settings ??= []
+        body.contentType ??= []
+        await db('definitions').update(body)
+
+        return {
+            pageReload: true
+        }
+    },
+    async getDefinition(body) {
+        const res = await db('definitions').query().filter('id', '=', body.id).first()
+        return res
+    },
 }

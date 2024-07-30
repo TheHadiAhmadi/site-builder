@@ -1,3 +1,4 @@
+@import './components.css';
 
 body, html {
     height: 100vh;    
@@ -28,10 +29,53 @@ iframe {
     top: 40px;
     bottom: 0;
     left: 0;
+    display: flex;
     width: 200px;
     background-color: #f1f1f1;
     color: black;
+    border-top: 1px solid #dddddd;
 }    
+
+[data-sidebar-title] {
+    padding: 8px 8px 0 8px;
+    font-weight: bold;
+    opacity: 0.8;
+}
+
+[data-sidebar-primary] {
+    width: 48px;
+    height: 100%;
+    background-color: #dddddd;
+    border-right: 1px solid #b3b3b3;
+}
+
+[data-sidebar-item-icon] {
+    width: 28px;
+    height: 28px;
+
+}
+
+[data-sidebar-item-small] {
+    cursor: pointer;
+    height: 48px;
+    text-align: center;
+    color: black;
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+[data-sidebar-item-small]:hover {
+    background-color: #ebebeb;
+    border-color: #cccccc;
+}
+
+[data-sidebar-secondary] {
+    width: calc(209px - 48px);
+    height: 100%;
+    background-color: #f1f1f1;
+}
 
 [data-definitions] {
     padding: 8px;
@@ -40,7 +84,14 @@ iframe {
     flex-direction: column;
 }
 
-[data-definition-id] {
+.sortable-drag {
+    color: red;
+}
+
+[data-definition-id], [data-create-module] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     cursor: pointer;
     background-color: #f7f7f7;
     padding: 8px;
@@ -48,7 +99,66 @@ iframe {
     font-weight: bold;
     border: 1px solid #dddddd;
 }
+
 [data-definition-id]:hover {
     background-color: #fafafa;
     box-shadow: 0 1px 8px -8px black;
+}
+
+[data-definition-icon] {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+[data-definition-icon]:hover {
+    box-shadow: 0 1px 4px -2px #b3b3b3;
+    background-color:#f1f1f1;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+[data-definition-id]:hover [data-definition-icon] {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.sortable-chosen [data-definition-icon]:not(:hover) {
+    display: none;
+}
+.sortable-ghost [data-definition-icon]:not(:hover) {
+    display: none;
+}
+
+
+[data-create-module] {
+    background-color: #2a63ff;
+    border: 1px solid #2a98ff;
+    width: 100%;
+    margin-top: 8px;
+    color: white;
+}
+
+[data-mode-create-definition],
+[data-mode-update-definition] {
+    background-color: white;
+    display: none;
+    position: absolute;
+    left: 200px;
+    top: 40px;
+
+    width: calc(100% - 200px);
+    height: calc(100vh - 40px);
+}
+
+body[data-mode="create-definition"] [data-mode-create-definition] {
+    display: block;
+}
+body[data-mode="update-definition"] [data-mode-update-definition] {
+    display: block;
 }

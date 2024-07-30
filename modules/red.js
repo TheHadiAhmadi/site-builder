@@ -35,15 +35,10 @@ const settings = {
     ]
 }
 
-async function load({contents}) {
-    return { value: contents[0] }
-}
-
 export default {
     name: 'Red',
     template,
     contentType,
     settings,
-    multiple: false,
-    load
+    multiple: false
 }

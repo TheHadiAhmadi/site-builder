@@ -51,6 +51,7 @@ function init() {
         draggable: '[data-definition-id]',
         animation: 150,
         async onEnd(event) {
+            if(event.to == definitionsElement) return;
             await request('createModule', { slug: window.location.pathname, definitionId: event.item.dataset.definitionId, index: event.newIndex })
             await updateModules()
         }
@@ -59,6 +60,129 @@ function init() {
     iframeElement.onload = () => {
         initIframe()
     }
+
+    document.querySelector('[data-create-module]').addEventListener('click', () => {
+        document.body.dataset.mode = 'create-definition'
+        // 
+    })
+    document.querySelectorAll('[data-mode-create-definition]').forEach(createDef => {
+
+        createDef.querySelectorAll('[data-button-action="close-create-definition"]').forEach(el => {
+            el.addEventListener('click', () => {
+                delete document.body.dataset.mode
+            })
+        })
+
+        createDef.querySelectorAll('[data-form]').forEach(el => {
+            el.addEventListener('submit', async (e) => {
+                console.log('submitted')
+                e.preventDefault();
+                delete document.body.dataset.mode;
+                const form = new FormData(e.target);
+                const body = {};
+                let handler;
+            
+                for (let [key, value] of form.entries()) {
+                    if(key === '_handler') {
+                        handler = value
+                    } else {
+                        if (key.includes('.')) {
+                            let parts = key.split('.');
+                            let current = body;
+                
+                            parts.forEach((part, index) => {
+                                if (!current[part]) {
+                                    if (index === parts.length - 1) {
+                                        current[part] = value;
+                                    } else if (parts[index + 1] >= '0' && parts[index + 1] <= '9') {
+                                        current[part] = [];
+                                    } else {
+                                        current[part] = {};
+                                    }
+                                }
+                                current = current[part];
+                            });
+                        } else {
+                            body[key] = value;
+                        }
+                    }
+                }
+            
+                await request(handler, body);
+                window.location.reload()
+            });
+        })
+    })
+    document.querySelectorAll('[data-mode-update-definition]').forEach(updateDef => {
+
+        updateDef.querySelectorAll('[data-button-action="close-update-definition"]').forEach(el => {
+            el.addEventListener('click', () => {
+                delete document.body.dataset.mode
+            })
+        })
+
+        updateDef.querySelectorAll('[data-form]').forEach(el => {
+            el.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                delete document.body.dataset.mode;
+                const form = new FormData(e.target);
+                const body = {};
+                let handler = 'updateDefinition';
+            
+                for (let [key, value] of form.entries()) {
+                    if(key === '_handler') {
+                        handler = value
+                    } else {
+                        if (key.includes('.')) {
+                            let parts = key.split('.');
+                            let current = body;
+                
+                            parts.forEach((part, index) => {
+                                if (!current[part]) {
+                                    if (index === parts.length - 1) {
+                                        current[part] = value;
+                                    } else if (parts[index + 1] >= '0' && parts[index + 1] <= '9') {
+                                        current[part] = [];
+                                    } else {
+                                        current[part] = {};
+                                    }
+                                }
+                                current = current[part];
+                            });
+                        } else {
+                            body[key] = value;
+                        }
+                    }
+                }
+            
+                // TODO: Handler from html
+                await request('updateDefinition', body);
+                window.location.reload()
+            });
+        })
+    })
+
+    document.querySelectorAll('[data-definition-id]').forEach(el => {
+        setTimeout(() => {
+
+            el.querySelector('[data-definition-settings]').addEventListener('click', async () => {
+                console.log('clicked')
+                document.body.dataset.mode = 'update-definition'
+                
+                const data = await request('getDefinition', {id: el.dataset.definitionId})
+
+                console.log({data})
+                
+                document.querySelectorAll('[data-mode-update-definition] [data-form] [name]').forEach(input => {
+                    input.value = data[input.getAttribute('name')]
+                })
+
+                document.querySelector('[data-mode-update-definition] [data-form] [name="id"]').value = el.dataset.definitionId
+                // fill the form
+                // document.querySelectorAll()
+            })
+        }, 200)
+    })
 }
 
 function initIframe() {
@@ -83,11 +207,11 @@ function initIframe() {
             mod.querySelector('[data-module-delete]').classList.add('open')
         })
         
-        mod.querySelector('[data-module-confirm-button-no').addEventListener('click', async () => {
+        mod.querySelector('[data-module-confirm-button-no]').addEventListener('click', async () => {
             mod.querySelector('[data-module-delete]').classList.remove('open')
         })
 
-        mod.querySelector('[data-module-confirm-button-yes').addEventListener('click', async () => {
+        mod.querySelector('[data-module-confirm-button-yes]').addEventListener('click', async () => {
             mod.querySelector('[data-module-delete]').classList.remove('open')
             await request('deleteModule', {moduleId: mod.dataset.moduleId})
         })
@@ -128,12 +252,18 @@ function initIframe() {
         })
 
         if(mod.dataset.multiple) {
-            mod.querySelector('[data-header-button-insert]').addEventListener('click', () => {
+            mod.querySelector('[data-content-header] [data-button-action="open-insert"]').addEventListener('click', () => {
                 mod.dataset.dataMode = 'add'
             })
-            mod.querySelectorAll('[data-header-button-back]').forEach(el => {
+            mod.querySelectorAll('[data-button-action="open-default"]').forEach(el => {
                 el.addEventListener('click', () => {
-                    mod.dataset.dataMode = 'list'
+                    delete mod.dataset.dataMode 
+                })
+            })
+
+            mod.querySelectorAll('[data-button-action="open-list"]').forEach(el => {
+                el.addEventListener('click', () => {
+                    mod.dataset.dataMode = 'list' 
                 })
             })
 
@@ -159,7 +289,7 @@ function initIframe() {
             })
         }
 
-        mod.querySelectorAll('[data-header-button-cancel]').forEach(el => {
+        mod.querySelectorAll('[data-button-action="open-default"]').forEach(el => {
             el.addEventListener('click', () => {
                 delete mod.dataset.dataMode
             })
@@ -178,13 +308,11 @@ function initIframe() {
         })
 
         mod.querySelectorAll('[data-form]').forEach(form => {
-            form.querySelectorAll('[data-form-button-cancel]').forEach(el => {
-
+            form.querySelectorAll('[data-button]').forEach(el => {
                 el.addEventListener('click', () => {
-                    // mod.dataset.dataMode = 'list'
-                    if(el.dataset.target) {
-                        mod.dataset.dataMode = el.dataset.target
-                    } else {
+                    if(el.dataset.action == 'open-list') {
+                        mod.dataset.dataMode = 'list'
+                    } else if(el.dataset.action == 'open-default') {
                         delete mod.dataset.dataMode
                     }
                 })

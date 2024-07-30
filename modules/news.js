@@ -1,17 +1,15 @@
-import { db } from '#services'
-
 const template = `
 <div class="flex flex-col p-4 gap-4">
     <h1 class="font-bold">{{settings.title}}</h1>
     <div class="flex flex-col gap-{{settings.space_between_items}}">
-        {{#each items}}
+        {{#each value}}
             <div class="p-2 {{#if ../settings.show_borders}} border -mt-1 {{/if}}">
                 <div class="text-xl font-bold">{{this.title}}</div>
                 <div class="text-sm text-gray-800">{{this.description}}</div>
             </div>
         {{/each}}
     </div>
-    {{#unless items.length }}
+    {{#unless value.length }}
         No items
     {{/unless}}
 </div>
@@ -31,12 +29,6 @@ const contentType = {
             slug: 'description'
         },
     ]
-}
-
-async function load({moduleId, contents}) {
-    const items = contents
-
-    return { items }
 }
 
 const settings = {
@@ -66,6 +58,5 @@ export default {
     name: 'News',
     template,
     contentType,
-    settings,
-    load,
+    settings
 }

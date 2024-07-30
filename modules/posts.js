@@ -1,10 +1,10 @@
 const template = `
 <div class="bg-blue-200 p-4 border border-green-700">
     <div class="text-xl font-bold">
-        {{title}}
+        {{value.title}}
     </div>
     <div class="p-4">
-        {{description}}
+        {{value.description}}
     </div>
 </div>
 `
@@ -12,6 +12,7 @@ const template = `
 export default {
     name: 'Posts',
     template,
+    multiple: false,
     contentType: {
         fields: [
             {
@@ -25,8 +26,5 @@ export default {
                 slug: 'description',
             },
         ]
-    },
-    async load({contents}) {
-        return contents[0]
     }
 }
