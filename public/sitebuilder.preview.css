@@ -7,6 +7,7 @@
 
 [data-body] {
     min-height: 400px;
+    background-color: white;
 }
 
 [data-body] [data-definition-id] {
@@ -94,7 +95,7 @@
     max-height: 90vh;
 }
 [data-module-id][data-data-mode] [data-data] [data-page] {
-    min-height: 400px;
+    min-height: 300px;
 }
 
 body:has([data-data-mode]) [data-module-actions] {

@@ -6,7 +6,6 @@ export function Page({id, title, actions, body}) {
                 <div data-header-actions>
                     ${actions}
                 </div>
-                
             </div>
             ${body}
         </div>
@@ -36,7 +35,7 @@ export function Form({handler, fields, cancelAction}) {
 }
 
 export function Button({text, color, action, type="button"}) {
-    return `<button type="${type}" data-button data-button-color="${color}" data-button-action="${action}">${text}</button>`
+    return `<button type="${type}" data-button data-button-color="${color}" data-button-action="${action}" data-action="${action}">${text}</button>`
 }
 
 export function Table({items, head, row}) {

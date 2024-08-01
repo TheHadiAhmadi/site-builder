@@ -1,11 +1,136 @@
+//#region Globals
 const iframeElement = document.querySelector('iframe')
+const mainElement = document.querySelector('[data-main]')
+const sidebarElement = document.querySelector('[data-sidebar]')
 
-async function reloadIframe() {
-    const res = await fetch(window.location.href.replace('mode=edit', 'mode=preview')).then(res => res.text())
-    iframeElement.contentDocument.documentElement.innerHTML = res
+const actions = {
+    'navigate-back'(el) {
+        history.back()
+    },
+    navigate(el) {
+        const path = el.dataset.path
+        const [sidebar, view] = path.split('.')
 
-    setTimeout(() => {
-        initIframe()
+        sidebarElement.dataset.active = sidebar
+        if(view) {
+            mainElement.dataset.active = view
+        } else {
+            delete mainElement.dataset.active
+        }        
+    },
+    link(el) {
+        window.location.href = el.dataset.href
+
+    },
+    'create-module': () => {
+        mainElement.dataset.active = 'create-module'
+
+        const definitionEl = getElement(createDefinitionTemplate())        
+        mainElement.appendChild(definitionEl)
+    },
+    'close-sidebar': () => {
+        delete sidebarElement.dataset.active        
+    },
+    'create-page': () => {
+        mainElement.dataset.active = 'create-page'
+    },
+    'open-delete-module-confirm'(el) {
+        const mod = getParentModule(el)
+        mod.querySelector(`[data-module-delete]`).classList.add('open')
+    },
+    'module-delete-no'(el) {
+        const mod = getParentModule(el)
+        mod.querySelector(`[data-module-delete]`).classList.remove('open')
+    },
+    async 'module-delete-yes'(el) {
+        const mod = getParentModule(el)
+        mod.querySelector(`[data-module-delete]`).classList.remove('open')
+        await request('deleteModule', {moduleId: mod.dataset.moduleId})
+    },
+    async 'open-module-settings'(el) {
+        const mod = getParentModule(el)
+        mod.dataset.dataMode = 'settings'
+        const settings = await request('loadModuleSettings', {moduleId: el.dataset.id})
+        setFormValue(mod.querySelector('[data-mode-settings] [data-form]'), settings)
+
+    },
+    async 'open-module-data'(el) {
+        const mod = getParentModule(el)
+
+        if(mod.dataset.multiple) {
+            mod.dataset.dataMode = 'list'
+        } else {
+            mod.dataset.dataMode = 'edit-single'
+
+            const contentId = mod.dataset.contentId
+
+            if(contentId) {
+                // load data if have
+                const content = await request('getContent', {contentId}).then(res => res.data[0])
+                
+                setFormValue(mod.querySelector('[data-mode-edit-single] [data-form]'), content)
+            } else {
+                mod.querySelector('[data-mode-edit-single] [data-form] [name="_handler"]').value = 'createContent'
+            }
+        }
+    },
+    'open-module-default'(el) {
+        const mod = getParentModule(el)
+        delete mod.dataset.dataMode 
+    },
+    async 'content-delete-yes'(el) {
+        const mod = getParentModule(el)
+
+        const id = mod.dataset.contentId
+        mod.querySelector('[data-content-delete]').classList.remove('open')
+
+        await request('deleteContent', { moduleId: mod.dataset.moduleId, id})
+    },
+    async 'content-delete-no'(el) {
+        const mod = getParentModule(el)
+        delete mod.dataset.contentId
+        mod.querySelector('[data-content-delete]').classList.remove('open')
+    },
+    'open-module-insert'(el) {
+        const mod = getParentModule(el)
+
+        mod.dataset.dataMode = 'add'
+
+    },
+    'open-module-list'(el) {
+        const mod = getParentModule(el)
+
+        mod.dataset.dataMode = 'list'
+    },
+    'open-delete-content-confirm'(el) {
+        const mod = getParentModule(el)
+        mod.querySelector('[data-content-delete]').classList.add('open')
+
+        mod.dataset.contentId = el.dataset.id
+    },
+    async 'open-edit-content'(el) {
+        const mod = getParentModule(el)
+        mod.dataset.dataMode = 'edit'
+        const content = await request('getContent', {contentId: el.dataset.contentId}).then(res => res.data[0])
+        setFormValue(mod.querySelector('[data-mode-edit] [data-form]'), {content})
+    }
+}
+//#endregion
+
+//#region Helpers
+function getParentModule(el) {
+    if(el.dataset.moduleId) return el;
+    return getParentModule(el.parentElement)
+}
+
+function initActions(element) {
+    element.querySelectorAll("[data-action]").forEach(el => {
+        const actionType = el.dataset.trigger ?? 'click'
+        el.addEventListener(actionType, () => {
+            if(actions[el.dataset.action]) {
+                actions[el.dataset.action](el)
+            }
+        })
     })
 }
 
@@ -26,6 +151,108 @@ async function request(handler, body, reload = true) {
     })
 }
 
+function initForm(formEl) {
+    formEl.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const form = new FormData(e.target);
+        const body = {};
+        let handler;
+    
+        for (let [key, value] of form.entries()) {
+            if(key === '_handler') {
+                handler = value
+            } else {
+                if (key.includes('.')) {
+                    let parts = key.split('.');
+                    let current = body;
+        
+                    parts.forEach((part, index) => {
+                        if (!current[part]) {
+                            if (index === parts.length - 1) {
+                                current[part] = value;
+                            } else if (parts[index + 1] >= '0' && parts[index + 1] <= '9') {
+                                current[part] = [];
+                            } else {
+                                current[part] = {};
+                            }
+                        }
+                        current = current[part];
+                    });
+                } else {
+                    body[key] = value;
+                }
+            }
+        }
+    
+        const res = await request(handler, body);
+        if(res.pageReload) {
+            window.location.reload()
+        } else if(res.redirect) {
+            window.location.href = res.redirect
+        }
+    });
+}
+
+function initForms(element) {
+    element.querySelectorAll('[data-form]').forEach(el => {
+        initForm(el)
+    })
+}
+function flatObject(object, prefix = '') {
+    let flat = {}
+    for(let key in object) {
+        if(typeof object[key] =='object') {
+            const flatted = flatObject(object[key], prefix + key + '.')
+            for(let k in flatted) {
+                flat[k] = flatted[k]
+            }
+        } else {
+            flat[prefix + key] = object[key]
+        }
+    }
+    return flat;
+}
+
+function setFormValue(form, value) {
+    let formValue = flatObject(value)    
+
+    if(!form) return;
+    form.querySelectorAll('[name]').forEach(input => {
+        const name = input.getAttribute('name')
+        if(formValue[name]) {
+            input.value = formValue[name]
+        }
+    })
+}
+//#endregion
+
+
+function ContentTypeField(contentType, index) {
+    return `
+        <div data-content-type-field-row>
+            <label data-label>
+                <span data-label-text>Name</span>
+                <input data-input name="contentType.${index}.name" placeholder="Enter Field name" />
+            </label>
+            <label data-label>
+                <span data-label-text>Slug</span>
+                <input data-input name="contentType.${index}.slug" placeholder="Enter Field slug" />
+            </label>
+            <button data-id="contentType-${index}" type="button" data-button data-button-color="primary" style="margin-top: 20px">Remove</button>                    
+        </div>
+    `
+}
+
+async function reloadIframe() {
+    const res = await fetch(window.location.href.replace('mode=edit', 'mode=preview')).then(res => res.text())
+    iframeElement.contentDocument.documentElement.innerHTML = res
+
+    setTimeout(() => {
+        initIframe()
+    })
+}
+
 function updateModules() {
     const body = { slug: window.location.pathname, modules: [] }
     let index = 1;
@@ -34,12 +261,35 @@ function updateModules() {
     }
     request('updateModules', body)
 }
+
+function getElement(str) {
+    const el = document.createElement('template')
+    el.innerHTML = str
+
+    return el.content.cloneNode(true)
+}
+
+function initIframe() {
+    const bodyElement = iframeElement.contentDocument.querySelector('[data-body]')
+
+    Sortable.get(bodyElement)?.destroy()
+    new Sortable(bodyElement, {
+        group: 'nested',
+        animation: 150,
+        draggable: '[data-module-id]',
+        handle: '[data-action="drag-module-handle"]',
+        onEnd(event) {
+            updateModules()
+        }
+    })
+
+    initActions(iframeElement.contentDocument)
+    initForms(iframeElement.contentDocument)
+}
+
 function init() {
-
-
     const definitionsElement = document.querySelector('[data-definitions]')
     Sortable.get(definitionsElement)?.destroy()
-
 
     new Sortable(definitionsElement, {
         group: {
@@ -53,292 +303,16 @@ function init() {
         async onEnd(event) {
             if(event.to == definitionsElement) return;
             await request('createModule', { slug: window.location.pathname, definitionId: event.item.dataset.definitionId, index: event.newIndex })
-            await updateModules()
-        }
-    })
-
-    iframeElement.onload = () => {
-        initIframe()
-    }
-
-    document.querySelector('[data-create-module]').addEventListener('click', () => {
-        document.body.dataset.mode = 'create-definition'
-        // 
-    })
-    document.querySelectorAll('[data-mode-create-definition]').forEach(createDef => {
-
-        createDef.querySelectorAll('[data-button-action="close-create-definition"]').forEach(el => {
-            el.addEventListener('click', () => {
-                delete document.body.dataset.mode
-            })
-        })
-
-        createDef.querySelectorAll('[data-form]').forEach(el => {
-            el.addEventListener('submit', async (e) => {
-                console.log('submitted')
-                e.preventDefault();
-                delete document.body.dataset.mode;
-                const form = new FormData(e.target);
-                const body = {};
-                let handler;
-            
-                for (let [key, value] of form.entries()) {
-                    if(key === '_handler') {
-                        handler = value
-                    } else {
-                        if (key.includes('.')) {
-                            let parts = key.split('.');
-                            let current = body;
-                
-                            parts.forEach((part, index) => {
-                                if (!current[part]) {
-                                    if (index === parts.length - 1) {
-                                        current[part] = value;
-                                    } else if (parts[index + 1] >= '0' && parts[index + 1] <= '9') {
-                                        current[part] = [];
-                                    } else {
-                                        current[part] = {};
-                                    }
-                                }
-                                current = current[part];
-                            });
-                        } else {
-                            body[key] = value;
-                        }
-                    }
-                }
-            
-                await request(handler, body);
-                window.location.reload()
-            });
-        })
-    })
-    document.querySelectorAll('[data-mode-update-definition]').forEach(updateDef => {
-
-        updateDef.querySelectorAll('[data-button-action="close-update-definition"]').forEach(el => {
-            el.addEventListener('click', () => {
-                delete document.body.dataset.mode
-            })
-        })
-
-        updateDef.querySelectorAll('[data-form]').forEach(el => {
-            el.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                delete document.body.dataset.mode;
-                const form = new FormData(e.target);
-                const body = {};
-                let handler = 'updateDefinition';
-            
-                for (let [key, value] of form.entries()) {
-                    if(key === '_handler') {
-                        handler = value
-                    } else {
-                        if (key.includes('.')) {
-                            let parts = key.split('.');
-                            let current = body;
-                
-                            parts.forEach((part, index) => {
-                                if (!current[part]) {
-                                    if (index === parts.length - 1) {
-                                        current[part] = value;
-                                    } else if (parts[index + 1] >= '0' && parts[index + 1] <= '9') {
-                                        current[part] = [];
-                                    } else {
-                                        current[part] = {};
-                                    }
-                                }
-                                current = current[part];
-                            });
-                        } else {
-                            body[key] = value;
-                        }
-                    }
-                }
-            
-                // TODO: Handler from html
-                await request('updateDefinition', body);
-                window.location.reload()
-            });
-        })
-    })
-
-    document.querySelectorAll('[data-definition-id]').forEach(el => {
-        setTimeout(() => {
-
-            el.querySelector('[data-definition-settings]').addEventListener('click', async () => {
-                console.log('clicked')
-                document.body.dataset.mode = 'update-definition'
-                
-                const data = await request('getDefinition', {id: el.dataset.definitionId})
-
-                console.log({data})
-                
-                document.querySelectorAll('[data-mode-update-definition] [data-form] [name]').forEach(input => {
-                    input.value = data[input.getAttribute('name')]
-                })
-
-                document.querySelector('[data-mode-update-definition] [data-form] [name="id"]').value = el.dataset.definitionId
-                // fill the form
-                // document.querySelectorAll()
-            })
-        }, 200)
-    })
-}
-
-function initIframe() {
-    const bodyElement = iframeElement.contentDocument.querySelector('[data-body]')
-
-    Sortable.get(bodyElement)?.destroy()
-    new Sortable(bodyElement, {
-        group: 'nested',
-        animation: 150,
-        draggable: '[data-module-id]',
-        handle: '[data-drag-icon]',
-        onEnd(event) {
             updateModules()
         }
     })
 
-    const modules = iframeElement.contentDocument.querySelectorAll('[data-module-id]');
-    modules.forEach(mod => {
+    initActions(document)
+    initForms(document)
 
-        mod.querySelector('[data-delete-icon]')?.addEventListener('click', async () => {
-            // mod.dataset.dataMode = 'list'
-            mod.querySelector('[data-module-delete]').classList.add('open')
-        })
-        
-        mod.querySelector('[data-module-confirm-button-no]').addEventListener('click', async () => {
-            mod.querySelector('[data-module-delete]').classList.remove('open')
-        })
-
-        mod.querySelector('[data-module-confirm-button-yes]').addEventListener('click', async () => {
-            mod.querySelector('[data-module-delete]').classList.remove('open')
-            await request('deleteModule', {moduleId: mod.dataset.moduleId})
-        })
-
-        mod.querySelector('[data-settings-icon]')?.addEventListener('click', async () => {
-            // mod.dataset.dataMode = 'list'
-            // await request('deleteModule', {moduleId: mod.dataset.moduleId})
-            mod.dataset.dataMode = 'settings'
-            // load settings and fill form
-            const settings = await request('loadModuleSettings', {moduleId: mod.dataset.moduleId})
-
-            mod.querySelectorAll('[data-mode-settings] [data-form] [data-input]').forEach(input => {
-                input.value = settings[input.getAttribute('name')]
-            })
-
-        })
-
-
-        mod.querySelector('[data-data-icon]')?.addEventListener('click', async () => {
-            if(mod.dataset.multiple) {
-                mod.dataset.dataMode = 'list'
-            } else {
-                mod.dataset.dataMode = 'edit-single'
-
-                const contentId = mod.querySelector('[data-data-icon]').dataset.contentId
-
-                if(contentId) {
-                    // load data if have
-                    const content = await request('getContent', {contentId}).then(res => res.data[0])
-                    
-                    mod.querySelectorAll('[data-mode-edit-single] [data-form] [data-input]').forEach(input => {
-                        input.value = content[input.getAttribute('name')]
-                    })
-                } else {
-                    mod.querySelector('[data-mode-edit-single] [data-form] [name="_handler"]').value = 'createContent'
-                }
-            }
-        })
-
-        if(mod.dataset.multiple) {
-            mod.querySelector('[data-content-header] [data-button-action="open-insert"]').addEventListener('click', () => {
-                mod.dataset.dataMode = 'add'
-            })
-            mod.querySelectorAll('[data-button-action="open-default"]').forEach(el => {
-                el.addEventListener('click', () => {
-                    delete mod.dataset.dataMode 
-                })
-            })
-
-            mod.querySelectorAll('[data-button-action="open-list"]').forEach(el => {
-                el.addEventListener('click', () => {
-                    mod.dataset.dataMode = 'list' 
-                })
-            })
-
-            mod.querySelectorAll('[data-table-action-delete]').forEach(el => {
-                el.addEventListener('click', () => {
-                    mod.querySelector('[data-content-delete]').classList.add('open')
-                
-                    mod.querySelector('[data-content-confirm-button-yes]').dataset.contentId = el.dataset.contentId;
-                })
-            })
-            
-
-            const yesButton = mod.querySelector('[data-content-confirm-button-yes]')
-            const noButton = mod.querySelector('[data-content-confirm-button-no]')
-
-            yesButton.addEventListener('click', async () => {
-                mod.querySelector('[data-content-delete]').classList.remove('open')
-                await request('deleteContent', { moduleId: mod.dataset.moduleId, id: yesButton.dataset.contentId})
-            })
-
-            noButton.addEventListener('click', async () => {
-                mod.querySelector('[data-content-delete]').classList.remove('open')
-            })
-        }
-
-        mod.querySelectorAll('[data-button-action="open-default"]').forEach(el => {
-            el.addEventListener('click', () => {
-                delete mod.dataset.dataMode
-            })
-        })
-
-        mod.querySelectorAll('[data-table-action-edit]').forEach(editButton => {
-            editButton.addEventListener('click', async() => {
-                mod.dataset.dataMode = 'edit'
-
-                const content = await request('getContent', {contentId: editButton.dataset.contentId}).then(res => res.data[0])
- 
-                mod.querySelectorAll('[data-mode-edit] [data-form] [data-input]').forEach(input => {
-                    input.value = content[input.getAttribute('name')]
-                })
-            })
-        })
-
-        mod.querySelectorAll('[data-form]').forEach(form => {
-            form.querySelectorAll('[data-button]').forEach(el => {
-                el.addEventListener('click', () => {
-                    if(el.dataset.action == 'open-list') {
-                        mod.dataset.dataMode = 'list'
-                    } else if(el.dataset.action == 'open-default') {
-                        delete mod.dataset.dataMode
-                    }
-                })
-            })
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault()
-                let formData = new FormData(form)
-
-                let object = {}
-
-                let handler;
-                for(let [key, value] of formData.entries()) {
-                    if(key === '_handler') {
-                        handler = value
-                    } else {
-                        object[key] = value
-                    }
-                }
-
-                await request(handler, {content: object, moduleId: mod.dataset.moduleId})
-            })
-        })
-
-    })
-
+    iframeElement.onload = () => {
+        initIframe()
+    }
 }
 
 init()

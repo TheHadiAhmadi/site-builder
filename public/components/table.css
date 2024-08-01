@@ -1,9 +1,10 @@
 
 [data-table] {
-    background-color: white;
-    border: 1px solid #dedede;
-    border-radius: 4px;
+    background-color: #aaa;
+    border: 1px solid #aaa;
+    border-radius: 8px;
     width: 100%;
+    overflow: hidden;
 }
 
 
@@ -18,10 +19,12 @@
 [data-table] td {
     font-weight: normal;
     padding: 4px 8px;
+    background-color: white;
+
 }
 
 [data-table] tr {
-    border-bottom: 1px solid #b8b8b8;
+    border-bottom: 1px solid #aaa;
 }
 
 [data-table-actions] {

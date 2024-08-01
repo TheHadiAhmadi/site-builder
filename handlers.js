@@ -95,4 +95,17 @@ export default {
         const res = await db('definitions').query().filter('id', '=', body.id).first()
         return res
     },
+    async createPage(body) {
+        // body.settings ??= []
+        // body.contentType ??= []
+        await db('pages').insert(body)
+
+        return {
+            redirect: body.slug + '?mode=edit'
+        }        
+    },
+    async createCollection(body) {
+        // create content type
+
+    }
 }

@@ -2,6 +2,10 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 1rem;
+    background: white;
+    border: 1px solid #aaaa;
+    border-radius: 8px;
 }
 
 [data-form-actions] {
@@ -28,7 +32,13 @@
 [data-label] {
     display: flex;
     flex-direction: column;
+    width: 100%;
     gap: 2px;
+}
+[data-label-inline] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 [data-label-text] {

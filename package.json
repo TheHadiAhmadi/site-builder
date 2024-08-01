@@ -4,7 +4,8 @@
   "type": "module",
   "imports": {
     "#services": "./services/index.js",
-    "#modules": "./modules/index.js"
+    "#modules": "./modules/index.js",
+    "#modules/*": "./modules/*"
   },
   "main": "index.js",
   "scripts": {
