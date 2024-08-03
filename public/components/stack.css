@@ -1,0 +1,10 @@
+[data-stack] {
+    display: flex;
+    gap: 8px;
+}
+
+[data-stack-vertical] {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}

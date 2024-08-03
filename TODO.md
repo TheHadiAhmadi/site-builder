@@ -15,3 +15,11 @@
 - [ ] Customize definition template (Code editor or textarea)
 - [ ] Datasource settings to enable loading dynamic data
 - [ ] 
+
+
+
+### 
+## are you available full time?
+## how much hour per Week can you work? 30
+## when do you have time for interview?
+## SHould check source of project before meeting

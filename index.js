@@ -5,14 +5,32 @@ import handlers from './handlers.js'
 import {existsSync} from 'node:fs'
 import {mkdir, writeFile} from 'node:fs/promises'
 import { renderPage } from './src/page.js'
+import cookieParser from 'cookie-parser'
+import { LoginPage } from './src/pages/login.js'
 
 let context = {}
 
 const app = express()
+app.use(cookieParser())
 
 app.use(express.json())
 app.use(express.static('./public'))
 app.use('/files', express.static('./uploads'))
+
+app.get('/admin', (req, res) => {
+    const userToken = req.cookies['UserToken']
+    console.log(userToken)
+
+    res.json('Admin Panel')
+})
+
+app.get('/login', (req, res) => {
+    // const userToken = req.cookies['UserToken']
+    // console.log(userToken)
+
+    // res.json('Admin Panel')
+    res.send(LoginPage())
+})
 
 // #region file upload
 app.post('/api/file/upload', async (req, res) => {

@@ -9,6 +9,10 @@ export default {
             definitionId: body.definitionId,
             order: body.index + 1,
         })
+
+        return {
+            redirect: ''
+        }
     },
     async deleteModule(body) {
         await db('modules').remove(body.moduleId)
@@ -16,9 +20,11 @@ export default {
     async createContent(body) {
         const moduleId = body.moduleId
         const content = body.content
+        const _type = body._type
 
         await db('contents').insert({
             moduleId,
+            _type,
             ...content
         })
     },
@@ -73,25 +79,36 @@ export default {
             await db('modules').update(original)
         }
     },
+    async updateModule(body) {
+        console.log('updateModule', body)
+        if(!body.multiple) body.multiple = false;
+        await db('modules').update(body)
+    },
+    async getModule(body) {
+        return db('modules').query().filter('id', '=', body.id).first()
+
+    },
     async createDefinition(body) {
         body.settings ??= []
         body.contentType ??= []
+        body.multiple ??= false
         await db('definitions').insert(body)
 
-        return {
-            pageReload: true
+        return {            
+            redirect: '?mode=edit'
         }
     },
     async updateDefinition(body) {
         body.settings ??= []
         body.contentType ??= []
+        body.multiple ??= false
         await db('definitions').update(body)
 
         return {
             pageReload: true
         }
     },
-    async getDefinition(body) {
+    async loadDefinition(body) {
         const res = await db('definitions').query().filter('id', '=', body.id).first()
         return res
     },
@@ -104,8 +121,65 @@ export default {
             redirect: body.slug + '?mode=edit'
         }        
     },
+    async loadPage(body) {
+        return db('pages').query().filter('id', '=', body.id).first()
+    },
+    async updatePage(body) {
+        await db('pages').update(body)
+        return {
+            pageReload: true
+        }
+    },
+    async loadCollection(body) {
+        return db('collections').query().filter('id', '=', body.id).first()
+    },
     async createCollection(body) {
         // create content type
+        const res = await db('collections').insert(body)
 
+        return {
+            redirect: '?mode=edit&view=update-collection&id=' + res.id
+        }
+    },
+    async createCollectionForModule(body) {
+        // TODO: Can be merged with above
+        return db('collections').insert(body)
+    },
+    async updateCollection(body) {
+        const res = await db('collections').update(body)
+        return {
+            redirect: '?mode=edit&view=update-collection&id=' + res.id
+        }
+    },
+    async insertCollectionContent(body) {
+        if(!body._type) return;
+
+        const res = await db('contents').insert(body)
+
+        return {
+            redirect: `?mode=edit&view=collection-data-list&id=${body._type}`
+        }
+    },
+    async updateCollectionContent(body) {
+        if(!body._type) return;
+
+        await db('contents').update(body)
+
+        return {
+            redirect: `?mode=edit&view=collection-data-list&id=${body._type}`
+        }
+    },
+    async loadCollectionContent(body) {
+        const res = await db('contents').query().filter('id', '=', body.id).first()
+
+        return res;
+    },
+    async removeCollectionContent(body) {
+        const res = await db('contents').remove(body.id)
+
+        return {
+            reload: true
+        }        
     }
+
 }

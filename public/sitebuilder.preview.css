@@ -52,10 +52,15 @@
 
 [data-module-id] {
     transition: all 0.3s ease;
-    border: 1px dashed #40404040;
+    border: 1px solid #00000010;
     position: relative;
     min-height: 100px;
 }
+[data-module-id]:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
 [data-module-id]:hover {
     border: 1px solid var(--x-primary-hover);
 }

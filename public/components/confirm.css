@@ -1,7 +1,11 @@
 
 [data-delete-confirm] {
+    --modal-bg: white;
+    --modal-color: #202020;
+
+
     display: none;
-    background-color: #40404040;
+    background-color: var(--modal-backdrop);
     top: 0;
     left: 0;
     width: 100%;
@@ -20,7 +24,8 @@
     max-width: 80%;
     
     border-radius: 4px;
-    background-color: white;
+    background-color: var(--modal-bg);
+    color: var(--modal-color);
 }
 
 [data-confirm-title] {
@@ -36,17 +41,4 @@
     gap: 4px;
     display: flex;
     align-items: center;
-}
-[data-confirm-button-no], [data-confirm-button-yes] {
-    flex: 1;
-    border-radius: 4px;    
-    color: white;
-    background-color: #e93232;
-}
-
-[data-confirm-button-no] {
-    flex: 1;
-    border-radius: 4px;    
-    color: rgb(24, 24, 24);
-    background-color: #e9e9e9;
 }
