@@ -14,7 +14,7 @@ export default {
         }
     },
     async delete(body) {
-        await db('modules').remove(body.moduleId)
+        await db('modules').remove(body.id)
     },
     async loadSettings(body) {
         const moduleId = body.moduleId
@@ -38,14 +38,14 @@ export default {
         }
     },
 
-    async updateModules(body) {
+    async updateOrders(body) {
         for(let mod of body.modules) {
             const original = await db('modules').query().filter('id', '=', mod.id).first()
             original.order = mod.order
             await db('modules').update(original)
         }
     },
-    async updateModule(body) {
+    async update(body) {
         console.log('updateModule', body)
         if(!body.multiple) body.multiple = false;
         await db('modules').update(body)

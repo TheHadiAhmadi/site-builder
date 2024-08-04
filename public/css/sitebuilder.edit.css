@@ -205,6 +205,11 @@ iframe {
 [data-sidebar][data-active="settings"] [data-name="sidebar-settings"] {
     display: block;
 }
+
+[data-sidebar][data-active="module-settings"] [data-name="sidebar-module-settings"] {
+    display: block;
+}
+
 [data-sidebar][data-active="collections"] [data-name="sidebar-collections"] {
     display: block;
 }

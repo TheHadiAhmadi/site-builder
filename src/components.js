@@ -1,5 +1,27 @@
 import {html} from 'svelite-html'
 
+function attributes(object) {
+    console.log(object)
+    let result = ''
+
+    for(let key in object) {
+        if(object[key]) {
+            result += ` ${key}="${object[key]}"`
+        }
+    }
+    
+    console.log({result})
+    return result; 
+}
+
+export function Card(body) {
+    return html`<div data-card>${body}</div>`
+}
+
+export function CardBody(body) {
+    return html`<div data-card-body>${body}</div>`
+}
+
 export function Page({id, title, actions, body}) {
     return html`
         <div data-page data-mode-${id}>
@@ -15,10 +37,16 @@ export function Page({id, title, actions, body}) {
 }
 
 export function Label({text, body, inline = false, symbolic = false}) {
+    const attrs = attributes({
+        'data-label-inline': inline,
+        'data-label': inline === false,
+    })
+    
     let tag = symbolic ? 'div' : 'label'
+    
     if(inline)
-        return `
-            <${tag} data-label-inline>
+        return html`
+            <${tag}${attrs}>
                 ${body}
                 <span data-label-text>
                     ${text}
@@ -26,8 +54,8 @@ export function Label({text, body, inline = false, symbolic = false}) {
             </${tag}>
         `
 
-    return `
-        <${tag} data-label>
+    return html`
+        <${tag}${attrs}>
             <span data-label-text>
                 ${text}
             </span>
@@ -36,10 +64,10 @@ export function Label({text, body, inline = false, symbolic = false}) {
     `
 }
 
-export function Input({name, placeholder, label}) {
+export function Input({name, placeholder, label, disabled}) {
     return Label({
         text: label,
-        body: `<input data-input name="${name}" placeholder="${placeholder}"/>`
+        body: `<input data-input ${disabled ? 'disabled' : ''} name="${name}" placeholder="${placeholder}"/>`
     })
 }
 
@@ -66,11 +94,11 @@ export function Textarea({name, placeholder, label, rows = 5}) {
     })
 }
 
-export function Checkbox({name, label}) {
+export function Checkbox({name, checked, label}) {
     return Label({
         inline: true,
         text: label,
-        body: `<input ${checked ? 'checked' : ''} type="checkbox" data-checkbox name="${name}" value="true"/>`
+        body: `<input ${checked ? 'checked' : ''} type="checkbox" data-checkbox name="${name}" value="${checked}"/>`
     })
 }
 
@@ -138,25 +166,32 @@ export function EmptyTable({title, description, body = ''}) {
     `
 }
 
-export function Stack({body}) {
-    return html`
-        <div data-stack>
-            ${body}
-        </div>
-    `
+export function Stack({vertical = false, wrap, justify, ...rest}, body) {
+    
+    const attrs = attributes({
+        ...rest,
+        'data-stack': !vertical,
+        'data-stack-vertical': vertical,
+        'data-stack-justify': justify,
+        'data-stack-wrap': wrap
+    })
+
+    return html`<div${attrs}>${body}</div>`
 }
 
 export function Modal({name = '', title, footer, body}) {
-    return `<div data-modal="${name}">
+    const attrs = attributes({
+        'data-modal': name
+    })
+    return html`<div${attrs}>
         <div data-modal-content>
-
-            ${title ? `
+            ${title ? html`
                 <div data-modal-header>
                     <div data-modal-title>${title}</div>
                 </div>
             ` : ''}
             <div data-modal-body>${body}</div>
-            ${footer ? `<div data-modal-footer>${footer}</div>` : ''}
+            ${footer ? html`<div data-modal-footer>${footer}</div>` : ''}
         </div>
     </div>`
 }

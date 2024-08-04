@@ -8,3 +8,11 @@
     flex-direction: column;
     gap: 16px;
 }
+
+[data-stack-wrap] {
+    flex-wrap: wrap;
+}
+
+[data-stack-justify="end"] {
+    justify-content: end;
+}

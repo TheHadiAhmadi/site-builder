@@ -64,22 +64,32 @@
 [data-module-id]:hover {
     border: 1px solid var(--x-primary-hover);
 }
+
+
 [data-module-actions] {
+    height: 24px;
     display: flex;
     gap: 4px;
     position: absolute; 
     top: 0; 
-    right: 0;
     transition: all 0.2s ease;
     background-color: #4070f0;
     opacity: 0;
     color: white;
+}
+[data-module-actions-start] {
+    left: 0;
+
+}    
+
+[data-module-actions-end] {
+    right: 0;
 }    
 
 [data-action-icon] {
     padding: 2px;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
 }
 
 [data-module-actions] > * {

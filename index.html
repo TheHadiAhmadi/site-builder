@@ -3,29 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Login</title>
+    <title>Document</title>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-gray-800 dark:text-gray-100">
-    <div class="p-4 border rounded">
-        <div class="px-4 text-3xl">
-            Login
-        </div>
-        <form>
-            <label data-label>
-                <span data-label-text>Username</span>
-                <input data-input name="username" placeholder="Enter your username" />
-            </label>
+<body>
+    <div a-action="toggle">Click Me</div>
+    <div a-action="confirm">Confirm</div>
 
-            <label data-label>
-                <span data-label-text>Password</span>
-                <input type="password" data-input name="password" placeholder="Enter your password" />
-            </label>
+    <div a-confirm>Confirm component</div>
+    <div a-confirm a-open>Confirm component 2
 
-            <div data-form-actions>
-                <button class="w-full" data-button data-button-color="primary">Login</button>
-            </div>
-        </form>
+        <div a-confirm:close>Close</div>
     </div>
+
+    <div a-name="abc">Value</div>
+    <script src="./public/a.js"></script>
+    <script src="./confirm.js"></script>
+
+    <script>
+        A.action('toggle', (el) => {
+            console.log('toggle clicked')
+        })
+
+        A.start()
+    </script>
 </body>
 </html>

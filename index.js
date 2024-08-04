@@ -68,10 +68,14 @@ app.post('/api/query', async (req, res) => {
         handler
     }
 
+    console.log({handler})
+
     const [controller, action] = handler.split('.')
-    const resp = await handlers[controller][action](body, context)
+    if(handlers[controller]?.[action]) {
+        const resp = await handlers[controller][action](body, context)
+        res.json(resp ?? {reload: true})
+    }
     
-    res.json(resp ?? {reload: true})
 })
 //#endregion
 

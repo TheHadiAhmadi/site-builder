@@ -1,4 +1,4 @@
-import { Form, Input, Page, Textarea } from "../../public/shared/components.js"
+import { Form, Input, Page, Textarea } from "../components.js"
 
 export function pageCreatePage() {
     return Page({

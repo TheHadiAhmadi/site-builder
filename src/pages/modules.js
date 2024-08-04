@@ -1,9 +1,9 @@
-import { Button, Form, Input, Page } from "../../public/shared/components.js"
+import { Button, Form, Input, Page } from "../components.js"
 
 export function pageCreateModule() {
     return Page({
         actions: [
-            Button({text: 'Cancel', action: "navigate-to-default-view"})
+            Button({text: 'Cancel', action: "navigation.navigate-to-default-view"})
         ].join(''),
         title: `Create New Module`,
         body: Form({
@@ -21,7 +21,7 @@ export function pageCreateModule() {
                 <div>Is Multiple</div>
                 <div>Settings</div>
             `,
-            cancelAction: 'navigate-to-default-view'
+            cancelAction: 'navigation.navigate-to-default-view'
         })
     })
 }

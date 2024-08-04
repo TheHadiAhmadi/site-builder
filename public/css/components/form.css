@@ -1,7 +1,7 @@
 [data-form] {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 16px;
     padding: 1rem;
     background: white;
     border: 1px solid #aaaa;
@@ -47,6 +47,8 @@
 
 [data-label-text] {
     font-size: 16px;
+    opacity: 0.8;
+    font-weight: bolder;
 }
 
 [data-input], [data-textarea], [data-select], [data-label]:has([data-file]) {
