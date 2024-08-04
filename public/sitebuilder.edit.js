@@ -2,10 +2,41 @@
 let iframeElement = document.querySelector('iframe')
 let sidebarElement = document.querySelector('[data-sidebar]')
 
+function openConfirm({title, description, action, id}) {
+    const confirm = document.querySelector('[data-delete-confirm]')
+
+    confirm.dataset.open = true
+    confirm.dataset.id = id
+    confirm.dataset.handler = action
+    
+    confirm.querySelector('[data-confirm-title]').textContent = title
+    confirm.querySelector('[data-confirm-description]').textContent = description
+}
+
+const confirmActions = {
+    close(el) {
+        delete document.querySelector('[data-delete-confirm]').dataset.open
+    },
+    handle(el) {
+        const confirm = document.querySelector('[data-delete-confirm]')
+        delete confirm.dataset.open
+
+        const id = confirm.dataset.id;
+        const handler = confirm.dataset.handler;
+
+        request(handler, {id})
+    },
+}
+
 const actions = {
-    'navigate-back'(el) {
-        history.back()
-        reload(window.location.href)
+    confirm: confirmActions,
+    'delete-content'(el) {
+        openConfirm({
+            title: 'Are you sure?',
+            description: 'Are you sure to remove this item?',
+            action: 'content.removeCollectionContent',
+            id: el.dataset.id
+        })
     },
     navigate(el) {
         const path = el.dataset.path
@@ -104,20 +135,6 @@ const actions = {
         const content = await request('getContent', {contentId: el.dataset.contentId}).then(res => res.data[0])
         setFormValue(mod.querySelector('[data-mode-edit] [data-form]'), {content})
     },
-    async 'load-page'(el) {
-        const id = el.dataset.id;
-        const res = await request('loadPage', {id})
-        
-        setFormValue(el, res)
-        el.classList.remove('loading')
-    },
-    async 'load-module'(el) {
-        const id = el.dataset.id;
-        const res = await request('loadDefinition', {id})
-        
-        setFormValue(el, res)
-        el.classList.remove('loading')
-    },
     async 'load-collection'(el) {
         const id = el.dataset.id;
         const res = await request('loadCollection', {id})
@@ -151,25 +168,6 @@ const actions = {
         
         setFormValue(el, res)
 
-        // for(let index in res.fields) {
-        //     const field = res.fields[index]
-        //     const list = el.querySelector('[data-field-list]')
-        //     const template = el.querySelector('#field-inputs')
-        //     const button  = el.querySelector('[data-add-field-button]')
-
-        //     const element = template.content.cloneNode(true)
-
-        //     element.querySelectorAll('[name]').forEach(el => {
-        //         let name = el.getAttribute('name')
-        //         el.setAttribute('name', 'fields.' + index + '.' + name)
-        //         el.value = field[name]
-        //     })
-
-        //     list.insertBefore(element, button)
-
-        //     const insertedElement = [...list.querySelectorAll('[data-field-item]')].pop()
-        //     initActions(insertedElement)            
-        // }
         el.classList.remove('loading')
     },
     'add-field'(el) {
@@ -285,20 +283,29 @@ function getParentModule(el) {
 }
 
 function initAction(el, ev) {
+    let actionFn;
+
+    const actionName = el.dataset.action
+    if(actionName.includes('.')) {
+        const [controller, action] = actionName.split('.')
+        actionFn = actions[controller][action]
+    } else {
+        actionFn = actions[actionName]
+    }
+    if(!actionFn) {
+        console.log('action not found: ' + actionName)
+        return;
+    }
+
     const actionType = el.dataset.trigger ?? 'click'
     if(actionType === 'load') {
-        if(actions[el.dataset.action]) {
-            actions[el.dataset.action](el)
-        }
+        actionFn(el)
     } else {
         el.addEventListener(actionType, (ev) => {
             if(actionType === 'submit') {
                 ev.preventDefault()
             }
-            if(actions[el.dataset.action]) {
-                
-                actions[el.dataset.action](el)
-            }
+            actionFn(el)
         })
     }
 } 
@@ -359,6 +366,16 @@ function getFormValue(formEl) {
 
 
 function initForm(formEl) {
+    if(formEl.dataset.load) {
+        request(formEl.dataset.load, {
+            id: formEl.dataset.id
+        }).then(res => {
+            delete formEl.dataset.load
+            delete formEl.dataset.id
+            setFormValue(formEl, res)
+        })
+    }
+
     formEl.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -374,6 +391,27 @@ function initForm(formEl) {
             reload(res.redirect)
         }
     });
+}
+
+function initFileUploaders() {
+    document.querySelectorAll('[data-file]').forEach(el => {
+        const name = el.getAttribute('name')
+        el.removeAttribute('name')
+        const element =document.createElement('input')
+        element.setAttribute('name', name) 
+        element.setAttribute('type', 'hidden') 
+        
+        el.parentElement.insertBefore(element, el)
+        el.addEventListener('change', async event => {
+            const form = new FormData()
+            form.set('file', el.files[0])
+            const res = await fetch('/api/file/upload', {method: 'POST', body: form}).then(res => res.json())
+
+            el.dataset.fileId = res.id
+            element.value = res.id
+        })
+    })
+
 }
 
 function initLink(el) {
@@ -504,6 +542,7 @@ function initIframe() {
     initLinks(iframeElement.contentDocument)
     initForms(iframeElement.contentDocument)
     initModals(iframeElement.contentDocument)
+    initFileUploaders(iframeElement.contentDocument)
 
 }
 
@@ -536,7 +575,8 @@ function init() {
     initForms(document)
     initLinks(document)
     initModals(document)
-
+    initFileUploaders(document)
+    
     if(iframeElement) {
         iframeElement.onload = () => {
             initIframe()

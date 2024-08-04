@@ -1,7 +1,7 @@
 import express from 'express'
 import multer from 'multer'
 import { db } from '#services'
-import handlers from './handlers.js'
+import handlers from './src/handlers.js'
 import {existsSync} from 'node:fs'
 import {mkdir, writeFile} from 'node:fs/promises'
 import { renderPage } from './src/page.js'
@@ -68,8 +68,8 @@ app.post('/api/query', async (req, res) => {
         handler
     }
 
-    console.log({handler})
-    const resp = await handlers[handler](body, context)
+    const [controller, action] = handler.split('.')
+    const resp = await handlers[controller][action](body, context)
     
     res.json(resp ?? {reload: true})
 })

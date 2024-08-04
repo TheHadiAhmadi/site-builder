@@ -6,7 +6,7 @@ export function pageCreatePage() {
         actions: '',
         body: Form({
             cancelAction: 'navigate-to-default-view',
-            handler: 'createPage',
+            handler: 'page.create',
             fields: [
                 Input({name: 'name', label: 'Name', placeholder: 'Enter Page Name'}),
                 Input({name: 'title', label: 'Title', placeholder: 'Enter Title'}),
@@ -24,8 +24,8 @@ export function pageUpdatePage(page) {
         body: Form({
             name: 'page-update-form',
             cancelAction: 'navigate-to-default-view',
-            handler: 'updatePage',
-            load: 'load-page',
+            handler: 'page.update',
+            load: 'page.load',
             id: page.id,
             fields: [
                 `<input type="hidden" name="id" value="${page.id}" />`,

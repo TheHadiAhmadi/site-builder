@@ -7,7 +7,7 @@ export function pageCreateModule() {
         ].join(''),
         title: `Create New Module`,
         body: Form({
-            handler: 'createDefinition',
+            handler: 'definition.create',
             fields: `
                 <label data-label>
                     <span data-label-text>Name</span>
@@ -35,9 +35,9 @@ export function pageUpdateModule(data) {
         ].join(''),
         title: `Update Module (${data.name})`,
         body: Form({
-            load: 'load-module',
+            load: 'definition.load',
             id: data.id,
-            handler: 'updateDefinition',
+            handler: 'definition.update',
             fields: `
                 <input type="hidden" name="id" value="" />
                 <label data-label>

@@ -33,20 +33,6 @@
     gap: 2px;
 }
 
-[data-table-action] {
-    border: none;
-    background-color: transparent;
-    color: #4070f0;
-    padding: 4px 8px;
-}
-[data-table-action]:hover {
-    text-decoration: underline;
-}
-
-[data-table-action-delete] {
-    color: red;
-}
-
 [data-empty-table] {
     border: 1px solid #b8b8b8;
     border-radius: 4px;

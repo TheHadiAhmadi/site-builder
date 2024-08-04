@@ -1,26 +1,27 @@
-import { Button, Checkbox, EmptyTable, Form, Input, Label, Page, Select, Table, Textarea } from "../../public/shared/components.js"
+import { Button, Checkbox, EmptyTable, File, Form, Input, Label, Page, Select, Stack, Table, Textarea } from "../../public/shared/components.js"
 
 function DeleteConfirm() {
-    return `
-        <div data-delete-confirm data-collection-content-delete>
-            <div data-confirm-body>
-                <h3 data-confirm-title>Remove Content</h3>
-                <p data-confirm-description>Are you sure to remove this item?</p>
+    return ''
+    // return `
+    //     <div data-delete-confirm data-collection-content-delete>
+    //         <div data-confirm-body>
+    //             <h3 data-confirm-title>Remove Content</h3>
+    //             <p data-confirm-description>Are you sure to remove this item?</p>
 
-                <div data-confirm-actions>
-                    <button data-action="collection-content-delete-no" data-button data-button-block>No</button>
-                    <button data-action="collection-content-delete-yes" data-button data-button-block data-button-color="danger">Yes</button>
-                </div>
-            </div>
-        </div>
-    `
+    //             <div data-confirm-actions>
+    //                 <button data-action="collection-content-delete-no" data-button data-button-block>No</button>
+    //                 <button data-action="collection-content-delete-yes" data-button data-button-block data-button-color="danger">Yes</button>
+    //             </div>
+    //         </div>
+    //     </div>
+    // `
 }
 
 export function CollectionForm({id, handler, cancelAction, onSubmit}) {
     let load;
 
     if(id) {
-        load = 'load-collection'
+        load = 'collection.load'
     }
 
     return Form({
@@ -58,6 +59,7 @@ export function CollectionForm({id, handler, cancelAction, onSubmit}) {
                                 { text: 'Input', value: 'input' },
                                 { text: 'Textarea', value: 'textarea' },
                                 { text: 'Checkbox', value: 'checkbox' },
+                                { text: 'File', value: 'file' },
                                 { text: 'Select', value: 'select' },
                             ]
 
@@ -66,7 +68,7 @@ export function CollectionForm({id, handler, cancelAction, onSubmit}) {
                     </div>
                 </template>
             `})
-        ].join('')
+        ]
     })
 }
 
@@ -85,7 +87,8 @@ function FieldInput(field) {
         input: Input,
         select: Select,
         textarea: Textarea,
-        checkbox: Checkbox
+        checkbox: Checkbox,
+        file: File
     }
     
 
@@ -98,9 +101,9 @@ function FieldInput(field) {
 export function createCollectionPage() {
     return Page({
         title: 'Create Collection',
-        actions: [].join(''),
+        actions: [],
         body: CollectionForm({
-            handler: 'createCollection'
+            handler: 'collection.create'
         })
     })
 }
@@ -108,10 +111,10 @@ export function createCollectionPage() {
 export function updateCollectionPage(id) {
     return Page({
         title: 'Update Collection',
-        actions: [].join(''),
+        actions: [],
         body: CollectionForm({
             id,
-            handler: 'updateCollection'
+            handler: 'collection.update'
         })
     })
 }
@@ -119,6 +122,14 @@ export function updateCollectionPage(id) {
 
 export function collectionDataList(collection, items) {
     let content;
+
+    function render(item, field) {
+        if(field.type === 'input') return item[field.slug]
+        if(field.type === 'textarea') return item[field.slug].slice(0, 100) + (item[field.slug].length > 100 ? '...' : '')
+        if(field.type === 'checkbox') return item[field.slug] ? 'Yes' : 'No'
+        if(field.type === 'select') return `<div>BADGE: ${item[field.slug]}</div>`
+        if(field.type === 'file') return `<div>FILE${item[field.slug]}</div>`
+    }
     
     if(items.length) {
         content = Table({
@@ -127,17 +138,30 @@ export function collectionDataList(collection, items) {
             row(item) {
                 return `<tr>
                     ${collection.fields.map(field => 
-                        `<td>${item[field.slug]}</td>`
+                        `<td>${render(item, field)}</td>`
                     ).join('')}
                     <td>
-                        <div data-table-actions>
-                            <a href="?mode=edit&view=collection-data-update&id=${item.id}" data-table-action data-table-action-edit>
-                                Edit
-                            </a>
-                            <button data-action="open-delete-collection-content-confirm" data-content-id="${item.id}" data-table-action data-table-action-delete>
-                                Delete
-                            </button>
-                        </div>
+                        ${Stack({
+                            body: [
+                                Button({
+                                    text: 'Edit',
+                                    href: "?mode=edit&view=collection-data-update&id=" + item.id,
+                                    outline: true,
+                                    size: 'small',
+                                    color: 'primary'
+                                }),
+                                Button({
+                                    text: 'Delete',
+                                    action: 'delete-content',
+                                    outline: true,
+                                    size: 'small',
+                                    color: 'danger',
+                                    dataset: {
+                                        id: item.id
+                                    }
+                                })
+                            ]
+                        })}
                     </td>
                 </tr>`
             }
@@ -153,7 +177,7 @@ export function collectionDataList(collection, items) {
         title: collection.name + ' List',
         actions: [
             Button({text: 'Insert', color: 'primary', href: `?mode=edit&view=collection-data-create&id=` + collection.id})
-        ].join(''),
+        ],
         body: content        
     }) + DeleteConfirm()
 }
@@ -161,13 +185,13 @@ export function collectionDataList(collection, items) {
 export function collectionDataCreate(collection, items) {
     return Page({
         title: 'Insert ' + collection.name,
-        actions: [].join(''),
+        actions: [],
         body: Form({
-            handler: 'insertCollectionContent',
+            handler: 'content.insertCollectionContent',
             fields: [
                 `<input type="hidden" value="${collection.id}" name="_type">`, 
                 collection.fields.map(field => FieldInput(field)).join('')
-            ].join(''),
+            ],
             cancelAction: ''
         })
     })
@@ -177,16 +201,16 @@ export function collectionDataUpdate(collection, data) {
     const id = data.id.toString()
     return Page({
         title: 'Update ' + collection.name,
-        actions: [].join(''),
+        actions: [],
         body: Form({ 
-            load: 'load-collection-content',
+            load: 'content.loadCollectionContent',
             id,
-            handler: 'updateCollectionContent',
+            handler: 'content.updateCollectionContent',
             fields: [
                 '<input type="hidden" value="' + id + '" name="id">',
                 '<input type="hidden" value="' + data._type + '" name="_type">',
                 collection.fields.map(field => FieldInput(field)).join('')
-            ].join(''),
+            ],
             cancelAction: ''
         })
     })

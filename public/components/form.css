@@ -8,7 +8,7 @@
     border-radius: 8px;
 }
 
-[data-form].loading {
+[data-form][data-load] {
     opacity: 0.5;
 }
 
@@ -49,7 +49,7 @@
     font-size: 16px;
 }
 
-[data-input], [data-textarea], [data-select] {
+[data-input], [data-textarea], [data-select], [data-label]:has([data-file]) {
     --input-border: var(--border-color);
     width: 100%;
     padding: 4px 16px;
@@ -57,6 +57,29 @@
     outline: none;
     border: 1px solid var(--input-border);
     background-color: white;
+}
+
+[data-label]:has([data-file]) {
+    height: 48px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+[data-file-remove] {
+    opacity: 0;
+}
+
+[data-label]:has([data-file][data-file-id]) [data-file-remove] {
+    opacity: 1;
+    
+}
+
+
+[data-file] {
+    display: none;
 }
 
 [data-input], [data-select] {

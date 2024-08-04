@@ -1,5 +1,7 @@
+import {html} from 'svelite-html'
+
 export function Page({id, title, actions, body}) {
-    return `
+    return html`
         <div data-page data-mode-${id}>
             <div data-content-header>
                 <h2 data-header-title>${title}</h2>
@@ -68,13 +70,22 @@ export function Checkbox({name, label}) {
     return Label({
         inline: true,
         text: label,
-        body: `<input ${checked ? 'checked' : ''} type="checkbox" data-checkbox rows="${rows}" name="${name}" value="true"/>`
+        body: `<input ${checked ? 'checked' : ''} type="checkbox" data-checkbox name="${name}" value="true"/>`
+    })
+}
+
+export function File({name, label}) {
+    return Label({
+        text: label,
+        body: `<input type="file" data-file name="${name}" /><div data-file-remove>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 7L7 17M7 7l10 10"/></svg>
+        </div>`
     })
 }
 
 export function Form({name ='', handler, fields, cancelAction, load, id, onSubmit}) {
-    return `
-        <form${onSubmit ? ` data-action="${onSubmit}" data-trigger="submit"` : ''} data-form="${name}" ${load ? `class="loading" data-action="${load}" data-trigger="load" data-id=${id}` : ''}>
+    return html`
+        <form${onSubmit ? ` data-action="${onSubmit}" data-trigger="submit"` : ''} data-form="${name}" ${load ? `class="loading" data-load="${load}" data-id=${id}` : ''}>
             <input type="hidden" name="_handler" value="${handler}"/>
             ${fields}
             <div data-form-actions>
@@ -85,12 +96,19 @@ export function Form({name ='', handler, fields, cancelAction, load, id, onSubmi
     `
 }
 
-export function Button({href, text, color, action, type="button"}) {
+export function Button({href, text, color, action, outline = false, size="medium", dataset = {} , type="button"}) {
+    let attrs = ''
+    for(let item in dataset) {
+        if(dataset[item]) {
+            attrs += `data-${item}="${dataset[item]}"`
+        }
+    }
+
     if(href) {
-        return `<a href="${href}" data-button data-button-color="${color}">${text}</a>`
+        return `<a href="${href}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button data-button-color="${color}">${text}</a>`
 
     }
-    return `<button type="${type}" data-button data-button-color="${color}" data-action="${action}">${text}</button>`
+    return `<button type="${type}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button data-button-color="${color}" data-action="${action}">${text}</button>`
 }
 
 export function Table({items, head, row}) {
@@ -120,6 +138,13 @@ export function EmptyTable({title, description, body = ''}) {
     `
 }
 
+export function Stack({body}) {
+    return html`
+        <div data-stack>
+            ${body}
+        </div>
+    `
+}
 
 export function Modal({name = '', title, footer, body}) {
     return `<div data-modal="${name}">
@@ -134,4 +159,20 @@ export function Modal({name = '', title, footer, body}) {
             ${footer ? `<div data-modal-footer>${footer}</div>` : ''}
         </div>
     </div>`
+}
+
+export function DeleteConfirm() {
+    return `
+        <div data-delete-confirm>
+            <div data-confirm-body>
+                <h3 data-confirm-title></h3>
+                <p data-confirm-description></p>
+
+                <div data-confirm-actions>
+                    <button data-action="confirm.close" data-button data-button-block>No</button>
+                    <button data-action="confirm.handle" data-button data-button-block data-button-color="danger">Yes</button>
+                </div>
+            </div>
+        </div>
+    `
 }

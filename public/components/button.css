@@ -14,6 +14,18 @@
     height: 36px;
 }
 
+[data-button-outline] {
+    background-color: transparent;
+    color: var(--button-bg);
+    border-color: var(--button-border);
+}
+
+[data-button-outline]:hover {
+    background-color: var(--button-bg);
+    color: var(--button-color);
+    border-color: var(--button-border);
+}
+
 [data-button-block] {
     width: 100%;
 }
@@ -28,6 +40,12 @@
     --button-bg: #f04040;
     --button-color: white;
     --button-border: #e42727;
+}
+
+[data-button-size="small"] {
+    padding: 2px 8px;
+    height: 24px;
+    font-size: 14px;
 }
 
 

@@ -15,7 +15,7 @@
     justify-content: center;
 }
 
-[data-delete-confirm].open {
+[data-delete-confirm][data-open] {
     display: flex;
 }
 
