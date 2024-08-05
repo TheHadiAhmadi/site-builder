@@ -37,6 +37,10 @@ export function initSortableIframe() {
     })
 }
 
+function getPageId() {
+    return document.querySelector('iframe').contentDocument.querySelector('[data-body]').dataset.pageId
+}
+
 export function initSortable() {
     const definitionsElement = document.querySelector('[data-definitions]')
     Sortable.get(definitionsElement)?.destroy()
@@ -53,6 +57,7 @@ export function initSortable() {
         async onEnd(event) {
             if(event.to == definitionsElement) return;
             await request('module.create', { 
+                pageId: getPageId(),
                 slug: window.location.pathname, 
                 definitionId: event.item.dataset.definitionId, 
                 index: event.newIndex 

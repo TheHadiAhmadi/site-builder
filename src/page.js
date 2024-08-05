@@ -132,12 +132,24 @@ function sidebarSettings() {
 
 }
 
-function sidebarPages(pages, {permissions}) {
+async function sidebarPages(pages, {permissions}) {
+    async function getPageSlug(page) {
+        if(page.dynamic) {
+            let query = db('contents').query().filter('_type', '=', page.collectionId);
+
+
+            const content = await query.first()
+            console.log({page,content})
+            return getSlug(page.slug, content)
+        }
+        return page.slug
+    }
+    
     return `
         <div data-sidebar-title>Pages</div>
         <div data-sidebar-body>
-            ${pages.map(x => `
-                <div data-sidebar-item data-sidebar-page-item data-action="navigation.link" data-href="${x.slug}?mode=edit">
+            ${await Promise.all(pages.map(async x => `
+                <div data-sidebar-item data-sidebar-page-item data-action="navigation.link" data-href="${await getPageSlug(x)}?mode=edit">
                     <div data-page-item-start>
                         <span>${x.name}</span>
                         <span data-page-item-slug>${x.slug}</span>
@@ -145,7 +157,7 @@ function sidebarPages(pages, {permissions}) {
                     <a data-enhance data-sidebar-icon href="${getUrl({view: 'update-page', id: x.id})}">
                         <svg data-secondary-sidebar-item-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zm2.8-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5"/></svg>
                     </a>
-                </div>`).join('')}
+                </div>`)).then(res => res.join(''))}
             ${permissions.page_create ? `<a data-enhance href="${getUrl({view: 'create-page'})}" data-sidebar-item data-sidebar-create-button data-action="navigation.navigate" data-path="pages.create-page">
                 <svg data-sidebar-item-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H6q-.425 0-.712-.288T5 12t.288-.712T6 11h5V6q0-.425.288-.712T12 5t.713.288T13 6v5h5q.425 0 .713.288T19 12t-.288.713T18 13h-5v5q0 .425-.288.713T12 19t-.712-.288T11 18z"/></svg>
                 Create Page
@@ -155,8 +167,35 @@ function sidebarPages(pages, {permissions}) {
     `
 }
 
+function getSlug(slug, props) {
+    return hbs.compile(slug)(props)
+}
+
+async function DynamicPageSelect(page, params) {
+    const items = await db('contents').query().filter('_type', '=', page.collectionId).all()
+
+    function getText(content) {
+        let res = ''
+        for(let item in params) {
+            res += content[item]
+        }
+
+        return res
+    } 
+
+    function getValue(content) {
+        return hbs.compile(page.slug)(content)
+    }
+
+
+
+    return `<select style="width: max-content" data-select data-action="change-dynamic-page-content" data-trigger="change">
+        ${items.map(x => `<option ${getSlug(page.slug, params) === getValue(x) ? 'selected' : ''} value="${getValue(x)}">${getText(x)}</option>`)}
+    </select>`
+}
+
 //#region Render body
-export async function renderBody(body, {mode, url, view, ...query}) {
+export async function renderBody(body, {props, mode, url, view, ...query}) {
     // const permissions = {} 
     const permissions = {
         page_create: true,
@@ -174,7 +213,8 @@ export async function renderBody(body, {mode, url, view, ...query}) {
 
     let pages = await db('pages').query().all()
     let collections = await db('collections').query().all()
-    let currentPage = pages.find(x => x.slug == url.split('?')[0])
+    let res = await getPage(url.split('?')[0])
+    let currentPage = res.page
 
     if(!currentPage && view === 'iframe') view = 'create-page'
 
@@ -187,8 +227,9 @@ export async function renderBody(body, {mode, url, view, ...query}) {
                 <div data-content-header>
                     <h2 data-header-title>Edit (${currentPage.name})</h2>
                     <div data-header-actions>
+                        ${currentPage.dynamic ? await DynamicPageSelect(currentPage, props.params) : ''}
                         <a data-enhance data-button data-button-color="default" href="${getUrl({view: 'update-page', id: currentPage.id})}">Page Settings</a>
-                        <a data-button data-button-color="primary" target="_blank" href="${currentPage.slug}">Preview</a>
+                        <a data-button data-button-color="primary" target="_blank" href="${getSlug(currentPage.slug, props.params)}">Preview</a>
                     </div>
                 </div>
                 <iframe class="iframe" src="${url.replace('mode=edit', 'mode=preview')}"></iframe>
@@ -280,7 +321,7 @@ export async function renderBody(body, {mode, url, view, ...query}) {
                     ${sidebarModules({permissions})}
                 </div>
                 <div data-name="sidebar-pages">
-                    ${sidebarPages(pages, {permissions})}
+                    ${await sidebarPages(pages, {permissions})}
                 </div>
                 <div data-name="sidebar-collections">
                     ${sidebarCollections(collections, {permissions})}
@@ -304,8 +345,8 @@ export async function renderBody(body, {mode, url, view, ...query}) {
     ${DeleteConfirm()}
     `
 
-    return `<div data-body>
-        ${(await Promise.all(body.map(x => renderModule(x, {mode, definitions, permissions})))).join('')}
+    return `<div data-body data-page-id="${currentPage.id}">
+        ${(await Promise.all(body.map(x => renderModule(x, {props, mode, definitions, permissions})))).join('')}
         </div>`
 }
 //#endregion
@@ -383,23 +424,23 @@ export async function renderPage(req, res) {
     if(page.dynamic) {
         props.params = params
         if(page.collectionId) {
+            let collection = await db('collections').query().filter('id', '=', page.collectionId).first()
             let query = db('contents').query().filter('_type', '=', page.collectionId)
             for(let param in params) {
                 query = query.filter(param, '=', params[param])
             }
 
-            props.value = await query.first()
+            props.pageContent = await query.first()
+            props.collection = collection
         }
     }
-
-    console.log(props)
 
     let {head, title} = page;
     let modules = await getPageModules(page.id)
 
     const html = renderTemplate(layouts.default, {
         head: (head?? '') + (stylesheet ?? ''), 
-        body: await renderBody(modules, {...req.query, mode, url: req.url, view}), 
+        body: await renderBody(modules, {...req.query, props, mode, url: req.url, view}), 
         title: hbs.compile(title)(props)
     })
 

@@ -1,7 +1,7 @@
 export function FileUploader(el) {
     const name = el.getAttribute('name')
     el.removeAttribute('name')
-    const element =document.createElement('input')
+    const element = document.createElement('input')
     element.setAttribute('name', name) 
     element.setAttribute('type', 'hidden') 
     

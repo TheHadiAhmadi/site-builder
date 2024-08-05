@@ -1,15 +1,26 @@
 import { html } from 'svelite-html';
+import hbs from 'handlebars';
 
-export async function renderModule(module, {mode, definitions, permissions}) {
+export async function renderModule(module, {props, mode, definitions, permissions}) {
     const definition = definitions[module.definitionId]
 
     let fields = []
 
     fields = definition.fields ?? []
 
-    const props = {}
+    console.log("111:", {module, props})
+
+    if(props.collection) {
+        if(module.links) {
+            for(let key in module.links) {
+                module.props[key] = props.pageContent[module.links[key]]
+            }
+        }
+    }
 
     for(let item of definition.props ?? []) {
+        
+        
         props[item.slug] = module.props[item.slug] ?? item.defaultValue
     }
 

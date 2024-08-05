@@ -1,36 +1,108 @@
 import { db } from "#services"
 import { html } from "svelite-html"
-import { Form } from "../components.js"
+import { Checkbox, File, Form, Input, Select, Textarea } from "../components.js"
 import { FieldInput } from "../pages/collections.js"
 
-function sidebarModuleSettings(definition, module) {
+function DynamicFieldInput(field, fields, linked, module) {
+    function getLinkedText(key) {
+        return fields.find(x => x.slug === key)?.label ?? key
+    }
+    function getLabel(label) {
+        return `
+            <span>${label}</span>    
+
+            ${linked ? `
+                <div style="padding: 0; display: flex; align-items: center; border-radius: 10px; font-size: 12px; background-color: #0040f050; color: blue">
+                    <span style="padding: 4px;">${getLinkedText(linked)}</span>
+                    <div style="width: 16px; height: 16px; cursor: pointer" data-action="unlink-module-prop" data-prop="${field.slug}" data-mod-id="${module.id}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m8.382 17.025l-1.407-1.4L10.593 12L6.975 8.4L8.382 7L12 10.615L15.593 7L17 8.4L13.382 12L17 15.625l-1.407 1.4L12 13.41z"/></svg>
+                    </div>
+                </div>
+                ` : `
+                <div data-dropdown style="padding-left: 40px">
+                    <div data-dropdown-trigger style="display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 24px; height: 24px; color: white; background-color: #0030f0f0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M17 20v-3h-3v-2h3v-3h2v3h3v2h-3v3zm-6-3H7q-2.075 0-3.537-1.463T2 12t1.463-3.537T7 7h4v2H7q-1.25 0-2.125.875T4 12t.875 2.125T7 15h4zm-3-4v-2h8v2zm14-1h-2q0-1.25-.875-2.125T17 9h-4V7h4q2.075 0 3.538 1.463T22 12"/></svg>
+                    </div>
+ 
+                    <div data-dropdown-menu>
+                        ${fields.map(x => `<div data-action="link-module-prop" data-mod-id="${module.id}" data-prop="${field.slug}" data-field="${x.slug}" data-dropdown-item>${x.label}</div>`).join('')}
+                    </div>
+                </div>
+            `}
+        `
+
+    }
+    
+    let options = {
+        name: field.slug, 
+        label: getLabel(field.label),
+        placeholder: 'Enter ' + field.label
+    }
+    if(field.type === 'select') {
+        options.items = ['t', 'o', 'd', 'o']
+        options.placeholer = 'Choose' + field.label
+        // return Input({name: field.slug, label: field.name, placeholder: 'Enter ' + field.name})
+    }
+    const inputs = {
+        input: Input,
+        select: Select,
+        textarea: Textarea,
+        checkbox: Checkbox,
+        file: File
+    }
+    
+    if(inputs[field.type]) {
+        return inputs[field.type](options)
+    }
+}
+
+function sidebarModuleSettings(definition, module, collection) {
+    if(!collection) {
+        return html`
+            <div data-sidebar-module-settings-title data-sidebar-title>
+                <span>${definition.name} Settings</span>
+            </div>
+            <div data-sidebar-module-settings-body data-sidebar-body>
+                ${Form({
+                    name: 'module-settings',
+                    handler: 'module.saveSettings',
+                    fields: [
+                        `<input type="hidden" name="id" value="${module.id}">`,
+                        definition.props.map(prop => FieldInput(prop)).join('')
+                    ],
+                    cancelAction: 'navigate-to-default-view'
+                })}
+            </div>
+        `
+    }
+
     return html`
-        <div data-sidebar-module-settings-title data-sidebar-title>
-            <span>${definition.name} Settings</span>
-        </div>
-        <div data-sidebar-module-settings-body data-sidebar-body>
-            ${Form({
-                name: 'module-settings',
-                handler: 'module.saveSettings',
-                fields: [
-                    `<input type="hidden" name="id" value="${module.id}">`,
-                    definition.props.map(prop => FieldInput(prop)).join('')
-                ],
-                cancelAction: 'navigate-to-default-view'
-            })}
-        </div>
-    `
+            <div data-sidebar-module-settings-title data-sidebar-title>
+                <span>${definition.name} Settings</span>
+            </div>
+            <div data-sidebar-module-settings-body data-sidebar-body>
+                ${Form({
+                    name: 'module-settings',
+                    handler: 'module.saveSettings',
+                    fields: [
+                        `<input type="hidden" name="slug" value="">`,
+                        `<input type="hidden" name="id" value="${module.id}">`,
+                        definition.props.map(prop => DynamicFieldInput(prop, collection.fields, module.links?.[prop.slug], module)).join('')
+                    ],
+                    cancelAction: 'navigate-to-default-view'
+                })}
+            </div>
+        `
 }
 
 export default {
     async create(body) {
-        const page = await db('pages').query().filter('slug', '=', body.slug).first()
-
         await db('modules').insert({
-            pageId: page.id,
+            pageId: body.pageId,
             definitionId: body.definitionId,
             order: body.index + 1,
-            props: {}
+            props: {},
+            links: {}
         })
         return {
             redirect: ''
@@ -42,10 +114,21 @@ export default {
     async getSettingsTemplate(body) {
         const moduleId = body.id
         const module = await db('modules').query().filter('id', '=', moduleId).first();
+        const page = await db('pages').query().filter('id', '=', module.pageId).first();
         const definition = await db('definitions').query().filter('id', '=', module.definitionId).first();
         
-        const res = sidebarModuleSettings(definition, module)
-        return res
+        if(page.collectionId) {
+            const collection = await db('collections').query().filter('id', '=', page.collectionId).first();
+            
+            const res = sidebarModuleSettings(definition, module, collection, body.slug)
+
+            return res;
+
+
+        } else {
+            const res = sidebarModuleSettings(definition, module)
+            return res
+        }
     },
     async loadSettings(body) {
         const res = await db('modules').query().filter('id', '=', body.id).first()
@@ -56,8 +139,46 @@ export default {
         }
     },
     async saveSettings(body) {
-        const {id, ...props} = body
+        const {id, slug, ...props} = body
         const original = await db('modules').query().filter('id', '=', body.id).first()
+        const page = await db('pages').query().filter('id', '=', original.pageId).first()
+
+        if(page.dynamic) {
+            const collection = await db('collections').query().filter('id', '=', page.collectionId).first()
+            const dynamicParts = page.slug.split('/').filter(part => part.startsWith('{{') && part.endsWith('}}'));
+            const params = {};
+
+            let regexStr = page.slug;
+            for (const dynamicPart of dynamicParts) {
+                regexStr = regexStr.replace(dynamicPart, '([^/]+)');
+            }
+            const regex = new RegExp(`^${regexStr}$`);
+
+            const match = slug.match(regex);
+            if (match) {
+                const params = {};
+                dynamicParts.forEach((part, index) => {
+                    const paramName = part.slice(2, -2);
+                    params[paramName] = match[index + 1];
+                });
+
+                
+                let query = db('contents').query().filter('_type', '=', collection.id)
+                for(let key in params) {
+                    query = query.filter(key, '=', params[key])
+                }
+                const content = await query.first()
+            
+
+                for(let key in original.links) {
+                    content[original.links[key]] = props[key]
+                    // console.log('key is a link type', key)
+                }
+                await db('contents').update(content)
+            }
+        }
+
+            
 
         await db('modules').update({...original, props})
     },
@@ -77,4 +198,21 @@ export default {
         return db('modules').query().filter('id', '=', body.id).first()
 
     },
+    async linkProp(body) {
+        const {moduleId, prop, field} = body
+        const module = await db('modules').query().filter('id', '=', moduleId).first()
+
+        module.links[prop] = field
+
+        await db('modules').update(module)
+    },
+    async unlinkProp(body) {
+        const {moduleId, prop} = body
+        const module = await db('modules').query().filter('id', '=', moduleId).first()
+
+        delete module.links[prop]
+
+        await db('modules').update(module)
+    },
+    
 }

@@ -72,6 +72,26 @@ const actions = {
     confirm: confirmActions,
     modal: modalActions,
     navigation: navigationActions,
+    async 'unlink-module-prop'(el) {
+        const prop = el.dataset.prop
+        const moduleId = el.dataset.modId
+
+        await request('module.unlinkProp', {prop, moduleId})
+        document.querySelector('iframe').contentDocument.querySelector(`[data-module-id="${moduleId}"]`).click()
+
+    },
+    async 'link-module-prop'(el) {
+        const prop = el.dataset.prop
+        const moduleId = el.dataset.modId
+        const field = el.dataset.field
+        
+        await request('module.linkProp', {prop, moduleId, field})
+        document.querySelector('iframe').contentDocument.querySelector(`[data-module-id="${moduleId}"]`).click()
+
+    },
+    'change-dynamic-page-content'(el) {
+        reload(el.value + '?mode=edit')
+    },
     'add-field-next'(el) {
         
     },
@@ -165,15 +185,15 @@ const actions = {
         const template = await request('module.getSettingsTemplate', {id: moduleId})
         const moduleSettingsSidebar = document.querySelector('[data-name="sidebar-module-settings"]')
         moduleSettingsSidebar.innerHTML = template
+
+        settings.slug = location.pathname
         setFormValue(moduleSettingsSidebar, settings)
         delete moduleSettingsSidebar.querySelector('[data-form]').dataset.load
         document.querySelector('[data-sidebar]').dataset.active = 'module-settings'
         setTimeout(() => {
             // (moduleSettingsSidebar)
             hydrate(moduleSettingsSidebar)
-
         })
-
     },
     async 'open-module-data'(el) {
         const mod = getParentModule(el)

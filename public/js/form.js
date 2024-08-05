@@ -56,7 +56,11 @@ export function setFormValue(form, value) {
                 console.log('set value: ', input.value)
 
             } else {
-                console.log('TODO: File input', input, formValue[name])
+                // console.log('TODO: File input', input, formValue[name])
+                setTimeout(() => {
+                    form.querySelector(`[name="${name}"]`).value = formValue[name]
+                    input.dataset.fileId = formValue[name]
+                }, 100)
             }
         }
     })

@@ -47,7 +47,6 @@ export function FieldInput(field) {
         file: File
     }
     
-
     if(inputs[field.type]) {
         return inputs[field.type](options)
     }

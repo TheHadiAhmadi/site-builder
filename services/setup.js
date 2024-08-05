@@ -64,22 +64,27 @@ export async function setupCms(req, res) {
             let index = 0
             for(let module of page.modules) {
                 
-                for(let key in module.props) {
-                    const field = definitions[module.name].props.find(x => x.slug === key)
-                    const prop = module.props[key]
-                    if(field.type === 'file') {
-                        const {id} = await db('files').insert({
-                            name: prop
-                        })
-
-                        cpSync(`./templates/${template}/files/${prop}`, `./uploads/${id}`)
-                        module.props[key] = id
+                // Do not upload files of dynamic pages...
+                if(!page.dynamic) {
+                    for(let key in module.props) {
+                        const field = definitions[module.name].props.find(x => x.slug === key)
+                        const prop = module.props[key]
+                        if(field.type === 'file') {
+                            const {id} = await db('files').insert({
+                                name: prop
+                            })
+                            
+                            cpSync(`./templates/${template}/files/${prop}`, `./uploads/${id}`)
+                            module.props[key] = id
+                        }
                     }
                 }
+                
                 await db('modules').insert({
                     definitionId: definitions[module.name].id,
                     pageId: res.id,
                     props: module.props ?? {},
+                    links: module.links ?? {},
                     order: index++
                 })
             }

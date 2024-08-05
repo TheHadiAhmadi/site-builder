@@ -3,6 +3,7 @@ export default {
     definitions: [
         import('./definitions/PageHeading.js'),
         import('./definitions/TextHTML.js'),
+        import('./definitions/Image.js'),
     ],
     pages: [
         {
@@ -21,16 +22,39 @@ export default {
             ]
         },
         {
+            title: 'Properties | Nancy Saedi Real Estate',
+            name: 'Properties',
+            slug: '/properties',
+            modules: [
+                {
+                    name: 'Page Heading',
+                    props: {
+                        title: 'Properties',
+                        subtitle: 'Learn More About Our exclusive Properties...',
+                        background_image: 'properties.jpeg'
+                    }
+                }
+            ]
+        },
+        {
             name: 'Property detail',
             slug: '/properties/{{slug}}',
-            title: '{{value.title}} | Nancy Saedi Real Estate',
+            title: '{{pageContent.title}} | Nancy Saedi Real Estate',
             dynamic: true,
             collection: 'Properties',
             modules: [
                 {
+                    name: 'Image',
+                    links: {
+                        src: "main_image",
+                        alt: "title"
+                    },
+                    props: {}
+                },
+                {
                     name: 'Text HTML',
                     props: {
-                        "content": "HTML: {{value.title}} TITLE"
+                        "content": "HTML: {{pageContent.title}} TITLE"
                     }
                 }
             ]
