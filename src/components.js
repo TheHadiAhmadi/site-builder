@@ -113,7 +113,7 @@ export function File({name, label}) {
 
 export function Form({name ='', handler, fields, cancelAction, load, id, onSubmit}) {
     return html`
-        <form${onSubmit ? ` data-action="${onSubmit}" data-trigger="submit"` : ''} data-form="${name}" ${load ? `class="loading" data-load="${load}" data-id=${id}` : ''}>
+        <form${onSubmit ? ` data-action="${onSubmit}" data-trigger="submit"` : ''} data-form="${name}" ${load ? `data-load="${load}" data-id=${id}` : ''}>
             <input type="hidden" name="_handler" value="${handler}"/>
             ${fields}
             <div data-form-actions>
@@ -124,7 +124,7 @@ export function Form({name ='', handler, fields, cancelAction, load, id, onSubmi
     `
 }
 
-export function Button({href, text, color, action, outline = false, size="medium", dataset = {} , type="button"}) {
+export function Button({href, text, color, block, action, outline = false, size="medium", dataset = {} , type="button"}) {
     let attrs = ''
     for(let item in dataset) {
         if(dataset[item]) {
@@ -133,14 +133,14 @@ export function Button({href, text, color, action, outline = false, size="medium
     }
 
     if(href) {
-        return `<a href="${href}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button data-button-color="${color}">${text}</a>`
+        return `<a href="${href}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}">${text}</a>`
 
     }
-    return `<button type="${type}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button data-button-color="${color}" data-action="${action}">${text}</button>`
+    return `<button type="${type}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}" data-action="${action}">${text}</button>`
 }
 
-export function Table({items, head, row}) {
-    return `
+export function Table({items, head, row, body}) {
+    return html`
         <table data-table>
             <thead>
                 <tr>
@@ -149,7 +149,7 @@ export function Table({items, head, row}) {
                 </tr>
             </thead>
             <tbody>
-                ${items.map(item => row(item)).join('')}
+                ${body ? body : items.map(item => row(item)).join('')}
             </tbody>
         </table>
     `

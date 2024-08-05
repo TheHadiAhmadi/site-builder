@@ -1,4 +1,26 @@
 import { db } from "#services"
+import { html } from "svelite-html"
+import { Form } from "../components.js"
+import { FieldInput } from "../pages/collections.js"
+
+function sidebarModuleSettings(definition, module) {
+    return html`
+        <div data-sidebar-module-settings-title data-sidebar-title>
+            <span>${definition.name} Settings</span>
+        </div>
+        <div data-sidebar-module-settings-body data-sidebar-body>
+            ${Form({
+                name: 'module-settings',
+                handler: 'module.saveSettings',
+                fields: [
+                    `<input type="hidden" name="id" value="${module.id}">`,
+                    definition.props.map(prop => FieldInput(prop)).join('')
+                ],
+                cancelAction: 'navigate-to-default-view'
+            })}
+        </div>
+    `
+}
 
 export default {
     async create(body) {
@@ -8,6 +30,7 @@ export default {
             pageId: page.id,
             definitionId: body.definitionId,
             order: body.index + 1,
+            props: {}
         })
         return {
             redirect: ''
@@ -16,26 +39,27 @@ export default {
     async delete(body) {
         await db('modules').remove(body.id)
     },
+    async getSettingsTemplate(body) {
+        const moduleId = body.id
+        const module = await db('modules').query().filter('id', '=', moduleId).first();
+        const definition = await db('definitions').query().filter('id', '=', module.definitionId).first();
+        
+        const res = sidebarModuleSettings(definition, module)
+        return res
+    },
     async loadSettings(body) {
-        const moduleId = body.moduleId
-
-        const res = await db('moduleSettings').query().filter('moduleId', '=', moduleId).first()
+        const res = await db('modules').query().filter('id', '=', body.id).first()
         if(res) {
-            return res.value
+            return res.props
         } else {
             return {}
         }
     },
     async saveSettings(body) {
-        const moduleId = body.moduleId
+        const {id, ...props} = body
+        const original = await db('modules').query().filter('id', '=', body.id).first()
 
-        const original = await db('moduleSettings').query().filter('moduleId', '=', moduleId).first()
-
-        if(!original) {
-            await db('moduleSettings').insert({moduleId, value: body.content})
-        } else {
-            await db('moduleSettings').update({id: original.id, moduleId, value: body.content})
-        }
+        await db('modules').update({...original, props})
     },
 
     async updateOrders(body) {

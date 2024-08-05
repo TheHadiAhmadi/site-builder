@@ -3,6 +3,8 @@
 :root {
     --x-primary: #4070f0;
     --x-primary-hover: #5080f5;
+    --x-secondary: #696e7c;
+    --x-secondary-hover: #626777;
 }    
 
 [data-body] {
@@ -62,6 +64,9 @@
 }
 
 [data-module-id]:hover {
+    border: 1px dashed var(--x-primary-hover);
+} 
+[data-module-id][data-active] {
     border: 1px solid var(--x-primary-hover);
 }
 
@@ -79,8 +84,18 @@
 }
 [data-module-actions-start] {
     left: 0;
-
 }    
+[data-module-actions-start] > div {
+    display: flex;
+}
+
+[data-module-action-text] {
+    padding-left: 16px;
+    padding-right: 16px;
+    display: flex; 
+    align-items: center; 
+    font-weight: bold;
+}
 
 [data-module-actions-end] {
     right: 0;
@@ -100,21 +115,16 @@
     opacity: 1;
 }
 
-
-[data-module-id] [data-data] {
-    display: none;
-}
-
-[data-module-id][data-data-mode] [data-data] {
-    display: block;
-    max-height: 90vh;
-}
-[data-module-id][data-data-mode] [data-data] [data-page] {
-    min-height: 300px;
+[data-module-id][data-active] [data-module-actions] {
+    opacity: 1;
 }
 
 body:has([data-data-mode]) [data-module-actions] {
     display: none;
+}
+
+[data-module-content] {
+    position: relative;
 }
 
 [data-module-id][data-data-mode] [data-module-content] {

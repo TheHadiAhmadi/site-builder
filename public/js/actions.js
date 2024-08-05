@@ -1,5 +1,7 @@
 import { getFormValue, request, setFormValue } from "./form.js"
 import { getParentModule, reload } from "./helpers.js"
+import { hydrate } from "./hydrate.js"
+
 
 function openConfirm({title, description, action, ...dataset}) {
     const confirm = document.querySelector('[data-delete-confirm]')
@@ -31,7 +33,6 @@ const confirmActions = {
         delete body['deleteConfirm']
         delete body['handler']
         
-        // const id = confirm.dataset.id;
         const handler = confirm.dataset.handler;
 
         request(handler, body)
@@ -108,6 +109,15 @@ const actions = {
             id: el.dataset.id
         })
     },
+    'delete-settings-field'(el) {
+        openConfirm({
+            title: 'Are you sure?',
+            description: 'Are you sure to remove this field?',
+            action: 'definition.removeField',
+            id: el.dataset.id,
+            slug: el.dataset.slug
+        })
+    },
     'delete-field'(el) {
         openConfirm({
             title: 'Are you sure?',
@@ -143,20 +153,29 @@ const actions = {
         await request('deleteModule', {moduleId: mod.dataset.moduleId})
     },
     async 'open-module-settings'(el) {
-        let sidebarElement = document.querySelector('[data-sidebar]')
-
-        console.log('open module settings', el.dataset)
         const mod = getParentModule(el)
-        // mod.dataset.dataMode = 'settings'
-        const settings = await request('module.loadSettings', {moduleId: mod.dataset.moduleId})
-        const definition = await request('definition.getByModuleId', {moduleId: mod.dataset.moduleId})
+        const moduleId = mod.dataset.moduleId
+        document.querySelector('iframe').contentDocument.querySelectorAll('[data-module-id][data-active]').forEach(el => {
+            console.log('remove active from module', el)
+            delete el.dataset.active
+        })
 
-        setFormValue(mod.querySelector('[data-mode-settings] [data-form]'), settings)
-        sidebarElement.dataset.active = 'module-settings'
+        mod.dataset.active = true
 
-        const sidebar = document.querySelector('[data-name="sidebar-module-settings"]')
-        sidebar.querySelector('[data-sidebar-title]').textContent = definition.name + ' Settings'
-        sidebar.querySelector('[data-sidebar-body]').innerHTML = `<div style="display: flex; gap: 4px; flex-direction: column;">${(definition.props ?? [1, 2, 3]).map(x => `<div style="border: 1px solid black;">PROP</div>`)}</div>`
+        // reload(`?mode=edit&moduleId=` + moduleId)
+        const settings = await request('module.loadSettings', {id: moduleId})
+        const template = await request('module.getSettingsTemplate', {id: moduleId})
+        const moduleSettingsSidebar = document.querySelector('[data-name="sidebar-module-settings"]')
+        moduleSettingsSidebar.innerHTML = template
+        setFormValue(moduleSettingsSidebar, settings)
+        delete moduleSettingsSidebar.querySelector('[data-form]').dataset.load
+        document.querySelector('[data-sidebar]').dataset.active = 'module-settings'
+        setTimeout(() => {
+            // (moduleSettingsSidebar)
+            hydrate(moduleSettingsSidebar)
+
+        })
+
     },
     async 'open-module-data'(el) {
         const mod = getParentModule(el)

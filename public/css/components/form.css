@@ -92,3 +92,9 @@
     padding: 0;
     border: none;
 }
+
+[data-sidebar] [data-form] {
+    padding: 0;
+    background: transparent;
+    border: none;
+}

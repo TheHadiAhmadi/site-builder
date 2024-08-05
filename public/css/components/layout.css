@@ -18,6 +18,5 @@
 [data-page] {
     padding: 1rem;
     background-color: #e8e8e8;
-    height: 100%;
     overflow: auto;
 }

@@ -4,15 +4,11 @@ import { Button, DeleteConfirm, EmptyTable, Form, Input, Modal, Page, Table } fr
 import { db } from "#services";
 import layouts from "./layouts.js";
 import { pageCreateModule, pageUpdateModule } from './pages/modules.js';
-import { collectionDataCreate, collectionDataList, collectionDataUpdate, CollectionForm, createCollectionPage, updateCollectionPage } from './pages/collections.js';
+import { collectionDataCreate, collectionDataList, collectionDataUpdate, CollectionForm, createCollectionPage, FieldInput, updateCollectionPage } from './pages/collections.js';
 import { pageCreatePage, pageUpdatePage } from './pages/pages.js';
-import { html } from 'svelite-html';
+import { renderModule } from './renderModule.js';
 
 const definitions = {}
-
-async function getModuleContents(id) {
-    return db('contents').query().filter('_type', '=', id).all()
-}
 
 function renderTemplate(template, data) {
     return template(data)
@@ -30,328 +26,8 @@ async function getPage(slug) {
     return page // ?? page_404
 }
 
-function DeleteModuleConfirm({moduleId}) {
-    return `
-        <div data-delete-confirm data-module-delete>
-            <div data-confirm-body>
-                <h3 data-confirm-title>Remove Module</h3>
-                <p data-confirm-description>Are you sure to remove this module with all it's data?</p>
-
-                <div data-confirm-actions>
-                    <button data-action="module-delete-no" data-id="${moduleId}" data-button data-button-block>No</button>
-                    <button data-action="module-delete-yes" data-id="${moduleId}" data-button data-button-block data-button-color="danger">Yes</button>
-                </div>
-            </div>
-        </div>
-    `
-}
-
-function DeleteContentConfirm({}) {
-    return `
-        <div data-delete-confirm data-content-delete>
-            <div data-confirm-body>
-                <h3 data-confirm-title>Remove Content</h3>
-                <p data-confirm-description>Are you sure to remove this item?</p>
-
-                <div data-confirm-actions>
-                    <button data-action="content-delete-no" data-button data-button-block>No</button>
-                    <button data-action="content-delete-yes" data-button data-button-block data-button-color="danger" data-content-id="">Yes</button>
-                </div>
-            </div>
-        </div>
-    `
-}
-
-function ChooseCollectionModal(collections) {
-    return Modal({
-        name: 'choose-collection',
-        title: 'Choose Collection', 
-        body: Table({
-            items: collections, 
-            head: `<th>Name</th>`, 
-            row(item) {
-                return `<tr>
-                    <td>${item.name} (${item.fields.length} Fields)</td>
-                    <td>
-                        <button data-button data-action="choose-collection-button" data-collection-id="${item.id}">Choose</button>
-                    </td>
-                </tr>`
-            }
-        }), 
-        footer: `<button data-button data-action="close-choose-collection-modal">Close</button>`
-    })
-}
-
-function CreateCollectionModal() {
-    return Modal({
-        name: 'create-collection',
-        title: 'Create Collection', 
-        body: CollectionForm({
-            onSubmit: 'create-collection-modal-submit', 
-            cancelAction: 'close-create-collection-modal'
-        }), 
-    })
-
-
-}
-
-
 // module.collectionId
 // module.contentId
-async function renderModule(module, mode) {
-    const definition = definitions[module.definitionId]
-    const multiple = definition.multiple !== false;
-
-    let fields = []
-    let contents;
-    let value = null;
-
-    // multiple based on field (fields[0].multiple???)
-    fields = definition.fields ?? []
-    // if(definition.dynamic) {
-    //     // collectionId: (Choose collection modal)
-    //     // filters: (Show sample datatable with filters + save filters button)
-    //     // mapping: (Key value : other is fields of selected collection)
-
-    //     // if definition is dynaminc, It has collectionId, filters and mapping 
-    //     // const res = await db('collections').query().filter('id', '=', module.collectionId).first()
-    // } else {
-    //     fields = definition.fields        
-    // }
-
-
-    if(multiple) {
-        value = await db('contents').query().filter('_type', '=', module.collectionId).all()
-        contents = value;
-    } else {
-        value = await db('contents').query().filter('id', '=', module.contentId).first()
-    }
-
-    const props = {
-        value
-    }
-
-    props.settings = {}
-    const settings = await db('moduleSettings').query().filter('moduleId', '=', module.id).first() ?? {};
-
-    for(let item of definition.settings?.fields ?? []) {
-        props.settings[item.slug] = settings.value?.[item.slug] ?? item.defaultValue
-    }
-
-    let rendered;
-    try {
-        rendered = renderTemplate(definition.template, props);
-    } catch(err) {
-        rendered = 'Something went wrong: ' + err.message
-    }
-
-    let previewContent = ''
-
-    //#region Add Content
-    // const contentTypeAdd = Page({
-    //     id: 'add',
-    //     title: 'Insert Content', 
-    //     actions: [
-    //         Button({text: 'Back', action: 'open-module-list', color: 'default'})
-    //     ],
-    //     body: Form({
-    //         cancelAction: 'open-module-list',
-    //         handler: 'createContent', 
-    //         fields: [
-    //             `<input data-input type="hidden" name="_type" value="${module.collectionId}"/>`,
-    //             fields.map(x => 
-    //                 Input({name: 'content.' + x.slug, placeholder: 'Enter ' + x.name, label: x.name})
-    //             ).join('')
-    //         ]
-    //     })
-    // })
-    //#endregion
-
-    //#region Edit Content
-    // const contentTypeEdit = Page({
-    //     id: 'edit',
-    //     title: 'Update Content', 
-    //     actions: [
-    //         Button({text: 'Back', action: 'open-module-list', color: 'default'})
-    //     ],
-    //     body: Form({
-    //         cancelAction: 'open-module-list',
-    //         handler: 'updateContent', 
-    //         fields: [
-    //             '<input data-input type="hidden" name="content.id" value=""/>', 
-    //             `<input data-input type="hidden" name="_type" value="${module.collectionId}"/>`,
-    //             fields.map(x => 
-    //                 Input({name: 'content.' + x.slug, placeholder: 'Enter ' + x.name, label: x.name})
-    //             ).join('')
-    //         ]
-    //     })
-    // })
-    //#endregion
-
-    // let contentTypeEditSingle;
-
-
-    //#region Edit Single Content
-    // if(!multiple) {
-    //     if(module.contentId) {
-    //         contentTypeEditSingle = Page({
-    //             id: 'edit-single',
-    //             title: 'Update Content', 
-    //             actions: [
-    //                 Button({text: 'Cancel', action: 'open-module-default', color: 'default'})
-    //             ],
-    //             body: Form({
-    //                 cancelAction: 'open-module-default',
-    //                 handler: 'updateContent',
-    //                 fields: (value ? `<input data-input type="hidden" name="id" value="${module.contentId}"/> <input data-input type="hidden" name="_type" value="${module.collectionId}"/>` : "") + fields.map(x => 
-    //                     Input({name: 'content.' + x.slug, placeholder: 'Enter ' + x.name, label: x.name})
-    //                 )
-    //             })
-    //         })
-    //     } else {
-    //         contentTypeEditSingle = Page({
-    //             id: 'edit-single',
-    //             title: 'Update Content', 
-    //             actions: [
-    //                 Button({text: 'Cancel', action: 'open-module-default', color: 'default'})
-    //             ],
-    //             body: EmptyTable({
-    //                 title: 'Choose Content',
-    //                 description: 'Choose an item to connect to this module',
-    //                 body: `<div data-stack style="max-width: 400px">
-    //                     ${Button({text: 'Choose Content', action: 'choose-content'})}
-    //                     ${Button({text: 'Create New Content', color: 'primary', action: 'create-content'})}
-    //                 </div>`
-    //             })
-    //         })
-    //     }
-    // }
-    //#endregion
-
-
-    //#region Delete Confirms
-    
-    //#endregion
-
-    //#region Settings
-    // TODO: Sidebar
-    const moduleSettings = Page({
-        id: 'settings', 
-        title: 'Module Settings', 
-        actions: [
-            Button({text: 'Cancel', action: 'open-module-default'})
-        ], 
-        body: definition.settings?.fields?.length ? (
-            Form({
-                cancelAction: 'open-module-default', 
-                handler: 'module.saveSettings', 
-                fields: (definition.settings?.fields??[]).map(x => 
-                    Input({name: x.slug, label: x.name, placeholder: 'Enter ' + x.name})
-                )}
-            )
-        )
-        : EmptyTable({
-            title: 'No Settings', 
-            description: "This module doesn't have any settings"
-        })
-    })
-    //#endregion
-    
-    // #region Table
-    // let tableContent;
-    // if(multiple && module.collectionId) {
-
-    //     if(contents.length > 0) {
-    //         tableContent = Table({
-    //             items: contents,
-    //             head: fields.map(x=> `<th>${x.name}</th>`).join(''),
-    //             row: (item) => `
-    //                 <tr>
-    //                     ${fields.map(x => `<td>${item[x.slug]}</td>`).join('')}
-    //                     <td>
-    //                         <div data-table-actions>
-    //                             <button data-action="open-edit-content" data-content-id="${item.id}" data-table-action data-table-action-edit>
-    //                                 Edit
-    //                             </button>
-    //                             <button data-action="open-delete-content-confirm" data-content-id="${item.id}" data-table-action data-table-action-delete>
-    //                                 Delete
-    //                             </button>
-    //                         </div>
-    //                     </td>
-    //                 </tr>
-    //             `,  
-    //         })
-    //     } else {
-    //         tableContent = EmptyTable({
-    //             title: 'No items!', 
-    //             description: 'This module doesn\'t have data yet.'
-    //         })
-    //     }
-    // } else {
-    //     tableContent = EmptyTable({
-    //         title: 'Connect to a data source!', 
-    //         description: 'To manage content of this module, you need to connect it to a collection',
-    //         body: `<div data-stack style="max-width: 400px">
-    //             ${Button({text: 'Choose Collection', action: 'choose-collection'})}
-    //             ${Button({text: 'Create Collection', color: 'primary', action: 'create-collection'})}
-    //         </div>`
-    //     })
-    // }
-
-    // const contentTypeTable = Page({
-    //     id: 'list',
-    //     title: 'Module Contents',
-    //     actions: [
-    //         Button({action: 'open-module-default', text: 'Cancel'}),
-    //         Button({action: 'open-module-insert', color: 'primary', text: 'Insert'}),
-    //     ].join(''),
-    //     body: tableContent
-    // })
-    //#endregion
-
-    function ModuleAction({icon, action}) {
-        return `<div data-action="${action}">    
-            ${icon}
-        </div>`
-    }
-
-    const moduleActions = html`
-        <div data-action="drag-module-handle" data-module-actions data-module-actions-start>
-            ${[
-                ModuleAction({
-                    action: 'open-module-settings', 
-                    icon: '<div style="display: flex; align-items: center; font-weight: bold; gap: 4px; padding-right: 1rem;"><svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zm2.8-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5"/></svg>' + definition.name + '</div>'
-                })
-            ]}
-        </div>
-        <div data-module-actions data-module-actions-end>
-            ${[
-                ModuleAction({
-                    action: 'open-delete-module-confirm', 
-                    icon: '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/></svg>'
-                }),
-            ]}
-        </div>
-    `
-    
-    if(mode === 'preview') {
-        previewContent = `
-            <div data-data>
-                ${moduleSettings}
-            </div>
-            ${moduleActions}
-        `
-    }
-
-    return `
-        <div data-module-id="${module.id}">
-            <div data-module-content>
-                ${rendered}
-            </div>
-            ${previewContent}
-        </div>
-    `
-}
 
 async function loadModuleDefinitions() {
     const defs = await db('definitions').query().all()
@@ -383,46 +59,41 @@ function getUrl(query) {
     return res
 }
 
-function sidebarModuleSettings() {
-    return `
-        <div data-sidebar-module-settings-title data-sidebar-title>TODO</div>
-        <div data-sidebar-module-settings-body data-sidebar-body>
-            Settings form
-        </div>
-    `
-}
-
-function sidebarModules() {
+function sidebarModules({permissions}) {
     return `
         <div data-sidebar-title>Modules</div>
         <div data-sidebar-body data-definitions>
-            ${Object.keys(definitions).map(key => definitions[key]).map(x => `<div data-definition-id="${x.id}" data-sidebar-item><span>${x.name}</span><a data-enhance href="${getUrl({view: 'update-module', id: x.id})}" data-definition-settings>
+            ${Object.keys(definitions).map(key => definitions[key]).map(x => `<div data-definition-id="${x.id}" data-sidebar-item><span>${x.name}</span>${permissions.module_update ? `<a data-enhance href="${getUrl({view: 'update-module', id: x.id})}" data-definition-settings>
             <svg data-definition-icon data-secondary-sidebar-item-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zm2.8-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5"/></svg>
-                
-                </a></div>`).join('')}
-            <a data-enhance href="${getUrl({view: 'create-module'})}" data-sidebar-item data-sidebar-create-button>
+                </a>`: ''}
+                </div>`).join('')}
+            ${permissions.module_create ? (
+
+                `<a data-enhance href="${getUrl({view: 'create-module'})}" data-sidebar-item data-sidebar-create-button>
                 <svg data-sidebar-item-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H6q-.425 0-.712-.288T5 12t.288-.712T6 11h5V6q0-.425.288-.712T12 5t.713.288T13 6v5h5q.425 0 .713.288T19 12t-.288.713T18 13h-5v5q0 .425-.288.713T12 19t-.712-.288T11 18z"/></svg>
                 Create Module
-            </a>
+            </a>`
+            ) : ''}
         </div>
     `
 }
 
-function sidebarCollections(collections) {
+function sidebarCollections(collections, {permissions}) {
     return `
         <div data-sidebar-title>Collections</div>
         <div data-sidebar-body>
             ${collections.map(x => `
                 <div data-sidebar-item data-action="navigation.link" data-href="${getUrl({view: 'collection-data-list', id: x.id})}">
                     <span>${x.name}</span>
-                    <a data-enhance data-sidebar-icon href="${getUrl({view: 'update-collection', id: x.id})}">
+            ${permissions.collection_update ? `<a data-enhance data-sidebar-icon href="${getUrl({view: 'update-collection', id: x.id})}">
                         <svg data-secondary-sidebar-item-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zm2.8-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5"/></svg>
-                    </a>
+                    </a>` : ''}
                 </div>`).join('')}
-            <a data-enhance href="${getUrl({view: 'create-collection'})}" data-sidebar-item data-sidebar-create-button>
+            ${permissions.collection_create ? `<a data-enhance href="${getUrl({view: 'create-collection'})}" data-sidebar-item data-sidebar-create-button>
                 <svg data-sidebar-item-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H6q-.425 0-.712-.288T5 12t.288-.712T6 11h5V6q0-.425.288-.712T12 5t.713.288T13 6v5h5q.425 0 .713.288T19 12t-.288.713T18 13h-5v5q0 .425-.288.713T12 19t-.712-.288T11 18z"/></svg>
                 Create Collection
-            </a>
+            </a>` : ''}
+            
         </div>
     `
 }
@@ -431,13 +102,15 @@ function sidebarSettings() {
     return `
         <div data-sidebar-title>Settings</div>
         <div data-sidebar-body>
-            List of setting categories
+            <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'general'})}">General</a>
+            <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'appearance'})}">Appearance</a>
+            <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'profile'})}">Profile</a>
         </div>
     `
 
 }
 
-function sidebarPages(pages) {
+function sidebarPages(pages, {permissions}) {
     return `
         <div data-sidebar-title>Pages</div>
         <div data-sidebar-body>
@@ -451,18 +124,29 @@ function sidebarPages(pages) {
                         <svg data-secondary-sidebar-item-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zm2.8-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5"/></svg>
                     </a>
                 </div>`).join('')}
-            <a data-enhance href="${getUrl({view: 'create-page'})}" data-sidebar-item data-sidebar-create-button data-action="navigation.navigate" data-path="pages.create-page">
+            ${permissions.page_create ? `<a data-enhance href="${getUrl({view: 'create-page'})}" data-sidebar-item data-sidebar-create-button data-action="navigation.navigate" data-path="pages.create-page">
                 <svg data-sidebar-item-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H6q-.425 0-.712-.288T5 12t.288-.712T6 11h5V6q0-.425.288-.712T12 5t.713.288T13 6v5h5q.425 0 .713.288T19 12t-.288.713T18 13h-5v5q0 .425-.288.713T12 19t-.712-.288T11 18z"/></svg>
                 Create Page
-            </a>
+            </a>` : ''}
+            
         </div>
     `
 }
 
 //#region Render body
 export async function renderBody(body, {mode, url, view, ...query}) {
+    // const permissions = {} 
+    const permissions = {
+        page_create: true,
+        module_create: true,
+        module_update: true,
+        collection_create: true,
+        collection_update: true,
+    } 
+
     await loadModuleDefinitions()
     
+    let sidebarContent = ''
     let sidebar;
     let content;
 
@@ -473,8 +157,8 @@ export async function renderBody(body, {mode, url, view, ...query}) {
     if(!currentPage && view === 'iframe') view = 'create-page'
 
     let viewType = view === 'iframe' ? 'iframe' : 'page'
-
-    if(view === 'iframe') {
+    
+    if(view === 'iframe') {        
         sidebar = 'modules'
         content = `
             <div data-name="iframe">
@@ -534,6 +218,16 @@ export async function renderBody(body, {mode, url, view, ...query}) {
         console.log((await db('collections').query().all()).map(x => x.id))
         
         content = collectionDataUpdate(collection, data)
+    } else if(view === 'settings') {
+        sidebar = 'settings'
+        if(query.category === 'general') {
+            content = Page({title: 'General settings', body: 'Content'})
+        } else if(query.category === 'appearance') {
+            content = Page({title: 'Appearance settings', body: 'Content'})
+        } else if(query.category === 'profile') {
+            content = Page({title: 'Profile settings', body: 'Content'})
+
+        }
     }
 
     if(mode === 'edit') 
@@ -564,19 +258,19 @@ export async function renderBody(body, {mode, url, view, ...query}) {
             </div>
             <div data-sidebar-secondary>            
                 <div data-name="sidebar-modules">
-                    ${sidebarModules()}
+                    ${sidebarModules({permissions})}
                 </div>
                 <div data-name="sidebar-pages">
-                    ${sidebarPages(pages)}
+                    ${sidebarPages(pages, {permissions})}
                 </div>
                 <div data-name="sidebar-collections">
-                    ${sidebarCollections(collections)}
+                    ${sidebarCollections(collections, {permissions})}
                 </div>
                 <div data-name="sidebar-settings">
                     ${sidebarSettings()}
                 </div>
                 <div data-name="sidebar-module-settings">
-                    ${sidebarModuleSettings()}
+                    ${sidebarContent}
                 </div>
 
             </div>
@@ -584,18 +278,15 @@ export async function renderBody(body, {mode, url, view, ...query}) {
 
         <div data-main data-active="${viewType}">
             ${content}
-            ${ChooseCollectionModal(collections)}
-            ${CreateCollectionModal()}
-            ${DeleteConfirm()}
         </div>
     </div>
     <script src="https://unpkg.com/sortablejs@1.15.2/Sortable.min.js"></script>
     <script type="module" src="/js/sitebuilder.edit.js"></script>
+    ${DeleteConfirm()}
     `
 
     return `<div data-body>
-        ${(await Promise.all(body.map(x => renderModule(x, mode)))).join('')}
-        ${DeleteConfirm()}
+        ${(await Promise.all(body.map(x => renderModule(x, {mode, definitions, permissions})))).join('')}
         </div>`
 }
 //#endregion

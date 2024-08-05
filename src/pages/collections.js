@@ -1,153 +1,5 @@
 import { Button, Card, CardBody, Checkbox, EmptyTable, File, Form, Input, Label, Modal, Page, Select, Stack, Table, Textarea } from "../components.js"
-
-const fieldTypes = [
-    { text: 'Input', value: 'input' },
-    { text: 'Textarea', value: 'textarea' },
-    { text: 'Checkbox', value: 'checkbox' },
-    { text: 'File', value: 'file' },
-    { text: 'Select', value: 'select' },
-]
-
-function fieldTypeText(key) {
-    return fieldTypes.find(x => x.value === key).text
-
-}
-
-function FieldTypeModal() {
-    return Modal({
-        name: 'field-type', 
-        title: 'Choose a type',
-        body: [
-            Stack({}, fieldTypes.map(x => `
-                    <button type="button" style="width: calc(50% - 8px);" data-button data-action="add-field-choose-type" data-value="${x.value}">
-                        ${x.text}
-                    </button>
-                `)
-            )
-        ],
-        footer: Stack({justify: 'end'}, [
-            Button({text: 'Cancel', action: 'modal.close'}),
-            Button({text: 'Next', color: 'primary', action: 'add-field-next'}),
-        ])
-    
-    })
-}
-
-function FieldAddModal(collectionId) {
-    return Modal({
-        name: 'field-add', 
-        title: 'Add Field', 
-        body: Form({
-            cancelAction: 'modal.close',
-            handler: 'collection.addField',
-            fields: [
-                `<input name="id" value="${collectionId}" type="hidden">`,
-                `<input name="type" value="" type="hidden">`,
-                Input({
-                    name: 'slug', 
-                    placeholder: 'Enter Slug', 
-                    label: 'Slug'
-                }),
-                Input({
-                    name: 'label', 
-                    placeholder: 'Enter Label', 
-                    label: 'Label'
-                }),
-            ]
-        })
-    })
-}
-
-function FieldEditModal(collectionId) {
-    return Modal({
-        name: 'field-edit', 
-        title: 'Edit Field', 
-        body: Form({
-            cancelAction: 'modal.close',
-            handler: 'collection.setField',
-            fields: [
-                `<input name="id" value="${collectionId}" type="hidden">`,
-                `<input name="type" value="" type="hidden">`,
-                Input({
-                    name: 'slug', 
-                    disabled: true,
-                    placeholder: 'Enter Slug', 
-                    label: 'Slug'
-                }),
-                Input({
-                    name: 'label', 
-                    placeholder: 'Enter Label', 
-                    label: 'Label'
-                }),
-            ]
-        })
-    })
-}
-
-function CollectionFields(id, fields) {
-    return Label({
-        symbolic: true,
-        text: 'Fields', 
-        body: [
-            Stack({vertical: true}, [
-                Table({
-                    items: fields ?? [],
-                    head: `
-                        <th>Slug</th>
-                        <th>Label</th>
-                        <th>Type</th>
-                    `,
-                    row(item) {
-                        return `<tr>
-                            <td>${item.slug}</td>
-                            <td>${item.label}</td>
-                            <td>${fieldTypeText(item.type)}</td>
-                            <td>
-                                ${Stack({}, [
-                                    Button({
-                                        text: 'Edit', 
-                                        size: 'small', 
-                                        outline: true, 
-                                        color: 'primary',
-                                        action: 'open-edit-field-modal',
-                                        dataset: {
-                                            slug: item.slug,
-                                            label: item.label,
-                                            type: item.type
-                                        }
-                                    }),
-                                    Button({
-                                        text: 'Delete', 
-                                        size: 'small', 
-                                        outline: true, 
-                                        color: 'danger',
-                                        action: 'delete-field',
-                                        dataset: {
-                                            id: id,
-                                            slug: item.slug
-                                        }
-                                    }),
-                                ])}
-                            </td>
-                        </tr>`
-                    }
-                }),
-                Button({
-                    outline: true,
-                    text: 'Add Field', 
-                    color: 'primary', 
-                    action: 'modal.open',
-                    dataset: {
-                        'modal-name': 'field-type'
-                    }
-                })
-            ]),
-            FieldTypeModal(id),
-            FieldAddModal(id),
-            FieldEditModal(id)
-        ]
-    })
-}
+import { FieldAddModal, FieldEditModal, FieldsList, FieldTypeModal } from "./fields.js";
 
 export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
     let load;
@@ -172,46 +24,11 @@ export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
                 }),
                 
             ]
-        }),
-        (id ? CollectionFields(id, fields) : null)
-    ].filter(Boolean).join(''))
+        })
+    ])
 }
 
-// `
-//                     <template id="field-inputs">
-//                         ${Stack({}, [
-//                             Input({
-//                                 name: 'name', 
-//                                 placeholder: 'Enter Name', 
-//                                 label: 'Name'
-//                             }),
-//                             Input({
-//                                 name: 'slug', 
-//                                 placeholder: 'Enter Slug', 
-//                                 label: 'Slug'
-//                             }),
-//                             Select({
-//                                 name: 'type', 
-//                                 placeholder: 'Choose Type', 
-//                                 label: 'Type',
-//                                 items: [
-//                                     { text: 'Input', value: 'input' },
-//                                     { text: 'Textarea', value: 'textarea' },
-//                                     { text: 'Checkbox', value: 'checkbox' },
-//                                     { text: 'File', value: 'file' },
-//                                     { text: 'Select', value: 'select' },
-//                                 ]
-//                             }),
-//                             Button({
-//                                 text: 'Remove', 
-//                                 color: 'danger', 
-//                                 action: 'remove-field'
-//                             })
-//                         ])}
-//                     </template>
-//                 `
-
-function FieldInput(field) {
+export function FieldInput(field) {
     let options = {
         name: field.slug, 
         label: field.label,
@@ -248,15 +65,21 @@ export function createCollectionPage() {
 }
 
 export function updateCollectionPage(collection) {
-    return Page({
+    return [
+        Page({
         title: 'Update Collection',
         actions: [],
         body: CollectionForm({
-            id: collection.id,
-            fields: collection.fields ?? [],
-            handler: 'collection.update'
-        })
-    })
+                id: collection.id,
+                fields: collection.fields ?? [],
+                handler: 'collection.update'
+            }),
+        }),
+        FieldsList({id: collection.id, fields: collection.fields}),             
+        FieldTypeModal({}),
+        FieldAddModal({collectionId: collection.id}),
+        FieldEditModal({collectionId: collection.id})
+    ].join('')
 }
 
 

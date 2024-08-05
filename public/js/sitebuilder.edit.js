@@ -1,29 +1,17 @@
-import { Action } from "./actions.js"
-import { FileUploader } from "./fileuploader.js"
-import { Form } from "./form.js"
-import { Components, reloadIframe, reload } from "./helpers.js"
-import { Link } from "./link.js"
-import { Modal } from "./modal.js"
+import {hydrate} from './hydrate.js'
+import { reloadIframe, reload } from "./helpers.js"
 import { initSortable, initSortableIframe } from "./sortable.js"
-
-const components = Components()
-
-components.register('action', Action)
-components.register('form', Form)
-components.register('file', FileUploader)
-components.register('enhance', Link)
-components.register('modal', Modal)
 
 function onIframeInit() {
     let iframeElement = document.querySelector('iframe')
-    components.init(iframeElement.contentDocument)
+    hydrate(iframeElement.contentDocument)
     console.log('onIframeInit')
 
     initSortableIframe()    
 }
 
 function onInit() {
-    components.init(document)
+    hydrate(document)
     console.log('onInit')
     const iframeElement = document.querySelector('iframe')
 

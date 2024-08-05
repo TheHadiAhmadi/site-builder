@@ -2,9 +2,7 @@ import { db } from "#services"
 
 export default {
     async create(body) {
-        body.settings ??= []
-        body.contentType ??= []
-        body.multiple ??= false
+        body.props ??= []
         await db('definitions').insert(body)
 
         return {            
@@ -30,6 +28,20 @@ export default {
 
         const definition = await db('definitions').query().filter('id', '=', module.definitionId).first()
         return definition
+    },
+    async addField(body) {
+        const {id, ...field} = body
+        const original = await db('definitions').query().filter('id', '=', id).first()
+        original.props.push(field)
+        await db('definitions').update(original)
+
+    },
+    async removeField(body) {
+        const original = await db('definitions').query().filter('id', '=', body.id).first()
+        original.props = original.props.filter(x => x.slug !== body.slug)
+
+        await db('definitions').update(original)
+
     }
     
 }
