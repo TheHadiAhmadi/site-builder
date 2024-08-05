@@ -70,7 +70,6 @@ export default {
         }
     },
     async update(body) {
-        console.log('updateModule', body)
         if(!body.multiple) body.multiple = false;
         await db('modules').update(body)
     },

@@ -40,7 +40,6 @@ export function Components() {
         },
         init(doc) {
             for(let key in components) {
-                console.log(key)
                 doc.querySelectorAll(`[data-${key}]`).forEach(components[key])
             }
         }

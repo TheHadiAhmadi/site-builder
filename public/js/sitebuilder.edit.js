@@ -5,14 +5,12 @@ import { initSortable, initSortableIframe } from "./sortable.js"
 function onIframeInit() {
     let iframeElement = document.querySelector('iframe')
     hydrate(iframeElement.contentDocument)
-    console.log('onIframeInit')
 
     initSortableIframe()    
 }
 
 function onInit() {
     hydrate(document)
-    console.log('onInit')
     const iframeElement = document.querySelector('iframe')
 
     if(iframeElement) {
@@ -25,7 +23,6 @@ function onInit() {
 }
 
 function onRequest(e) {
-    console.log('onRequest', e.detail)
     const res = e.detail
 
     if(res.reload) {

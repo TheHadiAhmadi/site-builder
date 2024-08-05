@@ -35,7 +35,6 @@ async function loadModuleDefinitions() {
     for(let definition of defs) {
         if(definition.path) {
             try {
-                console.log(definition.path)
                 definitions[definition.id] = await import(definition.path).then(res => res.default)
             } catch(err) {
                 definitions[definition.id] = {}
@@ -46,7 +45,6 @@ async function loadModuleDefinitions() {
         definitions[definition.id].id = definition.id
         definitions[definition.id] = {...definitions[definition.id], ...definition }
     
-        console.log('HERE: ', definitions[definition.id])
         definitions[definition.id].template = hbs.compile(definitions[definition.id].template)
     }   
 }
@@ -201,7 +199,6 @@ export async function renderBody(body, {mode, url, view, ...query}) {
         const collection = await db('collections').query().filter('id', '=', query.id).first()
         const items = await db('contents').query().filter('_type', '=', query.id).all();
 
-        console.log('collectoin: ', {collection, items})
         
         content = collectionDataList(collection, items)
     }else if(view === 'collection-data-create') {
@@ -214,8 +211,6 @@ export async function renderBody(body, {mode, url, view, ...query}) {
         const data = await db('contents').query().filter('id', '=', query.id).first()
         const collection = await db('collections').query().filter('id', '=', data._type).first()
         
-        console.log(data._type)
-        console.log((await db('collections').query().all()).map(x => x.id))
         
         content = collectionDataUpdate(collection, data)
     } else if(view === 'settings') {
@@ -309,7 +304,6 @@ export async function renderPage(req, res) {
     }
     
     // if(page.dynamic) {
-    //     console.log('page is dynamic')
     //     props.slug = req.params.slug
     
     //     let query = await db('contents').query().filter('collectionId', '=', page.collectionId)

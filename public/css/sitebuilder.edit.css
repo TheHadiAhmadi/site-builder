@@ -19,6 +19,7 @@ iframe {
     border: 1px solid #aaa;
     border-radius: 8px;
     background-color: white;
+    box-shadow: 0 2px 4px -2px rgb(102, 100, 121);
 }
 
 [data-toolbar] {
@@ -215,7 +216,9 @@ iframe {
 }
 
 [data-name="iframe"] {
-    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
     /* background-color: #ddd; */
     height: 100%;
 }

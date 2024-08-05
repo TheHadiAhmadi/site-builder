@@ -55,7 +55,6 @@ const navigationActions = {
     navigate(el) {
         let sidebarElement = document.querySelector('[data-sidebar]')
 
-        console.log('navigate', sidebarElement)
         const path = el.dataset.path
         const [sidebar, view] = path.split('.')
 
@@ -156,7 +155,6 @@ const actions = {
         const mod = getParentModule(el)
         const moduleId = mod.dataset.moduleId
         document.querySelector('iframe').contentDocument.querySelectorAll('[data-module-id][data-active]').forEach(el => {
-            console.log('remove active from module', el)
             delete el.dataset.active
         })
 
@@ -288,7 +286,6 @@ const actions = {
 
     },
     'remove-field'(el) {
-        console.log('clicked')
         el.parentNode.remove()
         
         const remainingFields = [...el.parentElement.parentElement.querySelectorAll('[data-field-item]')]
@@ -364,7 +361,6 @@ const actions = {
 }
 
 export function Action(el) {
-    console.log('Action', el)
     let actionFn;
 
     const actionName = el.dataset.action
@@ -375,7 +371,6 @@ export function Action(el) {
         actionFn = actions[actionName]
     }
     if(!actionFn) {
-        console.log('action not found: ' + actionName)
         return;
     }
 
@@ -384,7 +379,6 @@ export function Action(el) {
         actionFn(el)
     } else {
         el.addEventListener(actionType, (ev) => {
-            console.log(actionType, actionName, el.dataset)
             if(actionType === 'submit') {
                 ev.preventDefault()
             }

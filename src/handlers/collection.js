@@ -26,7 +26,6 @@ export default {
     },
     async addField(body) {
         const {id, ...field} = body
-        console.log({field, id})
         
         const collection = await db('collections').query().filter('id', '=', id).first()
 

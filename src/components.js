@@ -1,7 +1,6 @@
 import {html} from 'svelite-html'
 
 function attributes(object) {
-    console.log(object)
     let result = ''
 
     for(let key in object) {
@@ -10,7 +9,6 @@ function attributes(object) {
         }
     }
     
-    console.log({result})
     return result; 
 }
 

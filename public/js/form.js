@@ -53,14 +53,13 @@ export function setFormValue(form, value) {
             if(input.getAttribute('type') !== 'file') {
                 input.value = formValue[name]
             } else {
-                console.log(input)
+                console.log('TODO: File input', input, formValue[name])
             }
         }
     })
 }
 
 export async function request(handler, body) {
-    console.log({handler, body})
     return await fetch('/api/query', {
         method: 'POST',
         body: JSON.stringify({ handler, body }),

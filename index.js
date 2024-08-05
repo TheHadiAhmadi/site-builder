@@ -25,10 +25,7 @@ app.get('/admin', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    // const userToken = req.cookies['UserToken']
-    // console.log(userToken)
 
-    // res.json('Admin Panel')
     res.send(LoginPage())
 })
 
@@ -67,8 +64,6 @@ app.post('/api/query', async (req, res) => {
     context = {
         handler
     }
-
-    console.log({handler})
 
     const [controller, action] = handler.split('.')
     if(handlers[controller]?.[action]) {

@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Form, Input, Label, Modal, Page, Stack, Table } from "../components.js"
+import { Button, Card, CardBody, EmptyTable, Form, Input, Label, Modal, Page, Stack, Table } from "../components.js"
 
 const fieldTypes = [
     { text: 'Input', value: 'input' },
@@ -106,7 +106,12 @@ export function FieldsList({name, id, fields, deleteAction = 'delete-field'}) {
                 }
             })
         ],
-        body: Table({
+        body: fields.length === 0 ? (
+            EmptyTable({
+                title: "No fields", 
+                description: 'There are no fields yet!'
+            })
+        ) : Table({
             items: fields ?? [],
             head: `
                 <th>Slug</th>
@@ -146,19 +151,7 @@ export function FieldsList({name, id, fields, deleteAction = 'delete-field'}) {
                         ])}
                     </td>
                 </tr>`).join(''),
-                
             ]
         })
     })
-    return ([
-        CardBody([
-            Label({
-                symbolic: true,
-                text: 'Fields', 
-                body: Stack({vertical: true}, [
-                    ,
-                ])
-            }),
-        ])
-    ])
 }
