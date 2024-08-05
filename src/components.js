@@ -139,17 +139,20 @@ export function Button({href, text, color, block, action, outline = false, size=
 
 export function Table({items, head, row, body}) {
     return html`
-        <table data-table>
-            <thead>
-                <tr>
-                    ${head}
-                    <th style="width: 0;"></th>
-                </tr>
-            </thead>
-            <tbody>
-                ${body ? body : items.map(item => row(item)).join('')}
-            </tbody>
-        </table>
+        <div data-table-parent>
+            <table data-table>
+                <thead>
+                    <tr>
+                        ${head}
+                        <th style="width: 0;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${body ? body : items.map(item => row(item)).join('')}
+                </tbody>
+            </table>
+        </div>
+
     `
 }
 

@@ -1,6 +1,6 @@
-import { Form, Input, Page, Textarea } from "../components.js"
+import { Checkbox, Form, Input, Page, Select, Textarea } from "../components.js"
 
-export function pageCreatePage() {
+export function pageCreatePage({collections}) {
     return Page({
         title: 'Create Page',
         actions: '',
@@ -17,7 +17,7 @@ export function pageCreatePage() {
     })
 }
 
-export function pageUpdatePage(page) {
+export function pageUpdatePage(page, {collections}) {
     return Page({
         title: 'Update Page',
         actions: '',
@@ -32,6 +32,13 @@ export function pageUpdatePage(page) {
                 Input({name: 'name', label: 'Name', placeholder: 'Enter Page Name'}),
                 Input({name: 'title', label: 'Title', placeholder: 'Enter Title'}),
                 Input({name: 'slug', label: 'Slug', placeholder: 'Enter Slug'}),
+                Checkbox({name: 'dynamic', label: 'Dynamic'}),
+                Select({
+                    name: 'collectionId', 
+                    label: 'Collection', 
+                    placeholder: 'Choose Collection',
+                    items: collections.map(x => ({text: x.name, value: x.id}))
+                }),
                 Textarea({name: 'head', label: 'Head', placeholder: 'Enter Head content'}),
             ].join('')
         })

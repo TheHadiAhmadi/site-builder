@@ -15,16 +15,40 @@ function renderTemplate(template, data) {
 }
 
 async function getPage(slug) {
-    if(!slug.startsWith('/')) {
-        slug = '/' + slug
+    if (!slug.startsWith('/')) {
+        slug = '/' + slug;
     }
-
-    const page = await db('pages').query().filter('slug', '=', slug).first()
+   
+    const pages = await db('pages').query().all();
     
-    if(!page) return;
+    for (let page of pages) {
+        const dynamicParts = page.slug.split('/').filter(part => part.startsWith('{{') && part.endsWith('}}'));
+        const staticParts = page.slug.split('/').filter(part => !part.startsWith('{{') && !part.endsWith('}}'));
 
-    return page // ?? page_404
+        // Build regex to match the dynamic parts
+        let regexStr = page.slug;
+        for (const dynamicPart of dynamicParts) {
+            regexStr = regexStr.replace(dynamicPart, '([^/]+)');
+        }
+        const regex = new RegExp(`^${regexStr}$`);
+
+        const match = slug.match(regex);
+        if (match) {
+            const params = {};
+            dynamicParts.forEach((part, index) => {
+                const paramName = part.slice(2, -2);
+                params[paramName] = match[index + 1];
+            });
+
+            return { params, page };
+        } else if (page.slug === slug) {
+            return { params: {}, page };
+        }
+    }
+    
+    return {}; // Return null if no matching page is found
 }
+
 
 // module.collectionId
 // module.contentId
@@ -172,12 +196,12 @@ export async function renderBody(body, {mode, url, view, ...query}) {
         `
     } else if(view === 'create-page') {
         sidebar = 'pages'
-        content = pageCreatePage()
+        content = pageCreatePage({collections})
     } else if(view === 'update-page') {
         sidebar = 'pages'
         const page = await db('pages').query().filter('id', '=', query.id).first()
 
-        content = pageUpdatePage(page)
+        content = pageUpdatePage(page, {collections})
     } else if(view === 'create-module' ) {
         sidebar = 'modules'
         content = pageCreateModule()
@@ -295,15 +319,15 @@ async function getPageModules(pageId) {
 }
 
 export async function renderPage(req, res) {    
-    const page = await getPage(req.params[0])
+    const {page, params} = await getPage(req.params[0])
     const mode = req.query.mode ?? 'view'
     const view = req.query.view ?? 'iframe'
 
     let props = {
-        // slug: 
+        
     }
+
     
-    // if(page.dynamic) {
     //     props.slug = req.params.slug
     
     //     let query = await db('contents').query().filter('collectionId', '=', page.collectionId)
@@ -356,13 +380,27 @@ export async function renderPage(req, res) {
         }
     }
     
+    if(page.dynamic) {
+        props.params = params
+        if(page.collectionId) {
+            let query = db('contents').query().filter('_type', '=', page.collectionId)
+            for(let param in params) {
+                query = query.filter(param, '=', params[param])
+            }
+
+            props.value = await query.first()
+        }
+    }
+
+    console.log(props)
+
     let {head, title} = page;
     let modules = await getPageModules(page.id)
 
     const html = renderTemplate(layouts.default, {
         head: (head?? '') + (stylesheet ?? ''), 
         body: await renderBody(modules, {...req.query, mode, url: req.url, view}), 
-        title
+        title: hbs.compile(title)(props)
     })
 
     res.send(html)

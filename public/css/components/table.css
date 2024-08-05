@@ -7,6 +7,9 @@
     overflow: hidden;
 }
 
+[data-table-parent] {
+    overflow-x: auto;
+}
 
 [data-table] thead tr {
     background-color: #dedede;
@@ -14,6 +17,7 @@
 [data-table] td, [data-table] th {
     text-align: start;
     padding: 4px 8px;
+    white-space: nowrap;
 }
 
 [data-table] td {

@@ -2,11 +2,43 @@ import express from 'express'
 import multer from 'multer'
 import { db } from '#services'
 import handlers from './src/handlers.js'
-import {existsSync} from 'node:fs'
-import {mkdir, writeFile} from 'node:fs/promises'
+import {cpSync, existsSync, rm, rmSync} from 'node:fs'
+import {mkdir, readdir, writeFile} from 'node:fs/promises'
 import { renderPage } from './src/page.js'
 import cookieParser from 'cookie-parser'
 import { LoginPage } from './src/pages/login.js'
+import layouts from './src/layouts.js'
+import { Form, Input, Select } from './src/components.js'
+import {setupCms} from './services/setup.js'
+
+if(existsSync('./data4.json'))
+    rmSync('./data4.json')
+
+async function SetupPage() {
+    const templates = await readdir('./templates');
+    return layouts.default({
+        head: '<link rel="stylesheet" href="/css/components.css">',
+        title: 'Setup CMS',
+        body: `<div style="display: flex; height: 100vh; align-items: center; justify-content: center;">
+            ${Form({
+                handler: 'setup.setup',
+                fields: [
+                    Input({ 
+                        name: 'password', 
+                        placeholder: 'Enter Admin Password', 
+                        label: 'Admin Password'
+                    }),
+                    Select({
+                        items: templates, 
+                        name: 'template', 
+                        placeholder: 'Choose a template', 
+                        label: 'Template'
+                    }),
+                ]
+            })}
+        </div>` + '<script type="module" src="/js/setup.js"></script>'
+    })
+}
 
 let context = {}
 
@@ -14,7 +46,23 @@ const app = express()
 app.use(cookieParser())
 
 app.use(express.json())
+app.use(express.urlencoded())
 app.use(express.static('./public'))
+
+app.use('/', async (req, res, next) => {
+    if(req.method === 'POST') return next()
+
+    const definitions = await db('definitions').query().all()
+
+    if(definitions.length) {
+        next()
+    } else {
+        res.end(await SetupPage())
+    }
+})
+
+app.post('/api/setup', setupCms)
+
 app.use('/files', express.static('./uploads'))
 
 app.get('/admin', (req, res) => {

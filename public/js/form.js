@@ -49,9 +49,12 @@ export function setFormValue(form, value) {
     if(!form) return;
     form.querySelectorAll('[name]').forEach(input => {
         const name = input.getAttribute('name')
+        console.log('set value: ', {name, formValue})
         if(formValue[name]) {
             if(input.getAttribute('type') !== 'file') {
                 input.value = formValue[name]
+                console.log('set value: ', input.value)
+
             } else {
                 console.log('TODO: File input', input, formValue[name])
             }
