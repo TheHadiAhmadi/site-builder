@@ -196,14 +196,14 @@ async function DynamicPageSelect(page, params) {
 
 //#region Render body
 export async function renderBody(body, {props, mode, url, view, ...query}) {
-    const permissions = {} 
-    // const permissions = {
-    //     page_create: true,
-    //     module_create: true,
-    //     module_update: true,
-    //     collection_create: true,
-    //     collection_update: true,
-    // } 
+    // const permissions = {} 
+    const permissions = {
+        page_create: true,
+        module_create: true,
+        module_update: true,
+        collection_create: true,
+        collection_update: true,
+    } 
 
     await loadModuleDefinitions()
     
