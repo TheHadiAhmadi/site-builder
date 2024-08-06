@@ -4,6 +4,8 @@ import { Form } from "./form.js"
 import { Link } from "./link.js"
 import { Modal } from "./modal.js"
 import { Components } from "./helpers.js"
+import { Dropdown } from "./dropdown.js"
+import { DataTable } from './data-table.js'
 
 const components = Components()
 
@@ -12,6 +14,8 @@ components.register('form', Form)
 components.register('file', FileUploader)
 components.register('enhance', Link)
 components.register('modal', Modal)
+components.register('dropdown', Dropdown)
+components.register('data-table', DataTable)
 
 
 export function hydrate(el) {

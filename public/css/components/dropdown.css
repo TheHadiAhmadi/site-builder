@@ -2,28 +2,32 @@
     position: relative;
 }
 
-[data-dropdown]:has([data-dropdown-menu]:hover) [data-dropdown-menu],
-[data-dropdown]:has([data-dropdown-trigger]:hover) [data-dropdown-menu] {
-    display: flex;
 
+[data-dropdown-placement="start"] [data-dropdown-menu] {
+    left: 0
+}
+[data-dropdown-placement="end"] [data-dropdown-menu] {
+    right: 0
 }
 
 [data-dropdown-menu] {
+    border-radius: 4px;
+    padding: 4px;
     z-index: 4;
     position: absolute;
     top: 100%;
-    right: 0;
     display: none;
     flex-direction: column;
     white-space: nowrap;
     font-weight: normal;
     background-color: white;
-    border: 1px solid #c0c0c0;
+    border: 1px solid #dfdfdf;
     min-width: 200px;
 }
 
 [data-dropdown-item] {
     padding: 4px 8px;
+    border-radius: 4px;
     cursor: pointer;
 }
 [data-dropdown-item]:hover {

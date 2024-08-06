@@ -8,6 +8,12 @@ body, html {
     height: 100vh;    
 }
 
+body {
+    font-family: "Roboto", sans-serif;
+    font-style: normal;   
+
+}
+
 body:has([data-sidebar]:not([data-active])) {
     --sidebar-width: 48px;
 }

@@ -1,0 +1,38 @@
+[data-data-table] {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+[data-data-table-filter-form] {
+    display: flex;
+    gap: 2rem;
+    align-items: end;
+    justify-content: space-between;
+}
+
+[data-data-table-filter-buttons] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+[data-data-table-filter-button] {
+    border-radius: 16px;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 0px 16px;
+    flex-wrap: nowrap;
+    justify-content: center;
+    height: 32px;
+}
+
+[data-data-table-button-has-value] {
+    background-color: #889cf752;
+    border: 1px solid #2248ef;
+    color: #2248ef;
+}
+[data-data-table-filter-button-icon] {
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 18px; margin-right: -16px;
+}

@@ -1,28 +1,28 @@
 
 [data-table] {
     background-color: #aaa;
-    border: 1px solid #aaa;
-    border-radius: 8px;
     width: 100%;
-    overflow: hidden;
+
 }
 
 [data-table-parent] {
     overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #aaa;
 }
 
 [data-table] thead tr {
     background-color: #dedede;
+    color: #404040;
 }
 [data-table] td, [data-table] th {
     text-align: start;
-    padding: 4px 8px;
+    padding: 12px 16px;
     white-space: nowrap;
 }
 
 [data-table] td {
     font-weight: normal;
-    padding: 8px;
     background-color: white;
 
 }

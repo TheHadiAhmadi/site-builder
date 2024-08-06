@@ -75,6 +75,17 @@ export default {
                     label: 'Slug'
                 },
                 {
+                    type: 'select',
+                    slug: 'type',
+                    label: 'Property type',
+                    items: [
+                        "Residential",
+                        "Commercial",
+                        "Land",
+                        "Others"
+                    ]
+                },
+                {
                     type: 'file',
                     slug: 'main_image',
                     label: 'Main Image'

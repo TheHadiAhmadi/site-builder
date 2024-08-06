@@ -1,4 +1,5 @@
 import { Button, Card, CardBody, Checkbox, EmptyTable, File, Form, Input, Label, Modal, Page, Select, Stack, Table, Textarea } from "../components.js"
+import { DataTable } from "./dataTable.js";
 import { FieldAddModal, FieldEditModal, FieldsList, FieldTypeModal } from "./fields.js";
 
 export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
@@ -35,9 +36,8 @@ export function FieldInput(field) {
         placeholder: 'Enter ' + field.label
     }
     if(field.type === 'select') {
-        options.items = ['t', 'o', 'd', 'o']
-        options.placeholer = 'Choose' + field.label
-        // return Input({name: field.slug, label: field.name, placeholder: 'Enter ' + field.name})
+        options.items = field.items ?? []
+        options.placeholder = 'Choose ' + field.label
     }
     const inputs = {
         input: Input,
@@ -76,69 +76,29 @@ export function updateCollectionPage(collection) {
         }),
         FieldsList({id: collection.id, fields: collection.fields}),             
         FieldTypeModal({}),
-        FieldAddModal({collectionId: collection.id}),
-        FieldEditModal({collectionId: collection.id})
+        FieldAddModal({id: collection.id}),
+        FieldEditModal({id: collection.id})
     ].join('')
 }
 
 
 export function collectionDataList(collection, items) {
-    let content;
-
-    function render(item, field) {
-        if(field.type === 'input') return item[field.slug]
-        if(field.type === 'textarea') return item[field.slug].slice(0, 100) + (item[field.slug].length > 100 ? '...' : '')
-        if(field.type === 'checkbox') return item[field.slug] ? 'Yes' : 'No'
-        if(field.type === 'select') return `<div>BADGE: ${item[field.slug]}</div>`
-        if(field.type === 'file') return `<div>FILE${item[field.slug]}</div>`
-    }
-    
-    if(items.length) {
-        content = Table({
-            items,
-            head: collection.fields.map(field => `<th>${field.label}</th>`),
-            row(item) {
-                return `<tr>
-                    ${collection.fields.map(field => 
-                        `<td>${render(item, field)}</td>`
-                    ).join('')}
-                    <td>
-                        ${Stack({}, [
-                            Button({
-                                text: 'Edit',
-                                href: "?mode=edit&view=collection-data-update&id=" + item.id,
-                                outline: true,
-                                size: 'small',
-                                color: 'primary'
-                            }),
-                            Button({
-                                text: 'Delete',
-                                action: 'delete-content',
-                                outline: true,
-                                size: 'small',
-                                color: 'danger',
-                                dataset: {
-                                    id: item.id
-                                }
-                            })
-                        ])}
-                    </td>
-                </tr>`
-            }
-        })
-    } else {
-        content = EmptyTable({
-            title: 'No Items',
-            description: "This collection doesn't have any item yet!"
-        })
-    }
+    let filters = collection.fields.map(x => {
+        return {
+            label: x.label,
+            slug: x.slug,
+            type: x.type,
+            ...x
+        }
+    })
+    let content = DataTable({filters, items, collectionId: collection.id, fields: collection.fields})
     
     return Page({
         title: collection.name + ' List',
         actions: [
             Button({text: 'Insert', color: 'primary', href: `?mode=edit&view=collection-data-create&id=` + collection.id})
         ],
-        body: content        
+        body: content    
     })
 }
 
@@ -171,7 +131,7 @@ export function collectionDataUpdate(collection, data) {
                 '<input type="hidden" value="' + data._type + '" name="_type">',
                 collection.fields.map(field => FieldInput(field)).join('')
             ],
-            cancelAction: ''
+            cancelAction: 'navigate-back'
         })
     })
 }

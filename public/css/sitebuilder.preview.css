@@ -7,6 +7,11 @@
     --x-secondary-hover: #626777;
 }    
 
+body {
+    font-family: "Roboto", sans-serif;
+    font-style: normal;   
+}
+
 [data-body] {
     min-height: 400px;
     background-color: white;

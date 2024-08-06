@@ -1,31 +1,87 @@
-export function getFormValue(formEl) {
-    const form = new FormData(formEl);
+function setNestedValue(obj, key, value) {
+    if (key.indexOf('.') > -1) {
+        const parts = key.split('.');
+        const firstPart = parts.shift();
 
-    const body = {};
+        if (!obj[firstPart]) {
+            obj[firstPart] = isNaN(parts[0]) ? {} : [];
+        }
 
-    for (let [key, value] of form.entries()) {
-        if (key.includes('.')) {
-            let parts = key.split('.');
-            let current = body;
-
-            parts.forEach((part, index) => {
-                if (!current[part]) {
-                    if (index === parts.length - 1) {
-                        current[part] = value;
-                    } else if (parts[index + 1] >= '0' && parts[index + 1] <= '9') {
-                        current[part] = [];
-                    } else {
-                        current[part] = {};
-                    }
-                }
-                current = current[part];
-            });
+        setNestedValue(obj[firstPart], parts.join('.'), value);
+    } else {
+        if (Array.isArray(obj)) {
+            obj[parseInt(key, 10)] = value;
         } else {
-            body[key] = value;
+            obj[key] = value;
         }
     }
+}
 
-    return body;
+function getNestedValue(obj, key) {
+    return key.split('.').reduce((prev, curr) => prev[curr], obj)
+}
+
+export function getFormValue(formEl) {
+    const body = {}
+ 
+    for(let input of formEl.querySelectorAll('[type="hidden"][name]')) {
+        const name = input.getAttribute('name')
+        const value = input.value
+
+        setNestedValue(body, name, value)
+    }
+    for(let input of formEl.querySelectorAll('[data-input][name]')) {
+        const name = input.getAttribute('name')
+        const value = input.value
+
+        setNestedValue(body, name, value)
+    }
+
+    for(let input of formEl.querySelectorAll('[data-textarea][name]')) {
+        const name = input.getAttribute('name')
+        const value = input.value
+
+        setNestedValue(body, name, value)
+    }
+    for(let input of formEl.querySelectorAll('[data-select][name]')) {
+        const name = input.getAttribute('name')
+        const value = input.value
+
+        setNestedValue(body, name, value)
+    }
+    for(let input of formEl.querySelectorAll('[data-checkbox][name]')) {
+        const name = input.getAttribute('name')
+        const multiple = input.hasAttribute('data-checkbox-multiple')
+
+        let currentValue;
+        try {
+            currentValue = getNestedValue(body, name)
+        } catch(err) {
+            currentValue = null
+        }
+
+        let inputValue = input.value
+        if(inputValue === 'true') {
+            inputValue = input.checked
+        }
+
+        if(!currentValue) {
+            if(multiple) {
+                setNestedValue(body, name, [])
+            } else {
+                setNestedValue(body, name, false)
+            }
+        }
+        
+        if(input.checked) {
+            if(multiple) {
+                setNestedValue(body, name, [...(currentValue ?? []), inputValue])
+            } else {
+                setNestedValue(body, name, inputValue)
+            }
+        }
+    }
+    return body
 }
 
 export function flatObject(object, prefix = '') {
@@ -44,26 +100,32 @@ export function flatObject(object, prefix = '') {
 }
 
 export function setFormValue(form, value) {
+    console.log('setFormValue', value)
     let formValue = flatObject(value)    
 
     if(!form) return;
     form.querySelectorAll('[name]').forEach(input => {
         const name = input.getAttribute('name')
-        console.log('set value: ', {name, formValue})
-        if(formValue[name]) {
-            if(input.getAttribute('type') !== 'file') {
-                input.value = formValue[name]
-                console.log('set value: ', input.value)
-
-            } else {
-                // console.log('TODO: File input', input, formValue[name])
+        if(formValue[name] || formValue[name] === false || formValue[name] == 0) {
+            if(input.getAttribute('type') === 'file') {
                 setTimeout(() => {
                     form.querySelector(`[name="${name}"]`).value = formValue[name]
                     input.dataset.fileId = formValue[name]
                 }, 100)
+            } else if(input.hasAttribute('data-checkbox') && input.value == 'true') {
+                input.checked = formValue[name]
+            } else if(input.hasAttribute('data-checkbox') && input.value !== 'true') {
+                // TODO: Handle checkbox group
+                input.checked = formValue[name]?.includes(input.value)
+                
+            } else {
+                input.value = formValue[name]
             }
         }
+
     })
+
+    console.log(getFormValue(form))
 }
 
 export async function request(handler, body) {

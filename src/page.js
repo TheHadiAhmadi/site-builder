@@ -196,14 +196,14 @@ async function DynamicPageSelect(page, params) {
 
 //#region Render body
 export async function renderBody(body, {props, mode, url, view, ...query}) {
-    // const permissions = {} 
-    const permissions = {
-        page_create: true,
-        module_create: true,
-        module_update: true,
-        collection_create: true,
-        collection_update: true,
-    } 
+    const permissions = {} 
+    // const permissions = {
+    //     page_create: true,
+    //     module_create: true,
+    //     module_update: true,
+    //     collection_create: true,
+    //     collection_update: true,
+    // } 
 
     await loadModuleDefinitions()
     
@@ -403,6 +403,13 @@ export async function renderPage(req, res) {
         stylesheet = '<link rel="stylesheet" href="/css/sitebuilder.edit.css">'
     } else if(mode === 'preview') {
         stylesheet = '<link rel="stylesheet" href="/css/sitebuilder.preview.css">'
+    }
+    if(stylesheet) {
+        stylesheet += `
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+        `
     }
 
 

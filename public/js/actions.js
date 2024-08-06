@@ -195,6 +195,10 @@ const actions = {
             hydrate(moduleSettingsSidebar)
         })
     },
+
+    'open-table-modal'() {
+        document.querySelector('[data-modal="table-modal"]').dataset.modalOpen = true
+    },
     async 'open-module-data'(el) {
         const mod = getParentModule(el)
 

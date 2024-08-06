@@ -92,11 +92,11 @@ export function Textarea({name, placeholder, label, rows = 5}) {
     })
 }
 
-export function Checkbox({name, checked, label}) {
+export function Checkbox({name, checked, label, multiple, value = "true"}) {
     return Label({
         inline: true,
         text: label,
-        body: `<input ${checked ? 'checked' : ''} type="checkbox" data-checkbox name="${name}" value="${checked}"/>`
+        body: `<input ${checked ? 'checked' : ''} ${multiple ? `data-checkbox-multiple` : ''} type="checkbox" data-checkbox name="${name}" value="${value}"/>`
     })
 }
 
