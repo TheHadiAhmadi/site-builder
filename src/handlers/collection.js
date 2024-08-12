@@ -1,4 +1,5 @@
 import { db } from "#services"
+import { FieldForm, FieldTypeSelector } from "../pages/fields.js"
 
 export default {
         
@@ -27,6 +28,9 @@ export default {
     async addField(body) {
         const {id, ...field} = body
         
+        if(field.type === 'select')
+            field.items = field.items.split('\n').map(x => x.trim())
+        
         const collection = await db('collections').query().filter('id', '=', id).first()
 
         collection.fields.push(field)
@@ -41,12 +45,18 @@ export default {
         const {id, ...field} = body
         const collection = await db('collections').query().filter('id', '=', id).first()
 
+        if(field.type === 'select')
+            field.items = field.items.split('\n').map(x => x.trim())
+        
+        console.log(field)
         collection.fields = collection.fields.map(x => {
             if(x.slug === field.slug) {
                 return field
             }
             return x
         })
+
+        console.log(JSON.stringify(collection))
 
         const res = await db('collections').update(collection)
 
@@ -65,5 +75,18 @@ export default {
         return {
             pageReload: true
         }
+    },
+    async getFieldTypeSelector(body) {
+        return FieldTypeSelector()
+    },
+    async getFieldForm(body) {
+        const type = body.type
+        const handler = body.handler
+        const mode = body.mode
+        const id = body.id
+
+        const collections = await db('collections').query().all()
+        
+        return FieldForm({mode, collections, handler, type, id})
     }
 }

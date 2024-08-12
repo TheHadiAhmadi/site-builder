@@ -82,7 +82,7 @@ function getUrl(query) {
 }
 
 function sidebarModules({permissions}) {
-    const modules = Object.keys(definitions).map(key => definitions[key]).filter(x => x.name !== 'Section')
+    const modules = Object.keys(definitions).map(key => definitions[key]).filter(x => !['Section', 'Columns'].includes(x.name))
     return `
         <div data-sidebar-title>Modules</div>
             <div data-sidebar-body data-definitions>
@@ -271,11 +271,10 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
         const collection = await db('collections').query().filter('id', '=', query.id).first()
         
         content = collectionDataCreate(collection)
-    }else if(view === 'collection-data-update') {
+    } else if(view === 'collection-data-update') {
         sidebar = 'collections'
         const data = await db('contents').query().filter('id', '=', query.id).first()
         const collection = await db('collections').query().filter('id', '=', data._type).first()
-        
         
         content = collectionDataUpdate(collection, data)
     } else if(view === 'settings') {
@@ -381,36 +380,6 @@ export async function renderPage(req, res) {
     let props = {
         
     }
-
-    
-    //     props.slug = req.params.slug
-    
-    //     let query = await db('contents').query().filter('collectionId', '=', page.collectionId)
-
-    //     if(page.multiple) {
-    //         props.value = await query.all()
-    //     } else {
-    //         props.value = await query.first()
-    //     }
-
-    //     page.filters = [
-    //         {field: 'username', operator: '=', value: '{{props.slug}}'},
-    //         {field: 'status', operator: '=', value: 'active'},
-    //     ]
-
-    //     // page.mapping = {
-    //     //     name: 'firstname',
-    //     //     subtitle: 'lastname',
-    //     //     image: 'profile'
-    //     // }
-
-    //     props.filters = page.filters;
-    //     // props.mapping = page.mapping
-    // }
-    
-    // page.title = render(page.title, props)
-    // page.description = render(page.description, props)
-    // ....
 
     let stylesheet;
     if(mode === 'edit') {

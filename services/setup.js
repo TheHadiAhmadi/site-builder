@@ -3,12 +3,24 @@ import db from "./db.js"
 
 const defaultModules = {
     Section: {
-        template: `<div data-section {{#if fullWidth}} data-section-full-width {{/if}}>{{{content}}}</div>`,
+        template: `<div data-section {{#if fullWidth}} data-section-full-width {{/if}} style="padding-top: {{paddingTop}}px; padding-bottom: {{paddingBottom}}px;">{{{content}}}</div>`,
         props: [
             {
                 type: 'checkbox',
                 slug: 'fullWidth',
                 label: 'Full Width'
+            },
+            {
+                type: 'input',
+                slug: 'paddingTop',
+                label: 'Padding Top',
+                defaultValue: 32
+            },
+            {
+                type: 'input',
+                slug: 'paddingBottom',
+                label: 'Padding Bottom',
+                defaultValue: 32
             },
             {
                 type: 'slot',
@@ -89,6 +101,7 @@ export async function setupCms(req, res) {
                         cpSync(`./templates/${template}/files/${prop}`, `./uploads/${id}`)
                         item[key] = id
                     }
+                    
                 }
                 item._type = res.id
 
@@ -96,16 +109,17 @@ export async function setupCms(req, res) {
             }
         } 
         
-        for(let key in collections) {
-            const collection = collections[key]
+        for(let collection of mod.default.collections) {
             for(let field of collection.fields) {
+                console.log(collection, field)
                 if(field.type === 'relation') {
-                    field.collectionId = collections[field.collection].id
+                    field.collectionId = collections[field.collection]?.id
                     delete field.collection
                 }
             }
             await db('collections').update(collection)
         }
+        
         for(let page of mod.default.pages) {
             const request = {
                 title: page.title,

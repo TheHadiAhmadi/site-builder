@@ -3,6 +3,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
+    flex-wrap: wrap ;
 }
 
 [data-header-title] {
@@ -11,6 +12,7 @@
 }
 
 [data-header-actions] {
+    margin-left: auto;
     display: flex;
     gap: 8px;
 }

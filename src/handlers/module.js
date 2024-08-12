@@ -112,7 +112,7 @@ export default {
             moduleId: body.moduleId,
             definitionId: body.definitionId,
             order: body.order,
-            cols: 3,
+            cols: 12,
             props: {},
             links: {}
         })

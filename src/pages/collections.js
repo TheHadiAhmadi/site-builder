@@ -1,6 +1,6 @@
 import { Button, Card, CardBody, Checkbox, EmptyTable, File, Form, Input, Label, Modal, Page, Select, Stack, Table, Textarea } from "../components.js"
 import { DataTable } from "./dataTable.js";
-import { FieldAddModal, FieldEditModal, FieldsList, FieldTypeModal } from "./fields.js";
+import { FieldModal, FieldsList } from "./fields.js";
 
 export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
     let load;
@@ -25,8 +25,31 @@ export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
                 }),
                 
             ]
-        })
+        }),
     ])
+}
+
+function Relation(field) {
+    return Label({
+        symbolic: true,
+        text: field.label,
+        inline: false,
+        body: Stack({}, [
+            Button({
+                text: 'Choose', 
+                color: 'primary', 
+                action: 'open-relation-modal', 
+                dataset: { 
+                    'collection-id': field.collectionId,
+                    'modal-name': 'relation-field-modal',
+                    'field-name': field.name,
+                    'field-multiple': field.multiple ? true : false
+                }
+            }),
+            `<input ${field.multiple ? 'data-json' : 'data-input'} type="hidden" name="${field.name}" value="">`    
+        ]),
+    })
+    
 }
 
 export function FieldInput(field) {
@@ -38,13 +61,20 @@ export function FieldInput(field) {
     if(field.type === 'select') {
         options.items = field.items ?? []
         options.placeholder = 'Choose ' + field.label
+        options.multiple = field.multiple
+    }
+
+    if(field.type === 'relation') {
+        options.collectionId = field.collectionId
+        options.multiple = field.multiple
     }
     const inputs = {
         input: Input,
         select: Select,
         textarea: Textarea,
         checkbox: Checkbox,
-        file: File
+        file: File,
+        relation: Relation
     }
     
     if(inputs[field.type]) {
@@ -52,6 +82,18 @@ export function FieldInput(field) {
     }
 }
 
+function RelationFieldModal() {
+    return Modal({
+        name: 'relation-field-modal', 
+        title: 'Choose items',
+        footer: Stack({justify: 'end'}, [
+            Button({text: 'Close', action: 'modal.close'}),
+            Button({color: 'primary', text: 'Done', action: 'choose-collection-items'}),
+        ]),
+        body: `<div></div>`
+
+    })
+}
 
 export function createCollectionPage() {
     return Page({
@@ -75,9 +117,8 @@ export function updateCollectionPage(collection) {
             }),
         }),
         FieldsList({id: collection.id, fields: collection.fields}),             
-        FieldTypeModal({}),
-        FieldAddModal({id: collection.id}),
-        FieldEditModal({id: collection.id})
+        FieldModal({ id: collection.id }),
+        
     ].join('')
 }
 
@@ -106,14 +147,17 @@ export function collectionDataCreate(collection, items) {
     return Page({
         title: 'Insert ' + collection.name,
         actions: [],
-        body: Form({
-            handler: 'content.insertCollectionContent',
-            fields: [
-                `<input type="hidden" value="${collection.id}" name="_type">`, 
-                collection.fields.map(field => FieldInput(field)).join('')
-            ],
-            cancelAction: ''
-        })
+        body: [
+            Form({
+                handler: 'content.insertCollectionContent',
+                fields: [
+                    `<input type="hidden" value="${collection.id}" name="_type">`, 
+                    collection.fields.map(field => FieldInput(field)).join('')
+                ],
+                cancelAction: ''
+            }),
+            RelationFieldModal()
+        ]
     })
 }
 
@@ -122,16 +166,19 @@ export function collectionDataUpdate(collection, data) {
     return Page({
         title: 'Update ' + collection.name,
         actions: [],
-        body: Form({ 
-            load: 'content.loadCollectionContent',
-            id,
-            handler: 'content.updateCollectionContent',
-            fields: [
-                '<input type="hidden" value="' + id + '" name="id">',
-                '<input type="hidden" value="' + data._type + '" name="_type">',
-                collection.fields.map(field => FieldInput(field)).join('')
-            ],
-            cancelAction: 'navigate-back'
-        })
+        body: [
+            Form({ 
+                load: 'content.loadCollectionContent',
+                id,
+                handler: 'content.updateCollectionContent',
+                fields: [
+                    '<input type="hidden" value="' + id + '" name="id">',
+                    '<input type="hidden" value="' + data._type + '" name="_type">',
+                    collection.fields.map(field => FieldInput(field)).join('')
+                ],
+                cancelHref: '?mode=edit&view=collection-data-list&id=' + collection.id
+            }),
+            RelationFieldModal()
+        ]
     })
 }

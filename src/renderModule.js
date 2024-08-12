@@ -3,7 +3,7 @@ import { db } from '#services';
 
 export async function renderModule(module, {props, mode, definitions, permissions}) {
     module.props ??= {}
-    console.log('renderModule', {module, props, mode})
+
     let definition = definitions[module.definitionId]
 
     if(props.collection && props.pageContent) {
@@ -72,6 +72,7 @@ export async function renderModule(module, {props, mode, definitions, permission
 
     const iconAdd = '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H6q-.425 0-.712-.288T5 12t.288-.712T6 11h5V6q0-.425.288-.712T12 5t.713.288T13 6v5h5q.425 0 .713.288T19 12t-.288.713T18 13h-5v5q0 .425-.288.713T12 19t-.712-.288T11 18z"/></svg>'
     const iconDelete = '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/></svg>'
+    const iconResizeSection = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 10h16M4 14h16m-8-4V6m-.05-4c1.035-.03 3.47 4.008 2.987 4.389c-.548.431-2.177-.6-2.695-.832c-.312-.14-.448-.136-.76.023c-1.406.717-2.11 1.075-2.414.856l-.003-.002C8.58 6.08 10.939 2.03 11.95 2m.1 20c-1.035.03-3.47-4.008-2.987-4.389c.548-.431 2.177.6 2.695.832c.312.14.448.136.76-.023c1.406-.717 2.11-1.075 2.414-.856l.003.002c.485.354-1.874 4.404-2.885 4.434M12 18v-4" color="currentColor"/></svg>'
 
     if(definition.name === 'Section') {
         const icon = module.props.fullWidth ? 
@@ -116,18 +117,27 @@ export async function renderModule(module, {props, mode, definitions, permission
     
     if(mode === 'preview' && permissions) {
 
-        
         previewContent = `
             ${moduleActions}
         `
     }
+
     if(definition.name === 'Columns')
     {
         return `${rendered}`
     }
+
+    let sectionResizer = ''
+
+    if(definition.name === 'Section') {
+        sectionResizer += `<div data-section-resizer data-mode="top">${iconResizeSection}</div>`
+        sectionResizer += `<div data-section-resizer data-mode="bottom">${iconResizeSection}</div>`
+    }
+
     return `
         <div data-action="open-module-settings" data-module-id="${module.id}">
             <div data-module-content>
+                ${sectionResizer}
                 ${rendered}
             </div>
             ${previewContent}

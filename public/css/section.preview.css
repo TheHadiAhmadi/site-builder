@@ -87,6 +87,15 @@
     width: 100%;
     min-height: 60px;
     background-color: #4092f028;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #71acce;
+
+}
+[data-slot-empty]::before {
+    content: 'Drag module here';
+    color: #71acce;
 }
 
 [data-body]:has([data-definition-module]) [data-slot] {
@@ -138,4 +147,42 @@
 [data-section-column-template] svg {
     width: 70px;
     height: 70px;
+}
+
+[data-section-resizer] {
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 12px;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    opacity: 0;
+    border: 1px solid #398f85;
+    background-color: white;
+    border-radius: 16px;
+
+}
+[data-module-id]:hover [data-section-resizer]{
+    opacity: 1;
+    pointer-events: all;
+}
+
+[data-section-resizer] svg {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    color: #2a3fffa4;
+}
+
+[data-section-resizer][data-mode="top"] {
+    top: 0rem;
+    cursor: n-resize;
+}
+
+[data-section-resizer][data-mode="bottom"] {
+    bottom: -12px;
+    cursor: s-resize;
+
 }

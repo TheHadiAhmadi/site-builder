@@ -16,20 +16,29 @@ export default {
     setup: setup,
     table: {
         async load(body) {
-            const {filters, perPage = 10, page = 1, collectionId} = body
+            const {filters, perPage = 10, page = 1, selectable, actions, collectionId} = body
 
             const collection = await db('collections').query().filter('id', '=', collectionId).first()
             let query = db('contents').query().filter('_type', '=', collectionId)
 
             for(let filter of filters) {
-                if(!Array.isArray(filter.value) && filter.value !== '') {
-                    query = query.filter(filter.field, filter.operator, filter.value)
+                if(filter.value !== '') {
+                    if(Array.isArray(filter.value)) {
+                        filter.operator = 'in'
+                        if(filter.value.length) {
+                            query = query.filter(filter.field, filter.operator, filter.value)
+                        }
+
+                    } else {
+                        query = query.filter(filter.field, filter.operator, filter.value)
+                    }
+                    
                 }
             }
 
             const items = await query.paginate(+page, +perPage)
             
-            return DataTable({filters, perPage, page, collectionId: collection.id, fields: collection.fields, items: items.data })
+            return DataTable({filters, selectable, actions, perPage, page, collectionId: collection.id, fields: collection.fields, items: items.data })
         }
 
     }

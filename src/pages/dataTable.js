@@ -1,7 +1,7 @@
 import { html } from "svelite-html";
 import { Button, Checkbox, EmptyTable, Stack, Table } from "../components.js";
 
-export function DataTable({filters = [], perPage = 10, page = 1, items, collectionId, fields, actions = ['edit', 'delete']}) {
+export function DataTable({filters = [], selectable, perPage = 10, page = 1, items, collectionId, fields, actions = ['edit', 'delete']}) {
     const filtersObject = filters.reduce((prev, curr) => {
         return {...prev, [curr.field]: curr.value}
     }, {})
@@ -32,7 +32,11 @@ export function DataTable({filters = [], perPage = 10, page = 1, items, collecti
                 return Button({
                     size: 'small',
                     outline: true,
-                    ...action
+                    ...action,
+                    dataset: {
+                        id: item.id,
+                        ...(action.dataset ?? {})
+                    }
                 })
             }
         }))
@@ -42,17 +46,29 @@ export function DataTable({filters = [], perPage = 10, page = 1, items, collecti
         if(field.type === 'input') return item[field.slug]
         if(field.type === 'textarea') return item[field.slug].slice(0, 100) + (item[field.slug].length > 100 ? '...' : '')
         if(field.type === 'checkbox') return item[field.slug] ? 'Yes' : 'No'
-        if(field.type === 'select') return `<div>BADGE: ${item[field.slug]}</div>`
+        if(field.type === 'select') return `<span data-badge>${item[field.slug]}</span>`
         if(field.type === 'file') return `<div>FILE${item[field.slug]}</div>`
+        if(field.type === 'relation') {
+            if(!item[field.slug]) return ''
+            if(field.multiple) {
+                return Stack({}, item[field.slug].map(x => `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${x}" data-badge>${x}</a>`))
+            } else {
+                return `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${item[field.slug]}" data-badge>${item[field.slug]}</a>`
+            }
+        }
     }
 
     let content;
     
     if(items.length) {
         content = Table({
-            head: fields.map(x => `<th>${x.label}</th>`),
+            head: [
+                selectable === 'multi' ? `<th style="width: 0"><input type="checkbox" name="select-all" data-checkbox/></th>` : (selectable === 'single' ?  '<th style="width: 0"></th>' : ''), 
+                fields.map(x => `<th>${x.label}</th>`).join('')
+            ].join(''),
             body: items.map(item => html`
                 <tr>
+                    ${selectable ? `<td><input name="data-table-select" value="${item.id}" type="${selectable === 'multi' ? 'checkbox': 'radio'}" data-${selectable === 'multi' ? 'checkbox': 'radio'}/></td>` : ''}
                     ${fields.map(x => `<td>${renderField(item, x)}</td>`)}
                     <td>
                         ${ActionButtons(item)}
@@ -134,7 +150,7 @@ export function DataTable({filters = [], perPage = 10, page = 1, items, collecti
     }
 
     return html`
-        <div data-data-table data-collection-id="${collectionId}">
+        <div data-data-table data-collection-id="${collectionId}" data-selectable="${selectable}">
             <form data-data-table-filters-form>
                 <div data-data-table-filter-buttons>
                     ${fields.map(x => FilterButton(x))}

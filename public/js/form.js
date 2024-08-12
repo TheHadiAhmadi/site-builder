@@ -37,6 +37,13 @@ export function getFormValue(formEl) {
         setNestedValue(body, name, value)
     }
 
+    for(let json of formEl.querySelectorAll('[data-json][name]')) {
+        const name = json.getAttribute('name')
+        const value = JSON.parse(json.value)
+
+        setNestedValue(body, name, value)
+    }
+
     for(let input of formEl.querySelectorAll('[data-textarea][name]')) {
         const name = input.getAttribute('name')
         const value = input.value
@@ -116,7 +123,8 @@ export function setFormValue(form, value) {
             } else if(input.hasAttribute('data-checkbox') && input.value !== 'true') {
                 // TODO: Handle checkbox group
                 input.checked = formValue[name]?.includes(input.value)
-                
+            } else if(input.hasAttribute('data-json')) { 
+                input.value = JSON.stringify(formValue[name])
             } else {
                 input.value = formValue[name]
             }

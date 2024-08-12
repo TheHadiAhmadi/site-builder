@@ -93,33 +93,126 @@ const actions = {
     'change-dynamic-page-content'(el) {
         reload(el.value + '?mode=edit')
     },
-    'add-field-next'(el) {
-        
-    },
-    'add-field-choose-type'(el) {
+    async 'module-add-field-choose-type'(el) {
         const value = el.dataset.value
-        const id = el.dataset.id
-        
-        delete document.querySelector(`[data-modal-open]`).dataset.modalOpen
 
-        const addFieldModal = document.querySelector(`[data-modal="field-add"]`)
-        addFieldModal.dataset.modalOpen = true
+        const modal = document.querySelector(`[data-modal="field"]`)
 
-        setFormValue(addFieldModal, {type: value})
-        
-        const typeInput = addFieldModal.querySelector(`[name="type"]`)
+        const formHtml = await request('definition.getFieldForm', {
+            type: value,
+            handler: 'definition.addField',
+            mode: 'add',
+            id: modal.dataset.id
+        })
 
-        typeInput.value = value
+        modal.querySelector('[data-modal-title]').textContent = 'Add ' + value
+        modal.querySelector('[data-modal-body]').innerHTML = formHtml
+
+        setTimeout(() => {
+            const el = modal.querySelector('[data-modal-body]')
+            hydrate(el)
+        })
     },
-    'open-edit-field-modal'(el) {
-        const field = el.dataset
-        const form = document.querySelector(`[data-modal="field-edit"]`)
-        form.dataset.modalOpen = true
+    async 'open-module-add-prop-modal'(el) {
+        const modal = document.querySelector(`[data-modal="field"]`)
+        modal.dataset.id = modal.querySelector('[name="id"]').value
 
-        setFormValue(form, field)
+        modal.querySelector('[data-modal-body]').innerHTML = ''
+        const html = await request('definition.getFieldTypeSelector', {})
 
+        modal.querySelector('[data-modal-title]').textContent = 'Choose a type'
+        modal.querySelector('[data-modal-body]').innerHTML = html
+        modal.dataset.modalOpen = true
+
+        setTimeout(() => {
+            const el = modal.querySelector('[data-modal-body]')
+            hydrate(el)
+        })
+    },
+    async 'open-add-field-modal'(el) {
+        const modal = document.querySelector(`[data-modal="field"]`)
+        modal.dataset.id = modal.querySelector('[name="id"]').value
+
+        modal.querySelector('[data-modal-body]').innerHTML = ''
+        const html = await request('collection.getFieldTypeSelector', {})
+
+        modal.querySelector('[data-modal-title]').textContent = 'Choose a type'
+        modal.querySelector('[data-modal-body]').innerHTML = html
+        modal.dataset.modalOpen = true
+
+        setTimeout(() => {
+            const el = modal.querySelector('[data-modal-body]')
+            hydrate(el)
+        })
+    },
+    async 'add-field-choose-type'(el) {
+        const value = el.dataset.value
+
+        const modal = document.querySelector(`[data-modal="field"]`)
+
+        const formHtml = await request('collection.getFieldForm', {
+            type: value,
+            handler: 'collection.addField',
+            mode: 'add',
+            id: modal.dataset.id
+        })
+
+        modal.querySelector('[data-modal-title]').textContent = 'Add ' + value
+        modal.querySelector('[data-modal-body]').innerHTML = formHtml
+
+        setTimeout(() => {
+            const el = modal.querySelector('[data-modal-body]')
+            hydrate(el)
+        })
         
+    },
+    async 'open-edit-field-modal'(el) {
+        const field = el.dataset
+        
+        const modal = document.querySelector(`[data-modal="field"]`)
+        modal.dataset.id = modal.querySelector('[name="id"]').value
+        
+        const formHtml = await request('collection.getFieldForm', {
+            type: field.type,
+            handler: 'collection.setField',
+            mode: 'edit',
+            id: modal.dataset.id
+        })
 
+        modal.querySelector('[data-modal-title]').textContent = 'Edit ' + field.type
+        modal.querySelector('[data-modal-body]').innerHTML = formHtml
+        modal.dataset.modalOpen = true
+
+        setTimeout(() => {
+            const el = modal.querySelector('[data-modal-body]')
+            hydrate(el)
+            
+            setFormValue(modal.querySelector('[data-form]'), field)
+        })
+    },
+    async 'module-open-edit-field-modal'(el) {
+        const field = el.dataset
+        
+        const modal = document.querySelector(`[data-modal="field"]`)
+        modal.dataset.id = modal.querySelector('[name="id"]').value
+        
+        const formHtml = await request('definition.getFieldForm', {
+            type: field.type,
+            handler: 'definition.setField',
+            mode: 'edit',
+            id: modal.dataset.id
+        })
+
+        modal.querySelector('[data-modal-title]').textContent = 'Edit ' + field.type
+        modal.querySelector('[data-modal-body]').innerHTML = formHtml
+        modal.dataset.modalOpen = true
+
+        setTimeout(() => {
+            const el = modal.querySelector('[data-modal-body]')
+            hydrate(el)
+            
+            setFormValue(modal.querySelector('[data-form]'), field)
+        })
     },
     'delete-content'(el) {
         openConfirm({
@@ -360,14 +453,50 @@ const actions = {
         document.querySelector('[data-action="collection-content-delete-yes"]').dataset.contentId = id
 
     },
-    'collection-content-delete-no'(el) {
-        document.querySelector('[data-collection-content-delete]').classList.remove('open')
-    },
-    async 'collection-content-delete-yes'(el) {
-        document.querySelector('[data-collection-content-delete]').classList.remove('open')
-        const id = document.querySelector('[data-action="collection-content-delete-yes"]').dataset.contentId
+    async 'choose-collection-items'(el) {
+        const modal = document.querySelector(`[data-modal="relation-field-modal"]`)
+        const fieldName = modal.dataset.fieldName
+        const fieldMultiple = modal.dataset.fieldMultiple
+        
+        delete modal.dataset.modalOpen
 
-        await request('removeCollectionContent', {id})
+        if(fieldMultiple === "true") {
+            let itemIds = [...modal.querySelectorAll('td [data-checkbox]')].filter(x => x.checked).map(item => item.value)
+            document.querySelector(`[data-form] [name="${fieldName}"]`).value = JSON.stringify(itemIds)
+            
+        } else {
+            const itemId = modal.querySelector('input[name="data-table-select"]:checked').value;
+            document.querySelector(`[data-form] [name="${fieldName}"]`).value = itemId
+        }
+
+    },
+    async 'open-relation-modal'(el) {
+        const fieldName = el.dataset.fieldName
+        const collectionId = el.dataset.collectionId
+
+        const fieldMultiple = el.dataset.fieldMultiple
+
+        const html = await request('table.load', {
+            filters: [], 
+            perPage: 10, 
+            selectable: 'single', 
+            page: 1, 
+            // actions: [{color: 'primary', text: 'Choose', action: 'data-table-choose-item'}],
+            collectionId
+        })
+
+        const modal = document.querySelector(`[data-modal="relation-field-modal"]`)
+        modal.dataset.fieldName = fieldName
+        modal.dataset.fieldMultiple = fieldMultiple
+
+        modal.querySelector('[data-modal-body]').innerHTML = html
+        modal.dataset.modalOpen = true
+
+        setTimeout(() => {
+            hydrate(modal.querySelector('[data-modal-body]'))
+        })
+
+
     },
     'choose-collection'(el) {
         const mod = getParentModule(el)

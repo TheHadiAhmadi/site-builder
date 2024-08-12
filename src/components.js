@@ -110,13 +110,13 @@ export function File({name, label}) {
     })
 }
 
-export function Form({name ='', handler, fields, cancelAction, load, id, onSubmit}) {
+export function Form({name ='', handler, fields, cancelAction, cancelHref = undefined, load, id, onSubmit}) {
     return html`
         <form${onSubmit ? ` data-action="${onSubmit}" data-trigger="submit"` : ''} data-form="${name}" ${load ? `data-load="${load}" data-id=${id}` : ''}>
             <input type="hidden" name="_handler" value="${handler}"/>
             ${fields}
             <div data-form-actions>
-                ${Button({text: 'Cancel', type: 'button', color: 'default', action: cancelAction})}
+                ${Button({text: 'Cancel', type: 'button', color: 'default', href: cancelHref, action: cancelAction})}
                 ${Button({text: 'Submit', type: 'submit', color: 'primary'})}
             </div>
         </form>
@@ -132,7 +132,7 @@ export function Button({href, text, color, block, action, outline = false, size=
     }
 
     if(href) {
-        return `<a href="${href}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}">${text}</a>`
+        return `<a data-enhance href="${href}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}">${text}</a>`
 
     }
     return `<button type="${type}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}" data-action="${action}">${text}</button>`
