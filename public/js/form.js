@@ -37,12 +37,25 @@ export function getFormValue(formEl) {
         setNestedValue(body, name, value)
     }
 
+
     for(let json of formEl.querySelectorAll('[data-json][name]')) {
         const name = json.getAttribute('name')
-        const value = JSON.parse(json.value)
+        const value = JSON.parse(json.value || '[]')
 
         setNestedValue(body, name, value)
     }
+
+    for(let input of formEl.querySelectorAll('[data-rich-text][name]')) {
+        const name = input.getAttribute('name')
+        if(Quill.find(input)) {
+            const value = Quill.find(input).root.innerHTML
+
+            setNestedValue(body, name, value)
+    
+        }
+    }
+
+    
 
     for(let input of formEl.querySelectorAll('[data-textarea][name]')) {
         const name = input.getAttribute('name')
@@ -124,7 +137,20 @@ export function setFormValue(form, value) {
                 // TODO: Handle checkbox group
                 input.checked = formValue[name]?.includes(input.value)
             } else if(input.hasAttribute('data-json')) { 
-                input.value = JSON.stringify(formValue[name])
+                if(formValue[name]) {
+                    input.value = JSON.stringify(formValue[name])
+                } else {
+                    input.value = '[]'
+                }
+
+            } else if(input.hasAttribute('data-rich-text')) {
+                if(Quill.find(input)) {
+                    Quill.find(input).root.innerHTML = formValue[name]
+                } else {
+                    setTimeout(() => {
+                        Quill.find(input).root.innerHTML = formValue[name]
+                    }, 200)
+                }
             } else {
                 input.value = formValue[name]
             }

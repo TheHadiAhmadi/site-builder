@@ -30,10 +30,10 @@ const defaultModules = {
         ]
     },
     RichText: {
-        template: `<div data-rich-text>{{{content}}}</div>`,
+        template: `<div data-rich-text-inline>{{{content}}}</div>`,
         props: [
             {
-                type: 'slot',
+                type: 'rich-text',
                 slug: 'content',
                 label: 'Content'
             },
@@ -118,6 +118,17 @@ export async function setupCms(req, res) {
                 }
             }
             await db('collections').update(collection)
+        }
+        for(let key in definitions) {
+            const definition = definitions[key]
+            for(let prop of definition.props) {
+                
+                if(prop.type === 'relation') {
+                    prop.collectionId = collections[prop.collection]?.id
+                    delete prop.collection
+                }
+            }
+            await db('definitions').update(definition)
         }
         
         for(let page of mod.default.pages) {

@@ -1,7 +1,7 @@
 import { db } from "#services"
 import { html } from "svelite-html"
 import { Checkbox, File, Form, Input, Select, Textarea } from "../components.js"
-import { FieldInput } from "../pages/collections.js"
+import { FieldInput, RelationFieldModal } from "../pages/collections.js"
 
 function DynamicFieldInput(field, fields, linked, module) {
     function getLinkedText(key) {
@@ -199,7 +199,6 @@ export default {
                     params[paramName] = match[index + 1];
                 });
 
-                
                 let query = db('contents').query().filter('_type', '=', collection.id)
                 for(let key in params) {
                     query = query.filter(key, '=', params[key])

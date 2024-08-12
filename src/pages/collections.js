@@ -48,8 +48,16 @@ function Relation(field) {
             }),
             `<input ${field.multiple ? 'data-json' : 'data-input'} type="hidden" name="${field.name}" value="">`    
         ]),
+    })    
+}
+
+function RichText(field) {
+    return Label({
+        text: field.label,
+        body: `<div data-rich-text-wrapper><div name="${field.name}" data-rich-text></div></div>`
+
     })
-    
+
 }
 
 export function FieldInput(field) {
@@ -74,7 +82,8 @@ export function FieldInput(field) {
         textarea: Textarea,
         checkbox: Checkbox,
         file: File,
-        relation: Relation
+        relation: Relation,
+        'rich-text': RichText
     }
     
     if(inputs[field.type]) {
@@ -82,7 +91,7 @@ export function FieldInput(field) {
     }
 }
 
-function RelationFieldModal() {
+export function RelationFieldModal() {
     return Modal({
         name: 'relation-field-modal', 
         title: 'Choose items',
@@ -156,7 +165,6 @@ export function collectionDataCreate(collection, items) {
                 ],
                 cancelAction: ''
             }),
-            RelationFieldModal()
         ]
     })
 }
@@ -178,7 +186,6 @@ export function collectionDataUpdate(collection, data) {
                 ],
                 cancelHref: '?mode=edit&view=collection-data-list&id=' + collection.id
             }),
-            RelationFieldModal()
         ]
     })
 }

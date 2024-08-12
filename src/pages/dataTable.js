@@ -48,6 +48,7 @@ export function DataTable({filters = [], selectable, perPage = 10, page = 1, ite
         if(field.type === 'checkbox') return item[field.slug] ? 'Yes' : 'No'
         if(field.type === 'select') return `<span data-badge>${item[field.slug]}</span>`
         if(field.type === 'file') return `<div>FILE${item[field.slug]}</div>`
+        if(field.type === 'rich-text') return '...'
         if(field.type === 'relation') {
             if(!item[field.slug]) return ''
             if(field.multiple) {

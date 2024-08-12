@@ -1,3 +1,4 @@
+import collection from '../../src/handlers/collection.js';
 
 export default {
     definitions: [
@@ -6,7 +7,9 @@ export default {
         import('./definitions/Videos.js'),
         import('./definitions/Image.js'),
         import('./definitions/Header.js'),
-        import('./definitions/Hero.js')
+        import('./definitions/Hero.js'),
+        import('./definitions/Footer.js'),
+        import('./definitions/NeighbourhoodList.js')
     ],
     pages: [
         {
@@ -35,6 +38,20 @@ export default {
                                     button_text: "View all properties"   
                                 }
                             }
+                        ]
+                    }
+                },
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        content: [
+                            {
+                                name: 'Footer',
+                                props: {}
+                            },
                         ]
                     }
                 }
@@ -81,6 +98,20 @@ export default {
                         ]
                     }
                 },
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        content: [
+                            {
+                                name: 'Footer',
+                                props: {}
+                            },
+                        ]
+                    }
+                }
             ]
         },
         {
@@ -105,6 +136,106 @@ export default {
                                     background_image: 'home-poster.jpg'
                                 }
                             }
+                        ]
+                    }
+                },
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: false,
+                        content: [
+                            {
+                                name: 'Neighbourhood List',
+                                props: {
+                                    items: [],
+                                    title: 'Neighbourhoods'
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        content: [
+                            {
+                                name: 'Footer',
+                                props: {}
+                            },
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            title: '{{title}} | Khana Real Estate',
+            name: "Neighbourhood Detail",
+            slug: '/neighbourhoods/{{slug}}',
+            dynamic: true,
+            collection: 'Neighbourhoods',
+            modules: [
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        content: [
+                            {
+                                name: 'Header',
+                                props: {}
+                            },
+                            {
+                                name: 'Page Heading',
+                                links: {
+                                    title: 'title',
+                                    background_image: 'image'
+                                },
+                                props: {
+                                    'subtitle': 'Kabul'
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: false,
+                        content: [
+                            {
+                                name: 'Text HTML',
+                                links: {
+                                    content: 'content'
+                                } ,
+                                props: {}
+                            },
+                            {
+                                name: 'Neighbourhood List',
+                                props: {
+                                    title: 'Similar Neighbourhoods',
+                                },
+                                links: {
+                                    items: 'similar_neighbourhoods'
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        content: [
+                            {
+                                name: 'Footer',
+                                props: {}
+                            },
                         ]
                     }
                 }
@@ -147,6 +278,20 @@ export default {
                                     videos: []
                                 }
                             }
+                        ]
+                    }
+                },
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        content: [
+                            {
+                                name: 'Footer',
+                                props: {}
+                            },
                         ]
                     }
                 }
@@ -192,6 +337,20 @@ export default {
                             }
                         ]
                     }
+                },
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        paddingTop: 0,
+                        paddingBottom: 0,
+                        content: [
+                            {
+                                name: 'Footer',
+                                props: {}
+                            },
+                        ]
+                    }
                 }
             ]
         }
@@ -220,6 +379,12 @@ export default {
                         "Land",
                         "Others"
                     ]
+                },
+                {
+                    type: 'relation',
+                    slug: 'neighbourhood',
+                    label: 'Neighbourhood',
+                    collection: 'Neighbourhoods'
                 },
                 {
                     type: 'file',
@@ -258,7 +423,7 @@ export default {
                     label: 'Price'
                 },
                 {
-                    type: 'textarea',
+                    type: 'rich-text',
                     slug: 'description',
                     label: 'Description'
                 },
@@ -380,18 +545,23 @@ export default {
                 },
                 {
                     type: 'input',
+                    slug: 'slug',
+                    label: 'Slug'
+                },
+                {
+                    type: 'input',
                     slug: 'city',
                     label: 'City'
                 },
                 {
-                    type: 'textarea',
-                    slug: 'content',
-                    label: 'Content',
+                    type: 'file',
+                    slug: 'image',
+                    label: 'Image'
                 },
                 {
-                    type: 'location',
-                    slug: 'location',
-                    label: 'Location',
+                    type: 'rich-text',
+                    slug: 'content',
+                    label: 'Content',
                 },
                 {
                     type: 'relation',
@@ -403,7 +573,46 @@ export default {
                 
             ],
             contents: [
+                {
+                    title: 'Barchi',
+                    slug: 'barchi',
+                    city: 'Kabul',
+                    image: 'barchi.jpg',
+                    content: `<p><strong>Barchi</strong> is a residential area located in the southwestern part of Kabul. This region has transformed into a large community with over 1 million inhabitants due to internal migrations within Afghanistan, particularly from provinces like Maidan Wardak, Ghazni, Parwan, Bamyan, Ghor, and Daikundi. The significant influx of people, mainly from the Hazara ethnic group, has shaped Barchi into a densely populated urban area.</p>
+
+                        <p>The population growth in <strong>Barchi</strong> has been remarkable. In 2002, the population was estimated to be around 200,000, but by 2018, Médecins Sans Frontières estimated it to have surpassed 1.5 million. This rapid increase is primarily attributed to the return of Afghan refugees from Iran and Pakistan, as well as internal migration from rural areas to the capital. Over 95% of the population in Barchi belongs to the Hazara community. Unfortunately, in recent years, western Kabul, including Barchi, has become one of the most insecure areas of the city, with numerous attacks on educational centers, shrines, and mosques, often claimed by the group known as ISIS.</p>`,
+                    similar_neighbourhoods: []
+                },
+                {
+                    title: 'Shahr-e-Naw',
+                    slug: 'shahr-e-naw',
+                    city: 'Kabul',
+                    image: 'shar-e-naw.jpg',
+                    content: `<p><strong>Shahr-e-Naw</strong> is one of the most prominent and central neighborhoods in Kabul. Known for its bustling streets and commercial activity, Shahr-e-Naw hosts numerous shops, restaurants, and hotels. The area is a blend of modernity and tradition, attracting both locals and expatriates alike. In recent years, it has also become a hub for cultural activities and events.</p>
                 
+                        <p>Shahr-e-Naw's strategic location in the heart of Kabul makes it a vital commercial and social center. The neighborhood is well-known for its parks, including Shahr-e-Naw Park, which offers a green escape in the middle of the city. Despite its growth and development, the area has not been immune to the security challenges faced by Kabul, with occasional incidents impacting daily life.</p>`,
+                    similar_neighbourhoods: []
+                },
+                {
+                    title: 'Wazir Akbar Khan',
+                    slug: 'wazir-akbar-khan',
+                    city: 'Kabul',
+                    image: 'wazir-akbar-khan.jpg',
+                    content: `<p><strong>Wazir Akbar Khan</strong> is one of the most affluent neighborhoods in Kabul, located to the north of the city center. This area is home to many embassies, government offices, and residences of high-ranking officials. The neighborhood is known for its spacious villas, tree-lined streets, and a higher level of security compared to other parts of Kabul.</p>
+                
+                        <p>Wazir Akbar Khan is a symbol of Kabul's elite, with its well-maintained roads and modern infrastructure. However, the area has also been a target for high-profile attacks due to its political significance. Despite these challenges, it remains one of the most sought-after residential areas in the city.</p>`,
+                    similar_neighbourhoods: []
+                },
+                {
+                    title: 'Kart-e-Se',
+                    slug: 'kart-e-se',
+                    city: 'Kabul',
+                    image: 'karte-3.jpg',
+                    content: `<p><strong>Kart-e-Se</strong> is a residential and commercial neighborhood located in the western part of Kabul. It is known for its diverse population, including a significant number of Hazaras, and has a vibrant community atmosphere. The area is filled with markets, schools, and cultural centers, making it a lively part of the city.</p>
+                
+                        <p>Kart-e-Se has seen substantial growth over the years, with new housing developments and businesses emerging. Despite this progress, the neighborhood has faced security issues, particularly due to its location in western Kabul, which has been prone to instability. Nevertheless, Kart-e-Se remains an important and resilient part of Kabul's urban landscape.</p>`,
+                    similar_neighbourhoods: []
+                },
             ]
         }
     ],    

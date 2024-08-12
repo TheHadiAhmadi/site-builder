@@ -479,7 +479,7 @@ const actions = {
         const html = await request('table.load', {
             filters: [], 
             perPage: 10, 
-            selectable: 'single', 
+            selectable: fieldMultiple ? 'multi' : 'single', 
             page: 1, 
             // actions: [{color: 'primary', text: 'Choose', action: 'data-table-choose-item'}],
             collectionId

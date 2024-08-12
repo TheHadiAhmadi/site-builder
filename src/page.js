@@ -4,7 +4,7 @@ import { Button, DeleteConfirm, EmptyTable, Form, Input, Modal, Page, Table } fr
 import { db } from "#services";
 import layouts from "./layouts.js";
 import { pageCreateModule, pageUpdateModule } from './pages/modules.js';
-import { collectionDataCreate, collectionDataList, collectionDataUpdate, CollectionForm, createCollectionPage, FieldInput, updateCollectionPage } from './pages/collections.js';
+import { collectionDataCreate, collectionDataList, collectionDataUpdate, CollectionForm, createCollectionPage, FieldInput, RelationFieldModal, updateCollectionPage } from './pages/collections.js';
 import { pageCreatePage, pageUpdatePage } from './pages/pages.js';
 import { renderModule } from './renderModule.js';
 
@@ -340,8 +340,10 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
         </div>
     </div>
     <script src="https://unpkg.com/sortablejs@1.15.2/Sortable.min.js"></script>
+    <script src="/js/quill.library.js"></script>
     <script type="module" src="/js/sitebuilder.edit.js"></script>
     ${DeleteConfirm()}
+    ${RelationFieldModal()}
     `
 
     let previewContent  = ''
@@ -395,6 +397,10 @@ export async function renderPage(req, res) {
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+        `
+
+        stylesheet += `
+            <link rel="stylesheet" href="/css/components/quill.snow.css">
         `
     }
 

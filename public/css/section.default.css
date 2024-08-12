@@ -8,3 +8,7 @@
 
 [data-section] {
 }
+
+[data-section-resizer] {
+    display: none;
+}

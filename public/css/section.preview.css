@@ -150,6 +150,7 @@
 }
 
 [data-section-resizer] {
+    display: block !important;
     position: absolute;
     left: 50%;
     right: 50%;
@@ -162,20 +163,13 @@
     border: 1px solid #398f85;
     background-color: white;
     border-radius: 16px;
-
 }
+
 [data-module-id]:hover [data-section-resizer]{
     opacity: 1;
     pointer-events: all;
 }
-
-[data-section-resizer] svg {
-    display: none;
-    width: 1rem;
-    height: 1rem;
-    color: #2a3fffa4;
-}
-
+    
 [data-section-resizer][data-mode="top"] {
     top: 0rem;
     cursor: n-resize;

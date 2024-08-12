@@ -43,6 +43,15 @@ export async function renderModule(module, {props, mode, definitions, permission
             } else {               
                 module.props[item.slug] = `<div data-slot="${module.id}" data-action="open-add-module" data-slot-empty></div>`
             }
+        } 
+        else if(item.type === 'relation') {
+            if(item.multiple) {
+                const ids = module.props[item.slug]
+                module.props[item.slug] = await db('contents').query().filter('_type', '=', item.collectionId).filter('id', 'in', ids).all()
+            } else {
+                const id = module.props[item.slug]
+                module.props[item.slug] = await db('contents').query().filter('_type', '=', item.collectionId).filter('id', '=', id).first()
+            }
         } else {
             module.props[item.slug] = module.props[item.slug] ?? item.defaultValue
         }
@@ -130,8 +139,8 @@ export async function renderModule(module, {props, mode, definitions, permission
     let sectionResizer = ''
 
     if(definition.name === 'Section') {
-        sectionResizer += `<div data-section-resizer data-mode="top">${iconResizeSection}</div>`
-        sectionResizer += `<div data-section-resizer data-mode="bottom">${iconResizeSection}</div>`
+        sectionResizer += `<div data-section-resizer data-mode="top"></div>`
+        sectionResizer += `<div data-section-resizer data-mode="bottom"></div>`
     }
 
     return `

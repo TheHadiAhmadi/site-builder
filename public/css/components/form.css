@@ -103,3 +103,20 @@
     background: transparent;
     border: none;
 }
+
+[data-rich-text-wrapper] {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    width: 100%;
+    border-radius: 4px;
+    outline: none;
+    background-color: white;
+}
+[data-rich-text-wrapper]:focus-within {
+    box-shadow: 0 0 2px #4070f0;
+}
+
+[data-rich-text] {
+    outline: none;
+}

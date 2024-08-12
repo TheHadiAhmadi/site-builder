@@ -1,5 +1,6 @@
 
 export async function reloadIframe() {
+    console.log('reloadIframe')
     let iframeElement = document.querySelector('iframe')
     if(!iframeElement) {
         return reload(window.location.href)   
@@ -20,6 +21,8 @@ export async function reloadIframe() {
 }
 
 export async function reload(url) {
+    console.log('reload')
+
     history.pushState({}, {}, url)
     const res = await fetch(url).then(res => res.text())
     const template = document.createElement('template')
