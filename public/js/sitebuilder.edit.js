@@ -1,11 +1,13 @@
 import {hydrate} from './hydrate.js'
 import { reloadIframe, reload } from "./helpers.js"
 import { initSortable, initSortableIframe } from "./sortable.js"
+import { initColumns } from './columns.js'
 
 function onIframeInit() {
     let iframeElement = document.querySelector('iframe')
     hydrate(iframeElement.contentDocument)
-
+    
+    initColumns()
     initSortableIframe()    
 }
 
@@ -15,7 +17,7 @@ function onInit() {
 
     if(iframeElement) {
         initSortable()
-
+        
         iframeElement.onload = () => {
             onIframeInit()
         }

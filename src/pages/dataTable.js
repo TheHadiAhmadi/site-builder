@@ -6,7 +6,6 @@ export function DataTable({filters = [], perPage = 10, page = 1, items, collecti
         return {...prev, [curr.field]: curr.value}
     }, {})
 
-    console.log({filtersObject})
 
     const ActionButtons = (item) => {
         return Stack({}, actions.map(action => {
@@ -69,7 +68,6 @@ export function DataTable({filters = [], perPage = 10, page = 1, items, collecti
     }
 
     function FilterContent(field) {
-        console.log(field)
         if(field.type === 'select') {
             return `
                 <div style="display: flex; flex-direction: column; gap: 8px">

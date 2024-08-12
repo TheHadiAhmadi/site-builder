@@ -1,0 +1,79 @@
+[data-columns] {
+    position: relative;
+    overflow: hidden;
+}
+
+[data-columns].dragging * {
+    user-select: none;
+}
+
+[data-columns].active .line {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    background-color: #c9c9c921;
+    opacity: 0;
+    pointer-events: none;
+}
+
+[data-columns].dragging .line {
+    opacity: 1;
+}
+[data-columns].active [data-cols] {
+    transition: all 0.3s ease;
+    position: relative;
+    /* box-shadow: 0 0 0 1px rgba(161, 161, 161, 0.459); */
+}  
+
+[data-columns].active .resizer-handle {
+    position: absolute;
+    z-index: 61;
+    top: 0;
+    height: 100%;
+    right: -24px;
+    width: 48px;
+    cursor:col-resize;
+}
+
+[data-columns].active .resizer-handle::before {
+    content: '';
+    position:absolute;
+    transition: all 0.3s ease;
+    border-radius: 50px;
+    opacity: 0;
+    display: block;
+    right: 19px;
+    top: 1rem;
+    bottom: 1rem;
+    width: 8px;
+    background-color: #8a8a8a41;
+    cursor: col-resize;
+}
+
+[data-columns].active .resizer-handle::after {
+    content: '';
+    position:absolute;
+    transition: all 0.3s ease;
+    opacity: 0;
+    display: block;
+    right: 19px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    bottom: 50%;
+    height: clamp(40px, 25%, 100px);
+    width: 4px;
+    background-color: #8a8a8a86;
+    cursor: col-resize;
+}
+
+[data-columns].active .dragging {
+    cursor: col-resize;
+}
+
+[data-columns].active .resizer-handle.dragging::before, 
+[data-columns].active .resizer-handle.dragging::after,
+[data-columns].active .resizer-handle:hover::before, 
+[data-columns].active .resizer-handle:hover::after {
+    opacity: 1;
+}

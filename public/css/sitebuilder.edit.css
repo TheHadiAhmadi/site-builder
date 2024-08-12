@@ -84,6 +84,7 @@ iframe {
     height: 47px;
     text-align: center;
     color: black;
+    padding: 12px;
     /* border: 1px solid transparent; */
     display: flex;
     align-items: center;

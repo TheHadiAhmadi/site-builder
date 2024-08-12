@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, EmptyTable, Form, Input, Label, Modal, Page, Stack, Table } from "../components.js"
+import { Button, EmptyTable, Form, Input, Modal, Page, Stack, Table } from "../components.js"
 
 const fieldTypes = [
     { text: 'Input', value: 'input' },
@@ -6,6 +6,8 @@ const fieldTypes = [
     { text: 'Checkbox', value: 'checkbox' },
     { text: 'File', value: 'file' },
     { text: 'Select', value: 'select' },
+    { text: 'Slot', value: 'slot' },
+    { text: 'Rich Text', value: 'rich-text' },
 ]
 
 function fieldTypeText(key) {
@@ -30,33 +32,39 @@ export function FieldTypeModal({action = 'add-field-next'}) {
     })
 }
 
+export function FieldForm({handler, id, mode = 'add', type = ''}) {
+    return Form({
+        cancelAction: 'modal.close',
+        handler,
+        fields: [
+            `<input name="id" value="${id}" type="hidden">`,
+            `<input name="type" value="${type}" type="hidden">`,
+            Input({
+                name: 'slug', 
+                disabled: mode === 'edit',
+                placeholder: 'Enter Slug', 
+                label: 'Slug'
+            }),
+            Input({
+                name: 'label', 
+                placeholder: 'Enter Label', 
+                label: 'Label'
+            }),
+            Input({
+                name: 'defaultValue', 
+                placeholder: 'Enter Default Value', 
+                label: 'Default Value'
+            }),
+            `MORE INPUTS: ${type}`
+        ]
+    })
+}
+
 export function FieldAddModal({id, handler = 'collection.addField'}) {
     return Modal({
         name: 'field-add', 
         title: 'Add Field', 
-        body: Form({
-            cancelAction: 'modal.close',
-            handler,
-            fields: [
-                `<input name="id" value="${id}" type="hidden">`,
-                `<input name="type" value="" type="hidden">`,
-                Input({
-                    name: 'slug', 
-                    placeholder: 'Enter Slug', 
-                    label: 'Slug'
-                }),
-                Input({
-                    name: 'label', 
-                    placeholder: 'Enter Label', 
-                    label: 'Label'
-                }),
-                Input({
-                    name: 'defaultValue', 
-                    placeholder: 'Enter Default Value', 
-                    label: 'Default Value'
-                }),
-            ]
-        })
+        body: FieldForm({handler, id})
     })
 }
 
@@ -64,30 +72,7 @@ export function FieldEditModal({id, handler = 'collection.setField'}) {
     return Modal({
         name: 'field-edit', 
         title: 'Edit Field', 
-        body: Form({
-            cancelAction: 'modal.close',
-            handler,
-            fields: [
-                `<input name="id" value="${id}" type="hidden">`,
-                `<input name="type" value="" type="hidden">`,
-                Input({
-                    name: 'slug', 
-                    disabled: true,
-                    placeholder: 'Enter Slug', 
-                    label: 'Slug'
-                }),
-                Input({
-                    name: 'label', 
-                    placeholder: 'Enter Label', 
-                    label: 'Label'
-                }),
-                Input({
-                    name: 'defaultValue', 
-                    placeholder: 'Enter Default Value', 
-                    label: 'Default Value (Input based on type)'
-                }),
-            ]
-        })
+        body: FieldForm({handler, id, type: '', mode: 'edit'})
     })
 }
 

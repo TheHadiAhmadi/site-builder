@@ -3,35 +3,151 @@ export default {
     definitions: [
         import('./definitions/PageHeading.js'),
         import('./definitions/TextHTML.js'),
+        import('./definitions/Videos.js'),
         import('./definitions/Image.js'),
+        import('./definitions/Header.js'),
+        import('./definitions/Hero.js')
     ],
     pages: [
+        {
+            title: 'Landing',
+            name: 'Landing',
+            slug: '/',
+            modules: [
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        content: [
+                            {
+                                name: 'Header',
+                                cols: 12,
+                                props: {}
+                            },
+                            {
+                                name: 'Hero',
+                                cols: 12,
+                                props: {
+                                    video: "36pq4GxE",
+                                    title: "Khana, For you",
+                                    subtitle: "Best place to find your next house",
+                                    button_link: "/properties",
+                                    button_text: "View all properties"   
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         {
             title: 'About',
             name: 'About',
             slug: '/about',
             modules: [
                 {
-                    name: 'Page Heading',
+                    name: 'Section',
                     props: {
-                        title: 'ABOUT NANCY',
-                        subtitle: 'Learn More About Nancy Saedi...',
-                        background_image: 'about.jpg'
+                        fullWidth: true,
+                        content: [
+                            {
+                                name: 'Header',
+                                cols: 12,
+                                props: {}
+                            },
+                            {
+                                name: 'Page Heading',
+                                cols: 12,
+                                props: {
+                                    title: 'ABOUT KHANA',
+                                    subtitle: 'Learn More About Khana...',
+                                    background_image: 'about.jpg'
+                                }
+                            },
+                        ]
+                    },
+                },
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: false,
+                        content: [
+                            {
+                                name: "Text HTML",
+                                props: {
+                                    content: '<div class="mt-8"><h1 class="text-2xl font-bold">About Me</h1><p>This is about me section</p></div>'
+                                }
+                            }
+                        ]
+                    }
+                },
+            ]
+        },
+        {
+            title: 'Neighbourhoods | Khana Real Estate',
+            name: 'Neighbourhoods',
+            slug: '/neighbourhoods',
+            modules: [
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        content: [
+                            {
+                                name: 'Header',
+                                props: {}
+                            },
+                            {
+                                name: 'Page Heading',
+                                props: {
+                                    title: 'Neighbourhoods',
+                                    subtitle: 'Learn about our exclusive neighbourhoods in the area.',
+                                    background_image: 'home-poster.jpg'
+                                }
+                            }
+                        ]
                     }
                 }
             ]
         },
         {
-            title: 'Properties | Nancy Saedi Real Estate',
+            title: 'Properties | Khana Real Estate',
             name: 'Properties',
             slug: '/properties',
             modules: [
                 {
-                    name: 'Page Heading',
+                    name: 'Section',
                     props: {
-                        title: 'Properties',
-                        subtitle: 'Learn More About Our exclusive Properties...',
-                        background_image: 'properties.jpeg'
+                        fullWidth: true,
+                        content: [
+                            {
+                                name: 'Header',
+                                props: {}
+                            },
+                            {
+                                name: 'Page Heading',
+                                props: {
+                                    title: 'Properties',
+                                    subtitle: 'View my exclusive listings. Contact me for further information',
+                                    background_image: 'properties.jpeg'
+                                }
+                            },
+                        ]
+                    }
+                },
+                {
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        content: [
+                            {
+                                name: 'Videos',
+                                props: {
+                                    title: 'Featured Videos',
+                                    videos: []
+                                }
+                            }
+                        ]
                     }
                 }
             ]
@@ -39,22 +155,42 @@ export default {
         {
             name: 'Property detail',
             slug: '/properties/{{slug}}',
-            title: '{{pageContent.title}} | Nancy Saedi Real Estate',
+            title: '{{pageContent.title}} | Khana Real Estate',
             dynamic: true,
             collection: 'Properties',
             modules: [
                 {
-                    name: 'Image',
-                    links: {
-                        src: "main_image",
-                        alt: "title"
-                    },
-                    props: {}
+                    name: 'Section',
+                    props: {
+                        fullWidth: true,
+                        content: [
+                            {
+                                name: 'Header',
+                                props: {}
+                            },
+                            {
+                                name: 'Image',
+                                links: {
+                                    src: "main_image",
+                                    alt: "title"
+                                },
+                                props: {}
+                            },
+                            
+                        ]
+                    }
                 },
                 {
-                    name: 'Text HTML',
+                    name: 'Section',
                     props: {
-                        "content": "HTML: {{pageContent.title}} TITLE"
+                        content: [
+                            {
+                                name: 'Text HTML',
+                                links: {
+                                    content: "description"
+                                }
+                            }
+                        ]
                     }
                 }
             ]
@@ -199,6 +335,75 @@ export default {
                     description: "Cozy 2-bedroom cottage located in Muskoka. Perfect for a weekend getaway, this property offers serene surroundings, a fireplace, and easy access to lakes and hiking trails.",
                     active: "true"
                 }
+            ]
+        },
+        {
+            name: 'Videos',
+            fields: [
+                {
+                    type: 'input',
+                    slug: 'title',
+                    label: 'Title'
+                },
+                {
+                    type: 'input',
+                    slug: 'url',
+                    label: 'Url'
+                },
+                {
+                    type: 'file',
+                    slug: 'image',
+                    label: 'Image',
+                },
+                {
+                    type: 'select',
+                    slug: 'type',
+                    label: 'Type',
+                    items: [
+                        'Featured Properties',
+                        'Sold Properties',
+                        'Exclusive Properties',
+                    ]
+                }
+            ],
+            contents: [
+                
+            ]
+        },
+        {
+            name: 'Neighbourhoods',
+            fields: [
+                {
+                    type: 'input',
+                    slug: 'title',
+                    label: 'Title'
+                },
+                {
+                    type: 'input',
+                    slug: 'city',
+                    label: 'City'
+                },
+                {
+                    type: 'textarea',
+                    slug: 'content',
+                    label: 'Content',
+                },
+                {
+                    type: 'location',
+                    slug: 'location',
+                    label: 'Location',
+                },
+                {
+                    type: 'relation',
+                    slug: 'similar_neighbourhoods',
+                    label: 'Similar Neighbourhoods',
+                    collection: 'Neighbourhoods',
+                    multiple: true
+                },
+                
+            ],
+            contents: [
+                
             ]
         }
     ],    

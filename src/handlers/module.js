@@ -66,6 +66,7 @@ function sidebarModuleSettings(definition, module, collection) {
                 ${Form({
                     name: 'module-settings',
                     handler: 'module.saveSettings',
+                    cancelAction: 'open-add-module',
                     fields: [
                         `<input type="hidden" name="id" value="${module.id}">`,
                         definition.props.map(prop => FieldInput(prop)).join('')
@@ -78,11 +79,12 @@ function sidebarModuleSettings(definition, module, collection) {
 
     return html`
             <div data-sidebar-module-settings-title data-sidebar-title>
-                <span>${definition.name} Settings</span>
+                <span>${definition.name} Settings *</span>
             </div>
             <div data-sidebar-module-settings-body data-sidebar-body>
                 ${Form({
                     name: 'module-settings',
+                    cancelAction: 'open-add-module',
                     handler: 'module.saveSettings',
                     fields: [
                         `<input type="hidden" name="slug" value="">`,
@@ -95,12 +97,22 @@ function sidebarModuleSettings(definition, module, collection) {
         `
 }
 
+async function getPageFromModule(module) {
+    if(module.pageId) {
+        return db('pages').query().filter('id', '=', module.pageId).first()
+    }
+    
+    const mod = await db('modules').query().filter('id', '=', module.moduleId).first()
+    return getPageFromModule(mod)
+}
+
 export default {
     async create(body) {
         await db('modules').insert({
-            pageId: body.pageId,
+            moduleId: body.moduleId,
             definitionId: body.definitionId,
-            order: body.index + 1,
+            order: body.order,
+            cols: 3,
             props: {},
             links: {}
         })
@@ -111,13 +123,37 @@ export default {
     async delete(body) {
         await db('modules').remove(body.id)
     },
+    async createSection(body) {
+        const definitions = await db('definitions').query().all();
+
+        const mod = await db('modules').insert({
+            pageId: body.pageId,
+            definitionId: definitions.find(x => x.name === 'Section').id,
+            order: body.order,
+            props: {
+                fullWidth: false,
+            },
+            links: {}
+        })
+
+        const mod2 = await db('modules').insert({
+            moduleId: mod.id,
+            definitionId: definitions.find(x => x.name === 'Columns').id,
+            order: 0,
+            props: {
+                cols: [],
+                colsLg: []
+            },
+            links: {}
+        })
+    },
     async getSettingsTemplate(body) {
         const moduleId = body.id
         const module = await db('modules').query().filter('id', '=', moduleId).first();
-        const page = await db('pages').query().filter('id', '=', module.pageId).first();
+        const page = await getPageFromModule(module);
         const definition = await db('definitions').query().filter('id', '=', module.definitionId).first();
         
-        if(page.collectionId) {
+        if(page?.collectionId) {
             const collection = await db('collections').query().filter('id', '=', page.collectionId).first();
             
             const res = sidebarModuleSettings(definition, module, collection, body.slug)
@@ -141,7 +177,7 @@ export default {
     async saveSettings(body) {
         const {id, slug, ...props} = body
         const original = await db('modules').query().filter('id', '=', body.id).first()
-        const page = await db('pages').query().filter('id', '=', original.pageId).first()
+        const page = await getPageFromModule(original)
 
         if(page.dynamic) {
             const collection = await db('collections').query().filter('id', '=', page.collectionId).first()
@@ -154,6 +190,7 @@ export default {
             }
             const regex = new RegExp(`^${regexStr}$`);
 
+            console.log('match', slug, regex)
             const match = slug.match(regex);
             if (match) {
                 const params = {};
@@ -172,13 +209,10 @@ export default {
 
                 for(let key in original.links) {
                     content[original.links[key]] = props[key]
-                    // console.log('key is a link type', key)
                 }
                 await db('contents').update(content)
             }
         }
-
-            
 
         await db('modules').update({...original, props})
     },
@@ -186,6 +220,12 @@ export default {
     async updateOrders(body) {
         for(let mod of body.modules) {
             const original = await db('modules').query().filter('id', '=', mod.id).first()
+
+            if(mod.moduleId) {
+                original.moduleId = mod.moduleId
+                original.cols = mod.cols
+                original.colsLg = mod.colsLg
+            }
             original.order = mod.order
             await db('modules').update(original)
         }

@@ -126,7 +126,7 @@ export function Form({name ='', handler, fields, cancelAction, load, id, onSubmi
 export function Button({href, text, color, block, action, outline = false, size="medium", dataset = {} , type="button"}) {
     let attrs = ''
     for(let item in dataset) {
-        if(dataset[item]) {
+        if(dataset[item] != undefined) {
             attrs += `data-${item}="${dataset[item]}"`
         }
     }

@@ -100,7 +100,6 @@ export function flatObject(object, prefix = '') {
 }
 
 export function setFormValue(form, value) {
-    console.log('setFormValue', value)
     let formValue = flatObject(value)    
 
     if(!form) return;
@@ -122,10 +121,7 @@ export function setFormValue(form, value) {
                 input.value = formValue[name]
             }
         }
-
     })
-
-    console.log(getFormValue(form))
 }
 
 export async function request(handler, body) {

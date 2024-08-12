@@ -1,16 +1,12 @@
 import { html } from 'svelite-html';
-import hbs from 'handlebars';
+import { db } from '#services';
 
 export async function renderModule(module, {props, mode, definitions, permissions}) {
-    const definition = definitions[module.definitionId]
+    module.props ??= {}
+    console.log('renderModule', {module, props, mode})
+    let definition = definitions[module.definitionId]
 
-    let fields = []
-
-    fields = definition.fields ?? []
-
-    console.log("111:", {module, props})
-
-    if(props.collection) {
+    if(props.collection && props.pageContent) {
         if(module.links) {
             for(let key in module.links) {
                 module.props[key] = props.pageContent[module.links[key]]
@@ -19,14 +15,46 @@ export async function renderModule(module, {props, mode, definitions, permission
     }
 
     for(let item of definition.props ?? []) {
-        
-        
-        props[item.slug] = module.props[item.slug] ?? item.defaultValue
+        if(item.type === 'slot') {
+            let result = ''
+            const modules = await db('modules').query().filter('moduleId', '=', module.id).all().then(res => res.sort((a, b) => a.order > b.order ? 1 : -1))
+            let index = 0
+            for(let mod of modules) {
+                if(definition.name === 'Columns') {
+                    const cols = mod.cols ?? 12
+                    result += `
+                        <div data-column data-cols="${cols}">
+                            ${await renderModule(mod, { props, mode, definitions, permissions})}
+                        </div>
+                    `
+                } else {
+                    result += await renderModule(mod, { props, mode, definitions, permissions})
+                }
+                index = index + 1;
+            }
+
+            if(result) {
+                if(definition.name === 'Columns' || definition.name === 'Section') {
+                    module.props[item.slug] = result
+                }
+                else {
+                    module.props[item.slug] = `<div data-slot="${module.id}">${result}</div>`
+                }
+            } else {               
+                module.props[item.slug] = `<div data-slot="${module.id}" data-action="open-add-module" data-slot-empty></div>`
+            }
+        } else {
+            module.props[item.slug] = module.props[item.slug] ?? item.defaultValue
+        }
     }
 
     let rendered;
     try {
-        rendered = definition.template(props);
+        if(definition.name == 'Columns') {
+            rendered = `<div data-columns="${module.id}">${module.props.content}</div>`;
+        } else {
+            rendered = definition.template(module.props);
+        }
     } catch(err) {
         rendered = 'Something went wrong: ' + err.message
     }
@@ -34,38 +62,69 @@ export async function renderModule(module, {props, mode, definitions, permission
     let previewContent = ''
 
     function ModuleAction({icon, action}) {
-        return `<div data-action="${action}">    
+        return `<div data-module-action data-action="${action}">    
             ${icon}
         </div>`
     }
 
-    const moduleActions = html`
-        <div data-action="drag-module-handle" data-module-actions data-module-actions-start>
-            ${[
-                ModuleAction({
-                    icon: [
-                        '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m12 22l-4.25-4.25l1.425-1.425L11 18.15V13H5.875L7.7 14.8l-1.45 1.45L2 12l4.225-4.225L7.65 9.2L5.85 11H11V5.85L9.175 7.675L7.75 6.25L12 2l4.25 4.25l-1.425 1.425L13 5.85V11h5.125L16.3 9.2l1.45-1.45L22 12l-4.25 4.25l-1.425-1.425L18.15 13H13v5.125l1.8-1.825l1.45 1.45z"/></svg>',
-                        '<div data-module-action-text>' + definition.name + '</div>'
-                    ].join('')
-                })
-            ]}
+    let startActions = []
+    let endActions = []
+
+    const iconAdd = '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H6q-.425 0-.712-.288T5 12t.288-.712T6 11h5V6q0-.425.288-.712T12 5t.713.288T13 6v5h5q.425 0 .713.288T19 12t-.288.713T18 13h-5v5q0 .425-.288.713T12 19t-.712-.288T11 18z"/></svg>'
+    const iconDelete = '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/></svg>'
+
+    if(definition.name === 'Section') {
+        const icon = module.props.fullWidth ? 
+        '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M42 6v36M17 19l-5 5m0 0l5 5m-5-5h24m-5-5l5 5m0 0l-5 5M6 6v36"/></svg>'
+        : 
+        '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M11.988 32L4 24.006L12 16m24.012 0L44 23.994L36 32M4 24h40"/></svg>' 
+
+        startActions = [
+            ModuleAction({icon: iconAdd, action: 'add-section'}),
+            ModuleAction({icon, action: 'toggle-full-width'}),
+        ]
+        endActions = [
+            ModuleAction({icon: iconDelete, action: 'open-delete-module-confirm'}),
+        ]
+    } else {
+
+        startActions = [
+            ModuleAction({
+                icon: [
+                    '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m12 22l-4.25-4.25l1.425-1.425L11 18.15V13H5.875L7.7 14.8l-1.45 1.45L2 12l4.225-4.225L7.65 9.2L5.85 11H11V5.85L9.175 7.675L7.75 6.25L12 2l4.25 4.25l-1.425 1.425L13 5.85V11h5.125L16.3 9.2l1.45-1.45L22 12l-4.25 4.25l-1.425-1.425L18.15 13H13v5.125l1.8-1.825l1.45 1.45z"/></svg>',
+                    definition.name === 'Section' ? '' : '<div data-module-action-text>' + definition.name + '</div>'
+                ].join('')
+            })
+        ]
+        endActions = [
+            ModuleAction({icon: iconDelete, action: 'open-delete-module-confirm'}),
+
+        ]
+    }
+
+    let moduleActions = html`
+        <div data-action="drag-module-handle" data-module-actions>
+            <div data-module-actions-start>
+                ${startActions}
+            </div>
+            <div data-module-actions-end>
+                ${endActions}
+            </div>
         </div>
-        <div data-module-actions data-module-actions-end>
-            ${[
-                ModuleAction({
-                    action: 'open-delete-module-confirm', 
-                    icon: '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/></svg>'
-                }),
-            ]}
-        </div>
+
     `
     
     if(mode === 'preview' && permissions) {
+
+        
         previewContent = `
             ${moduleActions}
         `
     }
-
+    if(definition.name === 'Columns')
+    {
+        return `${rendered}`
+    }
     return `
         <div data-action="open-module-settings" data-module-id="${module.id}">
             <div data-module-content>

@@ -23,7 +23,6 @@ export default {
 
             for(let filter of filters) {
                 if(!Array.isArray(filter.value) && filter.value !== '') {
-                    console.log('filter based on : ', filter)
                     query = query.filter(filter.field, filter.operator, filter.value)
                 }
             }

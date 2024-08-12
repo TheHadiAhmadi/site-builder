@@ -1,6 +1,7 @@
 import { getFormValue, request, setFormValue } from "./form.js"
 import { getParentModule, reload } from "./helpers.js"
 import { hydrate } from "./hydrate.js"
+import { updateModules } from "./sortable.js"
 
 
 function openConfirm({title, description, action, ...dataset}) {
@@ -162,16 +163,26 @@ const actions = {
             id: mod.dataset.moduleId
         })
     },
-    'module-delete-no'(el) {
-        const mod = getParentModule(el)
-        mod.querySelector(`[data-module-delete]`).classList.remove('open')
+    'open-add-module'(el, ev) {
+        ev.stopPropagation()
+        let sidebarElement = document.querySelector('[data-sidebar]')
+
+        sidebarElement.dataset.active = 'modules'
     },
-    async 'module-delete-yes'(el) {
+    async 'toggle-full-width'(el, ev) {
+        ev.stopPropagation()
         const mod = getParentModule(el)
-        mod.querySelector(`[data-module-delete]`).classList.remove('open')
-        await request('deleteModule', {moduleId: mod.dataset.moduleId})
+
+        const isFullWidth = mod.querySelector('[data-section]').hasAttribute('data-section-full-width')
+        await request('module.saveSettings', {
+            id: mod.dataset.moduleId,
+            slug: location.pathname,
+            fullWidth: !isFullWidth
+        })
     },
-    async 'open-module-settings'(el) {
+    async 'open-module-settings'(el, ev) {
+        ev.stopPropagation()
+
         const mod = getParentModule(el)
         const moduleId = mod.dataset.moduleId
         document.querySelector('iframe').contentDocument.querySelectorAll('[data-module-id][data-active]').forEach(el => {
@@ -194,6 +205,24 @@ const actions = {
             // (moduleSettingsSidebar)
             hydrate(moduleSettingsSidebar)
         })
+    },
+    async 'add-section'(el, ev) {
+        ev.stopPropagation()
+        // const order = el.dataset.order
+
+        function getPageId() {
+            return document.querySelector('iframe').contentDocument.querySelector('[data-body]').dataset.pageId
+        }
+
+        function getIndex() {
+            const mod = getParentModule(el);
+            return [...mod.parentElement.children].indexOf(mod) + 1
+        }
+        await request('module.createSection', {
+            pageId: getPageId(),
+            order: el.dataset.order ?? getIndex(),
+        })
+        await updateModules()
     },
 
     'open-table-modal'() {
@@ -400,13 +429,13 @@ export function Action(el) {
 
     const actionType = el.dataset.trigger ?? 'click'
     if(actionType === 'load') {
-        actionFn(el)
+        actionFn(el, null)
     } else {
         el.addEventListener(actionType, (ev) => {
             if(actionType === 'submit') {
                 ev.preventDefault()
             }
-            actionFn(el)
+            actionFn(el, ev)
         })
     }
 }
