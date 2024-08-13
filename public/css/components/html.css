@@ -1,0 +1,97 @@
+[data-html] h1 {
+    font-size: 2.25rem; /* 36px */
+    line-height: 1.25; /* Adjust for your design */
+    font-weight: 700; /* Bold */
+    color: #1a202c; /* Dark color, change to your palette */
+    margin-bottom: 1rem; /* Spacing below the heading */
+}
+
+[data-html] h2 {
+    font-size: 1.5rem; /* 30px */
+    line-height: 1.3;
+    font-weight: 600; /* Semi-bold */
+    color: #2d3748;
+    margin-bottom: 0.875rem;
+}
+
+[data-html] h3 {
+    font-size: 1.25rem; /* 24px */
+    line-height: 1.4;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.75rem;
+}
+
+[data-html] h4, [data-html] h5, [data-html] h6 {
+    font-size: 1rem; /* 20px */
+    line-height: 1.5;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+}
+
+[data-html] p {
+    font-size: 1rem; /* 16px */
+    line-height: 1.75; /* Taller line height for readability */
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+[data-html] a {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #3182ce; /* Link color */
+    text-decoration: underline;
+    transition: color 0.2s ease-in-out;
+}
+
+[data-html] a:hover {
+    color: #2b6cb0; /* Darker link color on hover */
+}
+
+[data-html] ul {
+    list-style-type: disc;
+    margin-left: 1.5rem; /* Indent list */
+    margin-bottom: 1rem;
+}
+
+[data-html] ol {
+    list-style-type: decimal;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+[data-html] li {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+[data-html] blockquote {
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.6;
+    font-weight: 500;
+    color: #4a5568;
+    border-left: 4px solid #cbd5e0; /* Light gray border */
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+[data-html] code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #edf2f7;
+    color: #e53e3e; /* Slightly different color for contrast */
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+[data-html] pre {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f7fafc;
+    color: #2d3748;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto; /* Enable horizontal scroll for long code blocks */
+    margin-bottom: 1rem;
+}

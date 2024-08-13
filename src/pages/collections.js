@@ -64,11 +64,11 @@ export function FieldInput(field) {
     let options = {
         name: field.slug, 
         label: field.label,
-        placeholder: 'Enter ' + field.label
+        placeholder: field.placeholder ?? 'Enter ' + field.label
     }
     if(field.type === 'select') {
         options.items = field.items ?? []
-        options.placeholder = 'Choose ' + field.label
+        options.placeholder = field.placeholder ?? 'Choose ' + field.label
         options.multiple = field.multiple
     }
 

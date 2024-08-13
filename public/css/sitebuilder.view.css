@@ -1,4 +1,5 @@
 @import './columns.css';
+@import './components/html.css';
 @import './section.default.css';
 
 [data-module-id] {

@@ -90,6 +90,7 @@ export async function renderModule(module, {props, mode, definitions, permission
         '<svg data-action-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 48 48"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M11.988 32L4 24.006L12 16m24.012 0L44 23.994L36 32M4 24h40"/></svg>' 
 
         startActions = [
+            // ModuleAction({icon: settings, action: 'open-module-settings'}),
             ModuleAction({icon: iconAdd, action: 'add-section'}),
             ModuleAction({icon, action: 'toggle-full-width'}),
         ]
@@ -144,7 +145,7 @@ export async function renderModule(module, {props, mode, definitions, permission
     }
 
     return `
-        <div data-action="open-module-settings" data-module-id="${module.id}">
+        <div ${definition.name === 'Section' ? '' : 'data-action="open-module-settings"'} data-module-id="${module.id}">
             <div data-module-content>
                 ${sectionResizer}
                 ${rendered}

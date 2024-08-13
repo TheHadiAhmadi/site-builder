@@ -11,8 +11,8 @@ import layouts from './src/layouts.js'
 import { Form, Input, Select } from './src/components.js'
 import {setupCms} from './services/setup.js'
 
-if(existsSync('./data4.json'))
-    rmSync('./data4.json')
+// if(existsSync('./data4.json'))
+//     rmSync('./data4.json')
 
 async function SetupPage() {
     const templates = await readdir('./templates');

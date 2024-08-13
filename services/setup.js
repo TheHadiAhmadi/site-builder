@@ -30,7 +30,7 @@ const defaultModules = {
         ]
     },
     RichText: {
-        template: `<div data-rich-text-inline>{{{content}}}</div>`,
+        template: `<div data-html data-rich-text-inline>{{{content}}}</div>`,
         props: [
             {
                 type: 'rich-text',

@@ -1,4 +1,5 @@
 import { db } from "#services"
+import ai from "./handlers/ai.js"
 import collection from "./handlers/collection.js"
 import content from "./handlers/content.js"
 import definition from "./handlers/definition.js"
@@ -14,6 +15,7 @@ export default {
     collection,
     content,
     setup: setup,
+    ai,
     table: {
         async load(body) {
             const {filters, perPage = 10, page = 1, selectable, actions, collectionId} = body

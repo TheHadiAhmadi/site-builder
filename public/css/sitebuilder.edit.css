@@ -260,3 +260,7 @@ iframe {
     gap: 16px;
     padding-bottom: 1rem;
 } 
+
+[data-definition-ai] {
+    border-color: #4060f0;
+}

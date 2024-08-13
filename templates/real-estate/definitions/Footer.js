@@ -1,6 +1,6 @@
 export default {
     name: 'Footer',
-    template: `<footer class="bg-gray-800 text-white py-8">
+    template: `<footer class="px-4 bg-gray-800 text-white py-8">
     <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
             <h3 class="text-xl font-bold mb-4">Khana Real Estate</h3>

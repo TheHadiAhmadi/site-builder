@@ -34,26 +34,18 @@ function DynamicFieldInput(field, fields, linked, module) {
     }
     
     let options = {
-        name: field.slug, 
+        slug: field.slug, 
         label: getLabel(field.label),
         placeholder: 'Enter ' + field.label
     }
     if(field.type === 'select') {
-        options.items = ['t', 'o', 'd', 'o']
+        options.items = field.items
+        options.multiple = field.multiple
         options.placeholer = 'Choose' + field.label
         // return Input({name: field.slug, label: field.name, placeholder: 'Enter ' + field.name})
     }
-    const inputs = {
-        input: Input,
-        select: Select,
-        textarea: Textarea,
-        checkbox: Checkbox,
-        file: File
-    }
     
-    if(inputs[field.type]) {
-        return inputs[field.type](options)
-    }
+    return FieldInput(field)
 }
 
 function sidebarModuleSettings(definition, module, collection) {
@@ -71,7 +63,7 @@ function sidebarModuleSettings(definition, module, collection) {
                         `<input type="hidden" name="id" value="${module.id}">`,
                         definition.props.map(prop => FieldInput(prop)).join('')
                     ],
-                    cancelAction: 'navigate-to-default-view'
+                    cancelAction: 'open-add-module'
                 })}
             </div>
         `
@@ -91,7 +83,7 @@ function sidebarModuleSettings(definition, module, collection) {
                         `<input type="hidden" name="id" value="${module.id}">`,
                         definition.props.map(prop => DynamicFieldInput(prop, collection.fields, module.links?.[prop.slug], module)).join('')
                     ],
-                    cancelAction: 'navigate-to-default-view'
+                    cancelAction: 'open-add-module'
                 })}
             </div>
         `

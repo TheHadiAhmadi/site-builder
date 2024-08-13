@@ -23,5 +23,6 @@ components.register('rich-text', RichText)
 
 
 export function hydrate(el) {
+    console.log('hydrate')
     components.init(el)
 }
