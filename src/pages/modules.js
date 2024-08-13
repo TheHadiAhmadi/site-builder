@@ -59,6 +59,8 @@ export function pageUpdateModule(data) {
             ].join(''),
             title: `Update Module (${data.name})`,
             body: Stack({vertical: true}, [
+                data.prompt ? `<div style="border-radius: 4px; border: 1px solid #d0d0d0; background-color: #f0f0ff; padding: 1rem"><div class="font-bold">TEMPLATE:</div> ${(data.prompt?.template ?? '').replace('<', '&lt;')}</div>` : '', 
+                data.prompt ? `<div style="border-radius: 4px; border: 1px solid #d0d0d0; background-color: #f0f0ff; padding: 1rem"><div class="font-bold">FIELDS:</div> ${data.prompt?.fields ?? ''}</div>` : '', 
                 Form({
                     load: 'definition.load',
                     id: data.id,
