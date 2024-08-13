@@ -34,18 +34,20 @@ function DynamicFieldInput(field, fields, linked, module) {
     }
     
     let options = {
-        slug: field.slug, 
+        ...field,
+        // slug: field.slug, 
         label: getLabel(field.label),
         placeholder: 'Enter ' + field.label
     }
     if(field.type === 'select') {
-        options.items = field.items
-        options.multiple = field.multiple
-        options.placeholer = 'Choose' + field.label
+        // options.items = field.items
+        // options.multiple = field.multiple
+        options.placeholder = 'Choose' + field.label
         // return Input({name: field.slug, label: field.name, placeholder: 'Enter ' + field.name})
     }
     
-    return FieldInput(field)
+    console.log(FieldInput(options))
+    return FieldInput(options)
 }
 
 function sidebarModuleSettings(definition, module, collection) {
