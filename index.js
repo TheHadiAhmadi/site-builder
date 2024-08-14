@@ -86,7 +86,7 @@ Disallow: /css/
 Disallow: /js/
 Disallow: /files/
 
-Sitemap: https://${req.host}/sitemap.xml
+Sitemap: https://${req.hostname}/sitemap.xml
 `)
 })
 
