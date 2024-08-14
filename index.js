@@ -10,6 +10,8 @@ import { LoginPage } from './src/pages/login.js'
 import layouts from './src/layouts.js'
 import { Form, Input, Select } from './src/components.js'
 import {setupCms} from './services/setup.js'
+import hbs from 'handlebars'
+const compile = hbs.compile
 
 // if(existsSync('./data4.json'))
 //     rmSync('./data4.json')
@@ -75,6 +77,59 @@ app.get('/admin', (req, res) => {
 app.get('/login', (req, res) => {
 
     res.send(LoginPage())
+})
+
+app.get('/robots.txt', async (req, res) => {
+    res.end(`
+User-agent: *
+Disallow: /css/
+Disallow: /js/
+Disallow: /files/
+
+Sitemap: ${req.protocol}://${req.host}/sitemap.xml
+`)
+})
+
+app.get('/sitemap.xml', async(req, res) => {
+    let result = `
+        <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="https://www.w3.org/1999/xhtml" xmlns:mobile="https://www.google.com/schemas/sitemap-mobile/1.0" xmlns:news="https://www.google.com/schemas/sitemap-news/0.9" xmlns:image="https://www.google.com/schemas/sitemap-image/1.1" xmlns:video="https://www.google.com/schemas/sitemap-video/1.1">
+    `
+
+    let pages = await db('pages').query().all()
+
+    const host = req.protocol + '://' + req.hostname
+    for(let page of pages) {
+        if(page.dynamic && page.collectionId) {
+            const contents = await db('contents').query().filter('_type', '=', page.collectionId).all()
+            for(let content of contents) {
+                const slug = compile(page.slug)(content)
+
+                result += `
+                    <url>
+                        <loc>${host}${slug}</loc>
+                        <changefreq>weekly</changefreq>
+                        <priority>0.5</priority>
+                    </url>
+                `
+            }
+            
+        } else {
+            result += `
+                <url>
+                    <loc>${host}${page.slug}</loc>
+                    <changefreq>weekly</changefreq>
+                    <priority>0.5</priority>
+                </url>
+            `
+        }
+    }
+
+    result += '</urlset>'
+
+    res.writeHead(200, 'Ok', {
+        'Content-Type': 'application/xml'
+    })
+    return res.end(result)
 })
 
 // #region file upload
