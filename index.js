@@ -2,19 +2,21 @@ import express from 'express'
 import multer from 'multer'
 import { db } from '#services'
 import handlers from './src/handlers.js'
-import {cpSync, existsSync, rm, rmSync} from 'node:fs'
+import {cpSync, existsSync, readFile, readFileSync, rmdir, rmSync} from 'node:fs'
 import {mkdir, readdir, writeFile} from 'node:fs/promises'
 import { renderPage } from './src/page.js'
 import cookieParser from 'cookie-parser'
 import { LoginPage } from './src/pages/login.js'
 import layouts from './src/layouts.js'
-import { Form, Input, Select } from './src/components.js'
-import {setupCms} from './services/setup.js'
+import { File, Form, Input, Label, Select } from './src/components.js'
+import { setupCms} from './services/setup.js'
 import hbs from 'handlebars'
+import FileSaver from 'file-saver'
+import JSZip from 'jszip'
 const compile = hbs.compile
 
-// if(existsSync('./data4.json'))
-//     rmSync('./data4.json')
+if(existsSync('./data4.json'))
+    rmSync('./data4.json')
 
 async function SetupPage() {
     const templates = await readdir('./templates');
@@ -35,6 +37,10 @@ async function SetupPage() {
                         name: 'template', 
                         placeholder: 'Choose a template', 
                         label: 'Template'
+                    }),
+                    File({
+                        name: 'file', 
+                        label: 'Import zip'
                     }),
                 ]
             })}
@@ -182,11 +188,150 @@ app.post('/api/publish', async(req, res) => {
 })
 
 app.post('/api/export', async(req, res) => {
-    // export site as json
+    const files = {}    
+
+    const pages = await db('pages').query().all()
+
+    async function getModule(module) {
+        const definition  = await db('definitions').query().filter('id', '=', module.definitionId).first()
+
+        if(definition.name === 'Section') {
+            const columns = await db('modules').query().filter('moduleId', '=', module.id).first()
+
+            module.props['content'] = await getModules({moduleId: columns.id})
+
+        } else {
+            for(let prop of definition.props ?? []) {
+                if(prop.type == 'file') {
+                    files[module.props[prop.slug]] = true
+                }
+                if(prop.type == 'slot') {
+                    const res = await getModules({moduleId: module.id})
+                    module.props[prop.slug] = res
+                    // files[module.props[props.slug]] = true
+                }
+            }
+        }
+
+        module.definition = definition.name
+        delete module.definitionId
+
+        delete module.id
+        delete module.pageId
+        delete module.moduleId
+        delete module.createdAt
+        delete module.updatedAt    
+
+        return module
+    }
+
+    async function getModules({pageId, moduleId}) {
+        if(pageId) {
+            const modules = await db('modules').query().filter('pageId', '=', pageId).all()
+            return await Promise.all(modules.map(x => getModule(x)))
+        }
+        if(moduleId) {
+            const modules = await db('modules').query().filter('moduleId', '=', moduleId).all()
+            return await Promise.all(modules.map(x => getModule(x)))
+        }
+    }
+
+    for(let page of pages) {
+        const modules = await getModules({pageId: page.id})
+
+        page.modules = modules
+
+        if(page.dynamic) {
+            const collection = await db('collections').query().filter('id', '=', page.collectionId).first()
+
+            page.collection = collection.name
+            delete page.collectionId
+        }
+
+        delete page.id
+        delete page.createdAt
+        delete page.updatedAt
+    }
+
+    const definitions = await db('definitions').query().all()
+    for(let definition of definitions) {
+        delete definition.id
+        delete definition.createdAt
+        delete definition.updatedAt
+    }
+
+    const collections = await db('collections').query().all()
+    for(let collection of collections) {
+
+        for(let field of collection.fields) {
+            if(field.type === 'relation') {
+                console.log(field, collections)
+                field.collection = collections.find(x => x.id === field.collectionId)?.name
+                delete field.collectionId
+                console.log(field)
+                
+            }
+        }
+        
+        const contents = await db('contents').query().filter('_type', '=', collection.id).all()
+
+        for(let content of contents) {
+            for(let field of collection.fields) {
+                if(field.type === 'file') {
+                    if(field.multiple) {
+                        console.log(field, files[content[field.slug]])
+                        for(let file of files[content[field.slug]] ?? []) {
+                            files[file] = true
+                        }
+
+                    } else {
+                        files[content[field.slug]] = true
+                    }
+                }
+            }
+            delete content._type
+            delete content.createdAt
+            delete content.updatedAt
+        }
+        collection.contents = contents
+    
+        delete collection.createdAt
+        delete collection.updatedAt
+    }
+
+    for(let collection of collections) {
+        delete collection.id
+    }
+    const jszip = new JSZip()
+
+    for(let file of Object.keys(files)) {
+        if(file !== 'undefined') {
+            jszip.file('site/files/' + file, readFileSync('./uploads/' + file))
+        }
+    }
+    
+    jszip.file('site/pages.json', JSON.stringify(pages, null, 4))
+    jszip.file('site/definitions.json', JSON.stringify(definitions, null, 4))
+    jszip.file('site/collections.json', JSON.stringify(collections, null, 4))
+
+    const content = await jszip.generateAsync({type: 'nodebuffer'})
+
+    res.setHeader('Content-Disposition', 'attachment; filename=backup.zip');
+    res.setHeader('Content-Type', 'application/zip');
+
+    res.send(content)
 })
 
 app.post('/api/import', async(req, res) => {
-    // import site from json
+   
+    
+
+    // await writeFile('./temp/file.zip', req.files[0].buffer)
+    
+
+
+    res.end('{}')
+
 })
 
 //#region Pages

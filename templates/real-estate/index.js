@@ -18,17 +18,17 @@ export default {
             slug: '/',
             modules: [
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         content: [
                             {
-                                name: 'Header',
+                                definition: 'Header',
                                 cols: 12,
                                 props: {}
                             },
                             {
-                                name: 'Hero',
+                                definition: 'Hero',
                                 cols: 12,
                                 props: {
                                     video: "36pq4GxE",
@@ -42,14 +42,14 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         paddingTop: 0,
                         paddingBottom: 0,
                         content: [
                             {
-                                name: 'Footer',
+                                definition: 'Footer',
                                 props: {}
                             },
                         ]
@@ -63,17 +63,17 @@ export default {
             slug: '/about',
             modules: [
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         content: [
                             {
-                                name: 'Header',
+                                definition: 'Header',
                                 cols: 12,
                                 props: {}
                             },
                             {
-                                name: 'Page Heading',
+                                definition: 'Page Heading',
                                 cols: 12,
                                 props: {
                                     title: 'ABOUT KHANA',
@@ -85,12 +85,12 @@ export default {
                     },
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: false,
                         content: [
                             {
-                                name: "Text HTML",
+                                definition: "Text HTML",
                                 props: {
                                     content: '<div class="mt-8"><h1 class="text-2xl font-bold">About Me</h1><p>This is about me section</p></div>'
                                 }
@@ -99,14 +99,14 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         paddingTop: 0,
                         paddingBottom: 0,
                         content: [
                             {
-                                name: 'Footer',
+                                definition: 'Footer',
                                 props: {}
                             },
                         ]
@@ -120,16 +120,16 @@ export default {
             slug: '/neighbourhoods',
             modules: [
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         content: [
                             {
-                                name: 'Header',
+                                definition: 'Header',
                                 props: {}
                             },
                             {
-                                name: 'Page Heading',
+                                definition: 'Page Heading',
                                 props: {
                                     title: 'Neighbourhoods',
                                     subtitle: 'Learn about our exclusive neighbourhoods in the area.',
@@ -140,12 +140,12 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: false,
                         content: [
                             {
-                                name: 'Neighbourhood List',
+                                definition: 'Neighbourhood List',
                                 props: {
                                     items: [],
                                     title: 'Neighbourhoods'
@@ -155,14 +155,14 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         paddingTop: 0,
                         paddingBottom: 0,
                         content: [
                             {
-                                name: 'Footer',
+                                definition: 'Footer',
                                 props: {}
                             },
                         ]
@@ -178,18 +178,18 @@ export default {
             collection: 'Neighbourhoods',
             modules: [
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         paddingTop: 0,
                         paddingBottom: 0,
                         content: [
                             {
-                                name: 'Header',
+                                definition: 'Header',
                                 props: {}
                             },
                             {
-                                name: 'Page Heading',
+                                definition: 'Page Heading',
                                 links: {
                                     title: 'title',
                                     background_image: 'image'
@@ -202,19 +202,19 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: false,
                         content: [
                             {
-                                name: 'Text HTML',
+                                definition: 'Text HTML',
                                 links: {
                                     content: 'content'
                                 } ,
                                 props: {}
                             },
                             {
-                                name: 'Neighbourhood List',
+                                definition: 'Neighbourhood List',
                                 props: {
                                     title: 'Similar Neighbourhoods',
                                 },
@@ -226,14 +226,14 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         paddingTop: 0,
                         paddingBottom: 0,
                         content: [
                             {
-                                name: 'Footer',
+                                definition: 'Footer',
                                 props: {}
                             },
                         ]
@@ -247,16 +247,16 @@ export default {
             slug: '/properties',
             modules: [
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         content: [
                             {
-                                name: 'Header',
+                                definition: 'Header',
                                 props: {}
                             },
                             {
-                                name: 'Page Heading',
+                                definition: 'Page Heading',
                                 props: {
                                     title: 'Properties',
                                     subtitle: 'View my exclusive listings. Contact me for further information',
@@ -267,12 +267,12 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         content: [
                             {
-                                name: 'Videos',
+                                definition: 'Videos',
                                 props: {
                                     title: 'Featured Videos',
                                     videos: []
@@ -282,14 +282,14 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         paddingTop: 0,
                         paddingBottom: 0,
                         content: [
                             {
-                                name: 'Footer',
+                                definition: 'Footer',
                                 props: {}
                             },
                         ]
@@ -305,16 +305,16 @@ export default {
             collection: 'Properties',
             modules: [
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         content: [
                             {
-                                name: 'Header',
+                                definition: 'Header',
                                 props: {}
                             },
                             {
-                                name: 'Image',
+                                definition: 'Image',
                                 links: {
                                     src: "main_image",
                                     alt: "title"
@@ -326,11 +326,11 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         content: [
                             {
-                                name: 'Text HTML',
+                                definition: 'Text HTML',
                                 links: {
                                     content: "description"
                                 }
@@ -339,14 +339,14 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         paddingTop: 0,
                         paddingBottom: 0,
                         content: [
                             {
-                                name: 'Footer',
+                                definition: 'Footer',
                                 props: {}
                             },
                         ]

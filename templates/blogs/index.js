@@ -68,31 +68,31 @@ export default {
             name: "Blog post detail",
             modules: [
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         content: [
                             {
-                                name: 'HTML',
+                                definition: 'HTML',
                                 props: {
                                     content: 'HTML Content of title'
                                 }
                             },
                             // {
-                            //     name: 'HTML',
+                            //     definition: 'HTML',
                             //     props: {
                             //         content: 'HTML Content of post heading with image'
                             //     }
                             // },
                             // {
-                            //     name: 'Image',
+                            //     definition: 'Image',
                             //     props: {},
                             //     links: {
                             //         src: 'featuredImage'
                             //     }
                             // },
                             // {
-                            //     name: 'HTML',
+                            //     definition: 'HTML',
                             //     props: {},
                             //     links: {
                             //         content: 'title'
@@ -102,19 +102,19 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: false,
                         content: [
                             // {
-                            //     name: 'HTML',
+                            //     definition: 'HTML',
                             //     props: {},
                             //     links: {
                             //         content: 'content'
                             //     }
                             // },
                             {
-                                name: 'HTML',
+                                definition: 'HTML',
                                 props: {
                                     content: 'HTML Content of post'
                                 }
@@ -123,12 +123,12 @@ export default {
                     }
                 },
                 {
-                    name: 'Section',
+                    definition: 'Section',
                     props: {
                         fullWidth: true,
                         content: [
                             {
-                                name: 'HTML',
+                                definition: 'HTML',
                                 props: {
                                     content: 'footer'
                                 },

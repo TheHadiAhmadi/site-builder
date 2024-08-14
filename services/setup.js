@@ -1,5 +1,7 @@
-import {cpSync} from 'node:fs'
+import {cpSync, existsSync, readFileSync, rmSync} from 'node:fs'
 import db from "./db.js"
+import JSZip from 'jszip'
+import { mkdir, writeFile } from 'node:fs/promises'
 
 const defaultModules = {
     Section: {
@@ -51,87 +53,22 @@ const defaultModules = {
     }
 }
 
+
 export async function setupCms(req, res) {
-    const {template, password} = req.body
+    const {template, password, file} = req.body
 
     await db('users').insert({
         username: 'admin',
         password: `_%${password}%_`
     })
 
-    let definitions = {}
-    // inset default modules
-    for(let key in defaultModules) {
-        const res = await db('definitions').insert({
-            name: key,
-            props: defaultModules[key].props,
-            template: defaultModules[key].template,
-        })
-        definitions[res.name] = res
+    let _definitions = {}
+    let _collections = {}
 
-    }
+    const files = {}
 
-    const mod = await import(`../templates/${template}/index.js`)
-
-    if(mod.default) {
-        let collections = {}
-        for (let definition of mod.default.definitions) {
-            const def = (await definition).default
-            const res = await db('definitions').insert({...def})
-            definitions[res.name] = res
-        }
-
-
-        for(let collection of mod.default.collections) {
-            const {name, fields, contents} = collection
-            
-            const res = await db('collections').insert({name, fields})  
-            collections[res.name] = res
-
-            for(let item of contents) {
-                for(let key in item) {
-                    const field = fields.find(x => x.slug === key)
-                    const prop = item[key]
-                    if(!field) console.log('Field not found: ', key, fields)
-                    if(field.type === 'file' && !field.multiple) {
-                        const {id} = await db('files').insert({
-                            name: prop
-                        })
-
-                        cpSync(`./templates/${template}/files/${prop}`, `./uploads/${id}`)
-                        item[key] = id
-                    }
-                    
-                }
-                item._type = res.id
-
-                await db('contents').insert(item)
-            }
-        } 
-        
-        for(let collection of mod.default.collections) {
-            for(let field of collection.fields) {
-                console.log(collection, field)
-                if(field.type === 'relation') {
-                    field.collectionId = collections[field.collection]?.id
-                    delete field.collection
-                }
-            }
-            await db('collections').update(collection)
-        }
-        for(let key in definitions) {
-            const definition = definitions[key]
-            for(let prop of definition.props) {
-                
-                if(prop.type === 'relation') {
-                    prop.collectionId = collections[prop.collection]?.id
-                    delete prop.collection
-                }
-            }
-            await db('definitions').update(definition)
-        }
-        
-        for(let page of mod.default.pages) {
+    async function importPages(pages) {
+        for(let page of pages) {
             const request = {
                 title: page.title,
                 name: page.name,
@@ -140,7 +77,8 @@ export async function setupCms(req, res) {
 
             if(page.dynamic) {
                 request.dynamic = true
-                request.collectionId = collections[page.collection].id
+                console.log(_collections, page)
+                request.collectionId = _collections[page.collection].id
             }
             
             const res = await db('pages').insert(request)
@@ -150,8 +88,7 @@ export async function setupCms(req, res) {
                 let index = 0
                 let afterInsertActions = []
                 for(let module of modules) {
-                    
-                    for(let prop of definitions[module.name].props) {
+                    for(let prop of _definitions[module.definition].props) {
                         if(!module.props) continue;
                         const value = module.props[prop.slug]
 
@@ -186,7 +123,7 @@ export async function setupCms(req, res) {
                     if(!moduleId) {
 
                         let res1 = await db('modules').insert({
-                            definitionId: definitions[module.name].id,
+                            definitionId: _definitions[module.definition].id,
                             moduleId,
                             pageId: res.id,
                             props: module.props ?? {},
@@ -195,7 +132,7 @@ export async function setupCms(req, res) {
                         })
 
                         res2 = await db('modules').insert({
-                            definitionId: definitions['Columns'].id,
+                            definitionId: _definitions['Columns'].id,
                             moduleId: res1.id,
                             props: {},
                             links: {},
@@ -203,7 +140,7 @@ export async function setupCms(req, res) {
                         })
                     } else {
                         res2 = await db('modules').insert({
-                            definitionId: definitions[module.name].id,
+                            definitionId: _definitions[module.definition].id,
                             moduleId,
                             pageId: moduleId ? undefined : res.id,
                             props: module.props ?? {},
@@ -218,7 +155,11 @@ export async function setupCms(req, res) {
                             const res = await addModules(action.value ?? [], res2.id)
                         }
                         if(action.type === 'move-file') {
-                            cpSync(`./templates/${template}/files/${action.value.name}`, `./uploads/${action.value.id}`)
+                            if(file) {
+                                cpSync(`./temp/site/files/${action.value.name}`, `./uploads/${action.value.id}`)
+                            } else {
+                                cpSync(`./templates/${template}/files/${action.value.name}`, `./uploads/${action.value.id}`)
+                            }
                         }
                     }
                     afterInsertActions = []
@@ -229,10 +170,171 @@ export async function setupCms(req, res) {
             }
             
             await addModules(page.modules)
-            
+        }
+    }
 
+    async function importCollections(collections) {
+        console.log('import Collections')
+        const idMap = {}
+
+        for(let collection of collections) {
+            const {name, fields, contents} = collection
+            
+            const res = await db('collections').insert({name, fields})  
+            _collections[res.name] = res
+            console.log('set Collections', res)
+
+            for(let item of contents) {
+                for(let key in item) {
+                    const field = fields.find(x => x.slug === key)
+                    const prop = item[key]
+
+                    if(key === 'id') {
+                        continue
+                        // handle relations.
+                    }
+
+                    if(!field) console.log('Field not found: ', key, fields)
+                    if(field.type === 'file' && !field.multiple) {
+                        const {id} = await db('files').insert({
+                            name: prop
+                        })
+
+                        if(file) {
+                            cpSync(`./temp/site/files/${prop}`, `./uploads/${id}`)
+                        } else {
+                            cpSync(`./templates/${template}/files/${prop}`, `./uploads/${id}`)
+                        }
+                        item[key] = id
+                    }
+                    
+                }
+                item._type = res.id
+
+                const itemId = item.id
+                delete item.id
+                const res2 = await db('contents').insert(item)
+                
+                idMap[itemId] = res2.id
+            }
+        } 
+
+        for(let collection of await db('collections').query().all()) {
+            const contents = await db('contents').query().filter('_type', '=', collection.id).all()
+
+            for(let item of contents) {
+                for(let field of collection.fields) {
+                    if(field.type === 'relation') {
+                        item[field.slug] = idMap[item[field.slug]]
+                    }
+                }
+                await db('contents').update(item)
+            }
+
+            for(let field of collection.fields) {
+                if(field.type === 'relation') {
+                    field.collectionId = _collections[field.collection]?.id
+                    delete field.collection
+                }
+
+            }
+            await db('collections').update(collection)
+        }
+    }
+
+    if(file) {
+        const zipFile = './uploads/' + file;
+
+        if(!existsSync('./temp')) {
+            await mkdir('./temp')
+        } else {
+            rmSync('./temp', {force: true, recursive: true})
+            await mkdir('./temp')
         }
 
+        const zip = new JSZip()
+
+        const content = await zip.loadAsync(readFileSync(zipFile) , {createFolders: true})
+
+        const promises = []
+
+        content.forEach((path, file) => {
+            promises.push(
+                new Promise(async resolve => {
+                    if (!file.dir) {
+                        // Extract the file content as a buffer
+                        const fileContent = await file.async('nodebuffer');
+
+                        // Write the file content to the specified path
+                        await writeFile('./temp/' + path, fileContent);
+                    } else {
+                        await mkdir('./temp/' + path, {recursive: true})
+                    }
+                    resolve() // After all contents finished..
+                })
+            )
+        })
+
+        await Promise.all(promises)
+
+        const pagesFile = './temp/site/pages.json'
+        const collectionsFile = './temp/site/collections.json'
+        const definitionsFile = './temp/site/definitions.json'
+
+        const pages = JSON.parse(readFileSync(pagesFile))
+        const collections = JSON.parse(readFileSync(collectionsFile))
+        const definitions = JSON.parse(readFileSync(definitionsFile))
+
+        for (let definition of definitions) {
+            const res = await db('definitions').insert(definition)
+            _definitions[res.name] = res
+        }
+
+        await importCollections(collections)
+        
+        await importPages(pages)
+        
+    } else {
+        // inset default modules
+        for(let key in defaultModules) {
+            const res = await db('definitions').insert({
+                name: key,
+                props: defaultModules[key].props,
+                template: defaultModules[key].template,
+            })
+            _definitions[res.name] = res
+    
+        }
+    
+        const mod = await import(`../templates/${template}/index.js`)
+    
+        if(mod.default) {
+            for (let definition of mod.default.definitions) {
+                const def = (await definition).default
+                const res = await db('definitions').insert({...def})
+                _definitions[res.name] = res
+            }
+    
+    
+            for(let key in _definitions) {
+                const definition = _definitions[key]
+                for(let prop of definition.props) {
+                    
+                    if(prop.type === 'relation') {
+                        prop.collectionId = _collections[prop.collection]?.id
+                        delete prop.collection
+                    }
+                }
+                await db('definitions').update(definition)
+            }
+
+            await importCollections(mod.default.collections)
+            
+            await importPages(mod.default.pages)
+    
+        }
     }
+
     res.redirect('?mode=edit')
 }
+
