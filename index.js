@@ -15,8 +15,8 @@ import FileSaver from 'file-saver'
 import JSZip from 'jszip'
 const compile = hbs.compile
 
-if(existsSync('./data4.json'))
-    rmSync('./data4.json')
+// if(existsSync('./data4.json'))
+//     rmSync('./data4.json')
 
 async function SetupPage() {
     const templates = await readdir('./templates');
