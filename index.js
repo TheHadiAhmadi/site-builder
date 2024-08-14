@@ -86,7 +86,7 @@ Disallow: /css/
 Disallow: /js/
 Disallow: /files/
 
-Sitemap: ${req.protocol}://${req.host}/sitemap.xml
+Sitemap: https://${req.host}/sitemap.xml
 `)
 })
 
@@ -97,7 +97,7 @@ app.get('/sitemap.xml', async(req, res) => {
 
     let pages = await db('pages').query().all()
 
-    const host = req.protocol + '://' + req.hostname
+    const host = 'https' + '://' + req.hostname
     for(let page of pages) {
         if(page.dynamic && page.collectionId) {
             const contents = await db('contents').query().filter('_type', '=', page.collectionId).all()
