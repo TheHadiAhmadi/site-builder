@@ -1,7 +1,8 @@
 - [ ] Page settings (SEO, Head, ....)
     - [ ] Add Description and og settings for page seo
 - [ ] Global Theme Settings (tailwind config)
-- [ ] Publish/Import/Export site/page
+- [ ] Publish/
+- [x] Import/Export site/page
 - [ ] Landing page example
 - [x] Host site
 - [ ] Complete Toolbar items
@@ -21,4 +22,5 @@
 
 
 ## DB
-- [ ] Query (like, in) operators
+- [x] Query (in) operator
+- [ ] Query (like) operator
