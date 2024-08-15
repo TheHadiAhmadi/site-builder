@@ -6,9 +6,6 @@
     padding-right: 1rem;
 }
 
-[data-section] {
-}
-
 [data-section-resizer] {
     display: none;
 }

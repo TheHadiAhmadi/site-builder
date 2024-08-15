@@ -1,4 +1,6 @@
+import { db } from "#services";
 import { Button, Card, CardBody, Checkbox, EmptyTable, File, Form, Input, Label, Modal, Page, Select, Stack, Table, Textarea } from "../components.js"
+import { getDataTableItems } from "../handlers.js";
 import { DataTable } from "./dataTable.js";
 import { FieldModal, FieldsList } from "./fields.js";
 
@@ -132,7 +134,7 @@ export function updateCollectionPage(collection) {
 }
 
 
-export function collectionDataList(collection, items) {
+export async function collectionDataList(collection) {
     let filters = collection.fields.map(x => {
         return {
             label: x.label,
@@ -141,6 +143,9 @@ export function collectionDataList(collection, items) {
             ...x
         }
     })
+
+    let items = await getDataTableItems({collection, filters: [], page: 1, perPage: 10})
+
     let content = DataTable({filters, items, collectionId: collection.id, fields: collection.fields})
     
     return Page({

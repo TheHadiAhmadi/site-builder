@@ -46,10 +46,15 @@ function generatePrompt({template, fields, collections}) {
 
     name of module should be small and less than 20 characters
 it's ui should have these specs:
+--- start of user description of template 
 ${template}
+--- end of user description of template. only focus on tailwind and Handlebars template and skip other things if user said
 
 It has these props
+
+--- start of user description of props 
 ${fields}
+--- end of user description of props. other things if user said. focus on props
 
 use props in template (prop.slug should be used in template when needed)
 
@@ -65,15 +70,15 @@ AiResponse should be like this:
     props: Prop[]
 }
 
-type Prop = InputProp | TextareaProp | SelectProp | BooleanProp | RichTextProp | RelationProp
+type Prop = InputProp | TextareaProp | FileProp | SelectProp | BooleanProp | RichTextProp | RelationProp
 
 type InputProp = { type: 'input', slug: string, label: string }
+type FileProp = { type: 'file', slug: string, multiple: boolean, label: string, type: 'image' | 'video' | 'document' | 'all' }
 type TextareaProp = { type: 'textarea', slug: string, label: string }
 type RichTextProp = { type: 'rich-text', slug: string, label: string }
 type CheckboxProp = { type: 'checkbox', slug: string, label: string }
-type SelectProp = { type: 'select', slug: string, label: string, items: string[] }
+type SelectProp = { type: 'select', slug: string, label: string, multiple: boolean, items: string[] }
 type RelationProp = { type: 'relation', slug: string, label: string, collectionId: string, multiple: boolean }
-
 
 Don't be talktive. only respond with json object
     `

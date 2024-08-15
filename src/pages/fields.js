@@ -78,6 +78,14 @@ export function FieldForm({handler, collections, id, mode = 'add', type = ''}) {
     
     if(type === 'file') {
         fields.push(
+            Select({name: 'file_type', label: 'Type', items: [
+                {value: 'image', text: 'Image'},
+                {value: 'video', text: 'Video'},
+                {value: 'document', text: 'Document'},
+                {value: 'all', text: 'All Types'},
+            ]})
+        )
+        fields.push(
             Checkbox({name: 'multiple', label: 'Multiple'})
         )
     }

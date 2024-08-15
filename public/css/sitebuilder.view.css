@@ -8,3 +8,15 @@
 [data-module-content] {
     display: contents;
 }
+
+[data-section] {
+    display: contents;
+}
+
+[data-columns]:has(.sticky) {
+    display: contents;
+}
+
+[data-column]:has(.sticky) {
+    display: contents;
+}

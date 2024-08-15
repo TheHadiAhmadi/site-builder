@@ -1,7 +1,7 @@
 import { html } from "svelite-html";
 import { Button, Checkbox, EmptyTable, Stack, Table } from "../components.js";
 
-export function DataTable({filters = [], selectable, perPage = 10, page = 1, items, collectionId, fields, actions = ['edit', 'delete']}) {
+export function DataTable({filters = [], selectable, items, collectionId, fields, actions = ['edit', 'delete']}) {
     const filtersObject = filters.reduce((prev, curr) => {
         return {...prev, [curr.field]: curr.value}
     }, {})
@@ -47,7 +47,41 @@ export function DataTable({filters = [], selectable, perPage = 10, page = 1, ite
         if(field.type === 'textarea') return item[field.slug].slice(0, 100) + (item[field.slug].length > 100 ? '...' : '')
         if(field.type === 'checkbox') return item[field.slug] ? 'Yes' : 'No'
         if(field.type === 'select') return `<span data-badge>${item[field.slug]}</span>`
-        if(field.type === 'file') return `<div>FILE${item[field.slug]}</div>`
+        if(field.type === 'file') {
+            console.log(field, item)
+            
+            function renderFile(file) {
+                if(field.file_type == 'image') {
+                    return `
+                        <a href="/files/${file.id}" style="max-height: 40px; overflow: hidden">
+                            <img src="/files/${file.id}" style="width: 64px; height: auto"/>
+                        </a>
+                    `
+                }
+    
+                const file_icons = {
+                    video: '<svg data-file-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m14 2l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm4 18V9h-5V4H6v16zm-2-2l-2.5-1.7V18H8v-5h5.5v1.7L16 13z"/></svg>',
+                    document: '<svg data-file-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm0 2h7v5h5v11H6zm2 8v2h8v-2zm0 4v2h5v-2z"/></svg>',
+                    all: '<svg data-file-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm4 18H6V4h7v5h5z"/></svg>',
+                }
+                
+                return `
+                    <div data-file-item>
+                        <svg data-download-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-6 4q-.825 0-1.412-.587T4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413T18 20z"/></svg>
+                        ${file_icons[field.file_type]}
+                        <div>
+                            ${file.name ?? 'Download'}
+                        </div>
+                    </div>
+                `
+            }
+
+            if(field.multiple && Array.isArray(item[field.slug])) {
+                return Stack({}, item[field.slug].map(x => renderFile(x)))
+            }
+
+            return renderFile(item[field.slug])
+        }
         if(field.type === 'rich-text') return '...'
         if(field.type === 'relation') {
             if(!item[field.slug]) return ''
@@ -61,13 +95,14 @@ export function DataTable({filters = [], selectable, perPage = 10, page = 1, ite
 
     let content;
     
-    if(items.length) {
+    console.log(items)
+    if(items.data.length) {
         content = Table({
             head: [
                 selectable === 'multi' ? `<th style="width: 0"><input type="checkbox" name="select-all" data-checkbox/></th>` : (selectable === 'single' ?  '<th style="width: 0"></th>' : ''), 
                 fields.map(x => `<th>${x.label}</th>`).join('')
             ].join(''),
-            body: items.map(item => html`
+            body: items.data.map(item => html`
                 <tr>
                     ${selectable ? `<td><input name="data-table-select" value="${item.id}" type="${selectable === 'multi' ? 'checkbox': 'radio'}" data-${selectable === 'multi' ? 'checkbox': 'radio'}/></td>` : ''}
                     ${fields.map(x => `<td>${renderField(item, x)}</td>`)}
@@ -167,11 +202,11 @@ export function DataTable({filters = [], selectable, perPage = 10, page = 1, ite
                 <div style="display: flex; align-items: center; gap: 8px">
                     Show 
                     <select style="width: max-content;" data-select name="perPage">
-                        <option ${perPage == 5 ? 'selected' : ''} value="5">5</option>
-                        <option ${perPage == 10 ? 'selected' : ''} value="10">10</option>
-                        <option ${perPage == 25 ? 'selected' : ''} value="25">25</option>
-                        <option ${perPage == 50 ? 'selected' : ''} value="50">50</option>
-                        <option ${perPage == 100 ? 'selected' : ''} value="100">100</option>
+                        <option ${items.perPage == 5 ? 'selected' : ''} value="5">5</option>
+                        <option ${items.perPage == 10 ? 'selected' : ''} value="10">10</option>
+                        <option ${items.perPage == 25 ? 'selected' : ''} value="25">25</option>
+                        <option ${items.perPage == 50 ? 'selected' : ''} value="50">50</option>
+                        <option ${items.perPage == 100 ? 'selected' : ''} value="100">100</option>
                     </select>
                     entries
                 </div>

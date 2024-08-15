@@ -36,3 +36,44 @@
     border-radius: 16px;
     display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 18px; margin-right: -16px;
 }
+
+
+[data-file-item] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 16px;
+    height: 32px;
+    padding-left: 12px;
+    padding-right: 8px;
+    background-color: #1081232a;
+    color: #0c751e;
+    cursor: pointer;
+}
+
+[data-file-item]:hover {
+    background-color: #10812336;
+    color: #086117;
+}
+
+[data-file-icon] {
+    display: block;
+    width: 24px;
+    height: 24px; 
+    opacity: 0.7;
+}
+[data-download-icon] {
+    display: none;
+    width: 24px;
+    height: 24px; 
+    opacity: 0.7;
+
+}
+
+[data-file-item]:hover [data-file-icon] {
+    display: none;
+}
+
+[data-file-item]:hover [data-download-icon] {
+    display: block;
+}
