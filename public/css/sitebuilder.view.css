@@ -9,7 +9,7 @@
     display: contents;
 }
 
-[data-section] {
+[data-section]:has(.sticky) {
     display: contents;
 }
 
