@@ -23,21 +23,25 @@ export default {
             const collection = await db('collections').query().filter('id', '=', collectionId).first()
             let query = db('contents').query().filter('_type', '=', collectionId)
 
-            for(let filter of filters) {
-                if(filter.value !== '') {
-                    if(Array.isArray(filter.value)) {
-                        filter.operator = 'in'
-                        if(filter.value.length) {
-                            query = query.filter(filter.field, filter.operator, filter.value)
-                        }
+            for(let field of collection.fields) {
+                const filter = filters.find(x => x.field == field.slug)
 
-                    } else {
+                if(field.type === 'select') {
+                    filter.operator = 'in'
+                    if(filter.value.length) {
                         query = query.filter(filter.field, filter.operator, filter.value)
                     }
-                    
                 }
+                if(['input', 'textarea'].includes(field.type)) {
+                    filter.operator = 'like'
+                    if(filter.value != '') {
+                        query = query.filter(filter.field, filter.operator, filter.value)
+                    }
+                }
+                
+                // TODO: Other field type filters
             }
-
+            
             const items = await query.paginate(+page, +perPage)
             
             return DataTable({filters, selectable, actions, perPage, page, collectionId: collection.id, fields: collection.fields, items: items.data })
