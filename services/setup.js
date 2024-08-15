@@ -174,7 +174,7 @@ export async function setupCms(req, res) {
     }
 
     async function importCollections(collections) {
-        console.log('import Collections')
+        console.log('import Collections', collections)
         const idMap = {}
 
         for(let collection of collections) {
@@ -182,7 +182,7 @@ export async function setupCms(req, res) {
             
             const res = await db('collections').insert({name, fields})  
             _collections[res.name] = res
-            console.log('set Collections', res)
+            console.log('set Collections', _collections)
 
             for(let item of contents) {
                 for(let key in item) {
@@ -219,6 +219,7 @@ export async function setupCms(req, res) {
             }
         } 
 
+        console.log('final: ', _collections)
         for(let collection of await db('collections').query().all()) {
             const contents = await db('contents').query().filter('_type', '=', collection.id).all()
 
@@ -233,8 +234,10 @@ export async function setupCms(req, res) {
 
             for(let field of collection.fields) {
                 if(field.type === 'relation') {
-                    field.collectionId = _collections[field.collection]?.id
+                    console.log('relation field: ', _collections[field.collection])
+                    field.collectionId = _collections[field.collection].id
                     delete field.collection
+                    console.log(field)
                 }
 
             }
@@ -285,12 +288,20 @@ export async function setupCms(req, res) {
         const collections = JSON.parse(readFileSync(collectionsFile))
         const definitions = JSON.parse(readFileSync(definitionsFile))
 
+        await importCollections(collections)
+
         for (let definition of definitions) {
+            for(let prop of definition.props) {
+                if(prop.type === 'relation') {
+                    prop.collectionId = _collections[prop.collection]?.id
+                    delete prop.collection
+                }   
+            }
             const res = await db('definitions').insert(definition)
+
             _definitions[res.name] = res
         }
 
-        await importCollections(collections)
         
         await importPages(pages)
         

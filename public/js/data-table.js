@@ -46,10 +46,21 @@ export function DataTable(el) {
         const selectable = el.dataset.selectable
         // const handler = el.dataset.handler
 
+        const filters = []
+
+        for(let key in value.filters) {
+            console.log(value.filters[key])
+            filters.push({
+                field: key, 
+                operator: '=', 
+                value: value.filters[key]
+            })
+        }
+        
         const res = await request('table.load', {
             collectionId,
             selectable,
-            filters: Object.keys(value.filters).map(x => ({field: x, operator: '=', value: value.filters[x]})),
+            filters,
             perPage: +(el.querySelector('[name=perPage]').value ?? '10'),
         })
 

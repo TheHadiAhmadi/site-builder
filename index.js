@@ -255,6 +255,14 @@ app.post('/api/export', async(req, res) => {
 
     const definitions = await db('definitions').query().all()
     for(let definition of definitions) {
+
+        for(let prop of definition.props) {
+            if(prop.type === 'relation') {
+                const collection = await db('collections').query().filter('id', '=', prop.collectionId).first()
+                prop.collection = collection?.name ?? 'TODO'
+                delete prop.collectionId
+            }
+        }
         delete definition.id
         delete definition.createdAt
         delete definition.updatedAt
