@@ -273,11 +273,8 @@ app.post('/api/export', async(req, res) => {
 
         for(let field of collection.fields) {
             if(field.type === 'relation') {
-                console.log(field, collections)
                 field.collection = collections.find(x => x.id === field.collectionId)?.name
                 delete field.collectionId
-                console.log(field)
-                
             }
         }
         
@@ -287,11 +284,9 @@ app.post('/api/export', async(req, res) => {
             for(let field of collection.fields) {
                 if(field.type === 'file') {
                     if(field.multiple) {
-                        console.log(field, files[content[field.slug]])
                         for(let file of files[content[field.slug]] ?? []) {
                             files[file] = true
                         }
-
                     } else {
                         files[content[field.slug]] = true
                     }

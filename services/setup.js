@@ -64,6 +64,7 @@ export async function setupCms(req, res) {
 
     let _definitions = {}
     let _collections = {}
+    const idMap = {}
 
     const files = {}
 
@@ -92,6 +93,18 @@ export async function setupCms(req, res) {
                         if(!module.props) continue;
                         const value = module.props[prop.slug]
 
+                        if(prop.type === 'relation') {
+                            const value = module.props[prop.slug]
+                            if(prop.multiple) {
+                                if(value) {
+                                    module.props[prop.slug] = value.map(x => idMap[x])
+                                }
+                            } else {
+                                if(value) {
+                                    module.props[prop.slug] = idMap[value]
+                                }
+                            }
+                        }
 
                         if(prop.type === 'file' && !page.dynamic) {
                             const {id} = await db('files').insert({
@@ -175,7 +188,6 @@ export async function setupCms(req, res) {
 
     async function importCollections(collections) {
         console.log('import Collections', collections)
-        const idMap = {}
 
         for(let collection of collections) {
             const {name, fields, contents} = collection
@@ -219,29 +231,29 @@ export async function setupCms(req, res) {
             }
         } 
 
-        console.log('final: ', _collections)
         for(let collection of await db('collections').query().all()) {
+            for(let field of collection.fields) {
+                if(field.type === 'relation') {
+                    field.collectionId = _collections[field.collection].id
+                    delete field.collection
+                }
+            }
+            await db('collections').update(collection)
+
             const contents = await db('contents').query().filter('_type', '=', collection.id).all()
 
             for(let item of contents) {
                 for(let field of collection.fields) {
                     if(field.type === 'relation') {
-                        item[field.slug] = idMap[item[field.slug]]
+                        if(field.multiple) {
+                            item[field.slug] = item[field.slug].map(x => idMap[x])
+                        } else {
+                            item[field.slug] = idMap[item[field.slug]]
+                        }
                     }
                 }
                 await db('contents').update(item)
             }
-
-            for(let field of collection.fields) {
-                if(field.type === 'relation') {
-                    console.log('relation field: ', _collections[field.collection])
-                    field.collectionId = _collections[field.collection].id
-                    delete field.collection
-                    console.log(field)
-                }
-
-            }
-            await db('collections').update(collection)
         }
     }
 

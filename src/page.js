@@ -280,7 +280,10 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
     } else if(view === 'settings') {
         sidebar = 'settings'
         if(query.category === 'general') {
-            content = Page({title: 'General settings', body: 'Content'})
+            content = Page({title: 'General settings', body: [
+                `<form method="POST" action="/api/export">${Button({color: 'primary', text: 'Export', type: 'submit'})}</form>`
+                // Form()
+            ]})
         } else if(query.category === 'appearance') {
             content = Page({title: 'Appearance settings', body: 'Content'})
         } else if(query.category === 'profile') {
