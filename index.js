@@ -2,17 +2,17 @@ import express from 'express'
 import multer from 'multer'
 import { db } from '#services'
 import handlers from './src/handlers.js'
-import {cpSync, existsSync, readFile, readFileSync, rmdir, rmSync} from 'node:fs'
+import { existsSync, readFileSync, rmSync } from 'node:fs'
 import {mkdir, readdir, writeFile} from 'node:fs/promises'
 import { renderPage } from './src/page.js'
 import cookieParser from 'cookie-parser'
 import { LoginPage } from './src/pages/login.js'
 import layouts from './src/layouts.js'
-import { File, Form, Input, Label, Select } from './src/components.js'
+import { File, Form, Input, Select } from './src/components.js'
 import { setupCms} from './services/setup.js'
 import hbs from 'handlebars'
-import FileSaver from 'file-saver'
 import JSZip from 'jszip'
+
 const compile = hbs.compile
 
 // if(existsSync('./data4.json'))
@@ -88,9 +88,6 @@ app.get('/login', (req, res) => {
 app.get('/robots.txt', async (req, res) => {
     res.end(`
 User-agent: *
-Disallow: /css/
-Disallow: /js/
-Disallow: /files/
 
 Sitemap: https://${req.hostname}/sitemap.xml
 `)
