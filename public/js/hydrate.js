@@ -12,8 +12,8 @@ import { RichText } from './rich-text.js'
 const components = Components()
 
 components.register('action', Action)
-components.register('form', Form)
 components.register('file', FileUploader)
+components.register('form', Form)
 components.register('enhance', Link)
 components.register('modal', Modal)
 components.register('dropdown', Dropdown)

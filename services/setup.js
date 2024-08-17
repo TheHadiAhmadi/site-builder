@@ -71,14 +71,16 @@ export async function setupCms(req, res) {
     async function importPages(pages) {
         for(let page of pages) {
             const request = {
-                title: page.title,
                 name: page.name,
-                slug: page.slug
+                slug: page.slug,
+                head: page.head,
+                dynamic: page.dynamic,
+                script: page.script,
+                style: page.style,
+                seo: page.seo
             }
 
             if(page.dynamic) {
-                request.dynamic = true
-                console.log(_collections, page)
                 request.collectionId = _collections[page.collection].id
             }
             

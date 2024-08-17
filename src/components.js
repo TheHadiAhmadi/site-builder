@@ -100,13 +100,44 @@ export function Checkbox({name, checked, label, multiple, value = "true"}) {
     })
 }
 
-export function File({name, label}) {
+export function File({name, label, type, multiple}) {
+    let body;
+
+    if(type === 'image') {
+        body = `
+            <label data-file-label data-file-type="image">
+                <div data-empty-mode>
+                    ${Button({
+                        color: 'primary', 
+                        text: multiple ? 'Choose Images' : 'Choose Image'
+                    })}
+                </div>
+                <img data-image-preview />
+                <input type="file" data-file name="${name}" />
+                <div data-file-remove>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 7L7 17M7 7l10 10"/>
+                    </svg>
+                </div>
+            </label>
+        `
+    } else {
+        body = `
+            <label data-file-label data-file-type="${type}">
+                <input type="file" data-file name="${name}" />
+                <div data-file-remove>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 7L7 17M7 7l10 10"/>
+                    </svg>
+                </div>
+            </label>
+        `
+    }
+
     return Label({
         symbolic: true,
         text: label,
-        body: `<label data-file-label><input type="file" data-file name="${name}" /><div data-file-remove>
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 7L7 17M7 7l10 10"/></svg>
-        </div></label>`
+        body
     })
 }
 

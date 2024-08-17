@@ -131,14 +131,12 @@ export function setFormValue(form, value) {
     form.querySelectorAll('[name]').forEach(input => {
         const name = input.getAttribute('name')
         if(formValue[name] || formValue[name] == '' || formValue[name] == 0 || value[name]) {
-            if(input.getAttribute('type') === 'file') {
+            console.log(input)
+            if(input.hasAttribute('data-file-input')) {
+                input.setValue(formValue[name])
 
-                setTimeout(() => {
-                    form.querySelector(`[name="${name}"]`).value = formValue[name]
-                    input.dataset.fileId = formValue[name]
-                }, 100)
             } else if(input.hasAttribute('data-checkbox')) {
-
+                console.log('checkbox', name, formValue)
                 if(input.hasAttribute('data-checkbox-multiple')) {
                     if(input.value === 'true' || input.value === 'false') {
                         input.checked = formValue[name]?.includes(input.value === 'true' ? true : false)
@@ -147,7 +145,11 @@ export function setFormValue(form, value) {
                         input.checked = formValue[name]?.includes(input.value)
                     }
                 } else {
-                    input.checked = formValue[name]
+                    if(formValue[name] === 'true' || formValue[name] === true) {
+                        input.checked = true
+                    } else {
+                        input.checked = false
+                    }
                 }
             } else if(input.hasAttribute('data-json')) { 
                 if(value[name]) {
@@ -168,6 +170,7 @@ export function setFormValue(form, value) {
                     }, 200)
                 }
             } else {
+                console.log('here', name)
                 input.value = formValue[name]
             }
         }

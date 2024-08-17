@@ -110,7 +110,7 @@ app.get('/sitemap.xml', async(req, res) => {
                 result += `
                     <url>
                         <loc>${host}${slug}</loc>
-                        <changefreq>weekly</changefreq>
+                        <changefreq>daily</changefreq>
                         <priority>0.5</priority>
                     </url>
                 `

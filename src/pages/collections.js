@@ -78,6 +78,12 @@ export function FieldInput(field) {
         options.collectionId = field.collectionId
         options.multiple = field.multiple
     }
+
+    if(field.type === 'file') {
+        options.type = field.file_type
+        options.multiple = field.multiple
+    }
+
     const inputs = {
         input: Input,
         select: Select,

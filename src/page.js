@@ -441,7 +441,10 @@ export async function renderPage(req, res) {
     const html = renderTemplate(layouts.default, {
         head: (head?? '') + (stylesheet ?? ''), 
         body: await renderBody(modules, {...req.query, props, mode, url: req.url, view}), 
-        title: hbs.compile(title)(props)
+        title: hbs.compile(title)(props),
+        script: page.script,
+        style: page.style,
+        seo: page.seo
     })
 
     res.send(html)
