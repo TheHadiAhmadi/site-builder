@@ -43,6 +43,13 @@ export function initSortableIframe() {
     let iframeElement = document.querySelector('iframe')
     const bodyElement = iframeElement.contentDocument.querySelector('[data-body]')
 
+    if(!bodyElement) {
+        setTimeout(() => {
+            initSortableIframe()
+        }, 1000)
+        return;
+    }
+
     Sortable.get(bodyElement)?.destroy()
     new Sortable(bodyElement, {
         group: 'layout',
