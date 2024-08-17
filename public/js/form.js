@@ -86,7 +86,7 @@ export function getFormValue(formEl) {
         }
 
         let inputValue = input.value
-        if(inputValue === 'true') {
+        if(!multiple && inputValue === 'true') {
             inputValue = input.checked
         }
 
@@ -137,11 +137,18 @@ export function setFormValue(form, value) {
                     form.querySelector(`[name="${name}"]`).value = formValue[name]
                     input.dataset.fileId = formValue[name]
                 }, 100)
-            } else if(input.hasAttribute('data-checkbox') && input.value == 'true') {
-                input.checked = formValue[name]
-            } else if(input.hasAttribute('data-checkbox') && input.value !== 'true') {
-                // TODO: Handle checkbox group
-                input.checked = formValue[name]?.includes(input.value)
+            } else if(input.hasAttribute('data-checkbox')) {
+
+                if(input.hasAttribute('data-checkbox-multiple')) {
+                    if(input.value === 'true' || input.value === 'false') {
+                        input.checked = formValue[name]?.includes(input.value === 'true' ? true : false)
+
+                    } else {
+                        input.checked = formValue[name]?.includes(input.value)
+                    }
+                } else {
+                    input.checked = formValue[name]
+                }
             } else if(input.hasAttribute('data-json')) { 
                 if(value[name]) {
                     if(typeof value[name] == 'object') {

@@ -144,6 +144,24 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                 </div>
             `
         }
+        if(field.type === 'checkbox') {
+            return `
+                <div style="display: flex; flex-direction: column; gap: 8px">
+                    ${[{key: "true", text: 'True'}, {key: "false", text: 'False'}].map(item => `
+                        <div data-dropdown-item>
+                            ${Checkbox({
+                                multiple: true,
+                                name: 'filters.' + field.slug, 
+                                label: item.text, 
+                                checked: filtersObject[field.slug]?.includes(item.key),
+                                value: item.key
+                            })} 
+                        </div>
+                    `).join('')}
+                
+                </div>
+            `
+        }
         if(field.type === 'input' || field.type === 'textarea') {
             return `
             <div data-dropdown-item>
@@ -159,8 +177,16 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
         const content = FilterContent(field)
 
         if(!content) return ''
-        const hasFilter = field.type == 'select' ? filtersObject[field.slug]?.length : filtersObject[field.slug]
-        const filterValue = field.type == 'select' ? filtersObject[field.slug]?.length + ' Items' : filtersObject[field.slug]
+        const hasFilter = ['select', 'checkbox'].includes(field.type) ? filtersObject[field.slug]?.length : filtersObject[field.slug]
+        let filterValue;
+        
+        if(field.type === 'select') {
+            filterValue = filtersObject[field.slug]?.length + ' Items'
+        } else if(field.type === 'Checkbox') {
+            filterValue = filtersObject[field.slug].join(' or ')
+        } else {
+            filterValue = filtersObject[field.slug]
+        }
         
         return `
             <div data-dropdown data-dropdown-trigger="focus" data-dropdown-placement="start">

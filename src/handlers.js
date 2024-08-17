@@ -16,12 +16,20 @@ export async function getDataTableItems({page = 1, perPage = 10, collection, fil
 
         if(!filter) continue
 
-        if(field.type === 'select') {
+
+        if(['select'].includes(field.type)) {
             filter.operator = 'in'
             if(filter.value.length) {
                 query = query.filter(filter.field, filter.operator, filter.value)
             }
         }
+        if(['checkbox'].includes(field.type)) {
+            filter.operator = 'in'
+            if(filter.value.length) {
+                query = query.filter(filter.field, filter.operator, filter.value.map(x => x === 'true' ? true : false))
+            }
+        }
+
         if(['input', 'textarea'].includes(field.type)) {
             filter.operator = 'like'
             if(filter.value != '') {

@@ -46,17 +46,19 @@ export function DataTable(el) {
         const selectable = el.dataset.selectable
         // const handler = el.dataset.handler
 
-        const filters = []
+        let filters = []
 
         for(let key in value.filters) {
-            console.log(value.filters[key])
+            
             filters.push({
                 field: key, 
                 operator: '=', 
                 value: value.filters[key]
             })
         }
-        el.dataset.filters = JSON.stringify(filters.filter(x => x.value !== ''))
+
+        filters = filters.filter(x => x.value !== '' && x.value != [])
+        el.dataset.filters = JSON.stringify(filters)
 
         const res = await request('table.load', {
             collectionId,
