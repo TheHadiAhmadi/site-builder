@@ -288,6 +288,7 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
                         Textarea({name: 'meta_description', label: 'Default Site Meta Description'}),
                         File({name: 'favicon', label: 'Favicon', type: 'image'}),
                         File({name: 'logo', label: 'Logo', type: 'image'}),
+                        Input({name: 'gtags', label: 'Google tags ID'}),
                     ]
                 }),
                 '<br/>',
@@ -403,9 +404,8 @@ export async function renderPage(req, res) {
     const mode = req.query.mode ?? 'view'
     const view = req.query.view ?? 'iframe'
 
-    let props = {
-        
-    }
+    let props = {}
+    props.settings = await db('settings').query().first()
 
     let stylesheet;
     if(mode === 'edit') {
@@ -458,16 +458,21 @@ export async function renderPage(req, res) {
         }
     }
 
-    let {head, title} = page;
+    let {head} = page;
     let modules = await getPageModules(page.id)
+
+    console.log(props)
+    const seo = {}
+    for(let key in page.seo) {
+        seo[key] = hbs.compile(page.seo[key])(props)
+    }
 
     const html = renderTemplate(layouts.default, {
         head: (head?? '') + (stylesheet ?? ''), 
         body: await renderBody(modules, {...req.query, props, mode, url: req.url, view}), 
-        title: hbs.compile(title)(props),
         script: page.script,
         style: page.style,
-        seo: page.seo,
+        seo,
         settings: await db('settings').query().first() ?? {}
     })
 
