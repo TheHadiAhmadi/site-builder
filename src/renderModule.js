@@ -1,5 +1,6 @@
 import { html } from 'svelite-html';
 import { db } from '#services';
+import { getDataTableItems } from './handlers.js';
 
 export async function renderModule(module, {props, mode, definitions, permissions}) {
     module.props ??= {}
@@ -45,12 +46,33 @@ export async function renderModule(module, {props, mode, definitions, permission
             }
         } 
         else if(item.type === 'relation') {
+            const collection = await db('collections').query().filter('id', '=', item.collectionId).first()
+            
+
             if(item.multiple) {
                 const ids = module.props[item.slug]
-                module.props[item.slug] = await db('contents').query().filter('_type', '=', item.collectionId).filter('id', 'in', ids).all()
+                if(Array.isArray(module.props[item.slug])) {
+                    module.props[item.slug] = await db('contents').query().filter('_type', '=', item.collectionId).filter('id', 'in', ids).all()
+                } else if(module.props[item.slug]?.filters) {
+                    const {filters, page, perPage} = module.props[item.slug]
+                    console.log('here: ', filters, page, perPage)
+                    const items = await getDataTableItems({page, perPage, filters, collection})
+                    
+                    module.props[item.slug] = items.data
+                } else {
+                    module.props[item.slug] = []
+
+                }
             } else {
-                const id = module.props[item.slug]
-                module.props[item.slug] = await db('contents').query().filter('_type', '=', item.collectionId).filter('id', '=', id).first()
+                if(module.props[item.slug]?.filters) {
+                    const {filters, page, perPage} = module.props[item.slug]
+                    const items = await getDataTableItems({page, perPage, filters, collection})
+                    console.log('items')
+                    module.props[item.slug] = items.data[0]
+                } else {
+                    const id = module.props[item.slug]
+                    module.props[item.slug] = await db('contents').query().filter('_type', '=', item.collectionId).filter('id', '=', id).first()
+                }
             }
         } else {
             module.props[item.slug] = module.props[item.slug] ?? item.defaultValue

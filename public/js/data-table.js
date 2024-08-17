@@ -56,7 +56,8 @@ export function DataTable(el) {
                 value: value.filters[key]
             })
         }
-        
+        el.dataset.filters = JSON.stringify(filters.filter(x => x.value !== ''))
+
         const res = await request('table.load', {
             collectionId,
             selectable,

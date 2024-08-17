@@ -40,7 +40,12 @@ export function getFormValue(formEl) {
 
     for(let json of formEl.querySelectorAll('[data-json][name]')) {
         const name = json.getAttribute('name')
-        const value = JSON.parse(json.value || '[]')
+        let value;
+        if(json.value.startsWith('[') || json.value.startsWith('{')) {
+            value = JSON.parse(json.value || '{}')
+        } else {
+            value = json.value ?? ''
+        }
 
         setNestedValue(body, name, value)
     }
@@ -120,13 +125,14 @@ export function flatObject(object, prefix = '') {
 }
 
 export function setFormValue(form, value) {
+    if(!form) return;
     let formValue = flatObject(value)    
 
-    if(!form) return;
     form.querySelectorAll('[name]').forEach(input => {
         const name = input.getAttribute('name')
-        if(formValue[name] || formValue[name] === false || formValue[name] == 0) {
+        if(formValue[name] || formValue[name] == '' || formValue[name] == 0 || value[name]) {
             if(input.getAttribute('type') === 'file') {
+
                 setTimeout(() => {
                     form.querySelector(`[name="${name}"]`).value = formValue[name]
                     input.dataset.fileId = formValue[name]
@@ -137,12 +143,15 @@ export function setFormValue(form, value) {
                 // TODO: Handle checkbox group
                 input.checked = formValue[name]?.includes(input.value)
             } else if(input.hasAttribute('data-json')) { 
-                if(formValue[name]) {
-                    input.value = JSON.stringify(formValue[name])
+                if(value[name]) {
+                    if(typeof value[name] == 'object') {
+                        input.value = JSON.stringify(value[name])
+                    } else {
+                        input.value = value[name] ?? ''
+                    }
                 } else {
-                    input.value = '[]'
+                    input.value = '{}'
                 }
-
             } else if(input.hasAttribute('data-rich-text')) {
                 if(Quill.find(input)) {
                     Quill.find(input).root.innerHTML = formValue[name]

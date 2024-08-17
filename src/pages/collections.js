@@ -48,7 +48,7 @@ function Relation(field) {
                     'field-multiple': field.multiple ? true : false
                 }
             }),
-            `<input ${field.multiple ? 'data-json' : 'data-input'} type="hidden" name="${field.name}" value="">`    
+            `<input data-json type="hidden" name="${field.name}" value="">`    
         ]),
     })    
 }
@@ -99,7 +99,8 @@ export function RelationFieldModal() {
         title: 'Choose items',
         footer: Stack({justify: 'end'}, [
             Button({text: 'Close', action: 'modal.close'}),
-            Button({color: 'primary', text: 'Done', action: 'choose-collection-items'}),
+            Button({color: 'primary', outline:true, text: 'Save Filters', action: 'choose-collection-filters'}),
+            Button({color: 'primary', text: 'Save Items', action: 'choose-collection-items'}),
         ]),
         body: `<div></div>`
 

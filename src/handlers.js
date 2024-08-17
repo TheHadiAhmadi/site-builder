@@ -8,7 +8,7 @@ import page from "./handlers/page.js"
 import setup from "./handlers/setup.js"
 import { DataTable } from "./pages/dataTable.js"
 
-export async function getDataTableItems({page, perPage, collection, filters}) {
+export async function getDataTableItems({page = 1, perPage = 10, collection, filters}) {
     let query = db('contents').query().filter('_type', '=', collection.id)
 
     for(let field of collection.fields) {
@@ -32,6 +32,8 @@ export async function getDataTableItems({page, perPage, collection, filters}) {
     }
     
     const items = await query.paginate(+page, +perPage)
+
+    items.perPage = +perPage
 
     for(let item of items.data) {
         for(let field of collection.fields) {

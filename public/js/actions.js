@@ -285,7 +285,7 @@ const actions = {
         mod.dataset.active = true
 
         // reload(`?mode=edit&moduleId=` + moduleId)
-        const settings = await request('module.loadSettings', {id: moduleId})
+        const settings = await request('module.loadSettings', {id: moduleId, slug: window.location.pathname})
         const template = await request('module.getSettingsTemplate', {id: moduleId})
         const moduleSettingsSidebar = document.querySelector('[data-name="sidebar-module-settings"]')
         moduleSettingsSidebar.innerHTML = template
@@ -453,6 +453,28 @@ const actions = {
         document.querySelector('[data-action="collection-content-delete-yes"]').dataset.contentId = id
 
     },
+    async 'choose-collection-filters'(el) {
+        const modal = document.querySelector(`[data-modal="relation-field-modal"]`)
+        const fieldName = modal.dataset.fieldName
+        const fieldMultiple = modal.dataset.fieldMultiple
+        
+        delete modal.dataset.modalOpen
+
+        const dataTable = modal.querySelector('[data-data-table]')
+        const filters = JSON.parse(dataTable.dataset.filters ?? '[]')
+        const perPage = +dataTable.querySelector('[name="perPage"]').value
+        const page = 1
+
+        const result = {filters}
+
+        if(fieldMultiple) {
+            result.page = page
+            result.perPage = perPage
+        }
+        document.querySelector(`[data-form] [name="${fieldName}"]`).value = JSON.stringify(result)
+
+
+    },
     async 'choose-collection-items'(el) {
         const modal = document.querySelector(`[data-modal="relation-field-modal"]`)
         const fieldName = modal.dataset.fieldName
@@ -474,14 +496,32 @@ const actions = {
         const fieldName = el.dataset.fieldName
         const collectionId = el.dataset.collectionId
 
-        const fieldMultiple = el.dataset.fieldMultiple
+        const fieldMultiple = el.dataset.fieldMultiple  == 'true'
+        let value = el.nextElementSibling.value
+        console.log({value})
+        if(value.startsWith('{') ||value.startsWith('[') ) {
+            value = JSON.parse(value)
+        }
+
+        let filters = []
+        let page = 1
+        let perPage = 10
+
+        if(value.filters) {
+            filters = value.filters
+
+            if(fieldMultiple) {
+                page = value.page
+                perPage = value.perPage
+            }            
+        }
 
         const html = await request('table.load', {
-            filters: [], 
-            perPage: 10, 
+            filters, 
+            perPage, 
             selectable: fieldMultiple ? 'multi' : 'single', 
-            page: 1, 
-            // actions: [{color: 'primary', text: 'Choose', action: 'data-table-choose-item'}],
+            page, 
+            actions: [],
             collectionId
         })
 
@@ -494,6 +534,25 @@ const actions = {
 
         setTimeout(() => {
             hydrate(modal.querySelector('[data-modal-body]'))
+            setTimeout(() => {
+
+                if(value) {
+                    console.log(fieldMultiple)
+                    
+                    if(!value.filters) {
+                        if(fieldMultiple) {
+                            for(let item of value) {
+                                console.log(item, modal.querySelectorAll(`[name="data-table-select"]`).forEach(el => el.value))
+                                modal.querySelector(`[name="data-table-select"][value="${item}"]`).click()
+                            }
+                        } else {
+                            console.log(value, modal.querySelectorAll(`[name="data-table-select"]`).forEach(el => el.value))
+
+                            modal.querySelector(`[name="data-table-select"][value="${value}"]`).click()
+                        }
+                    }
+                }
+            })
         })
 
 

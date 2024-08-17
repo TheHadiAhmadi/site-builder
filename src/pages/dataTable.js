@@ -44,7 +44,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
     
     function renderField(item, field) {
         if(field.type === 'input') return item[field.slug]
-        if(field.type === 'textarea') return item[field.slug].slice(0, 100) + (item[field.slug].length > 100 ? '...' : '')
+        if(field.type === 'textarea') return item[field.slug] ? item[field.slug].slice(0, 100) + (item[field.slug].length > 100 ? '...' : '') : ''
         if(field.type === 'checkbox') return item[field.slug] ? 'Yes' : 'No'
         if(field.type === 'select') return `<span data-badge>${item[field.slug]}</span>`
         if(field.type === 'file') {
@@ -85,10 +85,16 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
         if(field.type === 'rich-text') return '...'
         if(field.type === 'relation') {
             if(!item[field.slug]) return ''
-            if(field.multiple) {
-                return Stack({}, item[field.slug].map(x => `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${x}" data-badge>${x}</a>`))
+
+            console.log(item, item[field.slug])
+            if(item[field.slug].filters) {
+                return Stack({}, item[field.slug].filters.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`))
             } else {
-                return `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${item[field.slug]}" data-badge>${item[field.slug]}</a>`
+                if(field.multiple) {
+                    return Stack({}, item[field.slug].map(x => `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${x}" data-badge>${x}</a>`))
+                } else {
+                    return `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${item[field.slug]}" data-badge>${item[field.slug]}</a>`
+                }
             }
         }
     }

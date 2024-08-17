@@ -32,6 +32,7 @@ export function pageUpdatePage(page, {collections}) {
                 Input({name: 'name', label: 'Name', placeholder: 'Enter Page Name'}),
                 Input({name: 'title', label: 'Title', placeholder: 'Enter Title'}),
                 Input({name: 'slug', label: 'Slug', placeholder: 'Enter Slug'}),
+                Checkbox({name: 'hidden', label: 'Hidden'}),
                 Checkbox({name: 'dynamic', label: 'Dynamic'}),
                 Select({
                     name: 'collectionId', 

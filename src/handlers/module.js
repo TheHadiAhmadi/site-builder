@@ -161,9 +161,47 @@ export default {
         }
     },
     async loadSettings(body) {
-        const res = await db('modules').query().filter('id', '=', body.id).first()
-        if(res) {
-            return res.props
+        const {slug} = body
+        const original = await db('modules').query().filter('id', '=', body.id).first()
+        const page = await getPageFromModule(original)
+        let props = original.props ?? {}
+
+        if(page.dynamic) {
+            const collection = await db('collections').query().filter('id', '=', page.collectionId).first()
+            const dynamicParts = page.slug.split('/').filter(part => part.startsWith('{{') && part.endsWith('}}'));
+            const params = {};
+
+            let regexStr = page.slug;
+            for (const dynamicPart of dynamicParts) {
+                regexStr = regexStr.replace(dynamicPart, '([^/]+)');
+            }
+            const regex = new RegExp(`^${regexStr}$`);
+
+            console.log('match', slug, regex)
+            const match = slug.match(regex);
+            if (match) {
+                const params = {};
+                dynamicParts.forEach((part, index) => {
+                    const paramName = part.slice(2, -2);
+                    params[paramName] = match[index + 1];
+                });
+
+                let query = db('contents').query().filter('_type', '=', collection.id)
+                for(let key in params) {
+                    query = query.filter(key, '=', params[key])
+                }
+                const content = await query.first()
+
+                for(let key in original.links ?? {}) {
+                    // content[original.links[key]] = props[key]
+                    props[key] = content[original.links[key]]
+                }
+                // await db('contents').update(content)
+            }
+        }
+
+        if(props) {
+            return props
         } else {
             return {}
         }
