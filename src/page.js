@@ -462,6 +462,9 @@ export async function renderPage(req, res) {
     let {head} = page;
     let modules = await getPageModules(page.id)
 
+    page.lang ??= 'en'
+    page.dir ??= 'ltr'
+
     const seo = {}
     for(let key in page.seo) {
         seo[key] = hbs.compile(page.seo[key])(props)

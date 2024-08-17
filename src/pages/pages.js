@@ -11,6 +11,26 @@ function PageEditFields({collections}) {
             placeholder: 'Choose Collection',
             items: collections.map(x => ({text: x.name, value: x.id}))
         }),
+        Select({
+            name: 'dir', 
+            label: 'Direction', 
+            placeholder: 'Choose page direction',
+            items: [
+                {text: 'left to right', value: 'ltr'},
+                {text: 'right to left', value: 'ltr'},
+            ]
+        }),
+        Select({
+            name: 'lang', 
+            label: 'Language', 
+            placeholder: 'Choose page language',
+            items: [
+                {text: 'English', value: 'en'},
+                {text: 'Persian', value: 'fa'},
+                {text: 'Pashto', value: 'ps'},
+                {text: 'Not defined', value: ''},
+            ]
+        }),
         `<div style="border-bottom: 1px solid #ddd; padding-top: 1.5rem; font-weight: bold; font-size: 18px; padding-bottom: 0.5rem;">SEO</div>`,
         Input({name: 'seo.title', label: 'Title', placeholder: 'Enter Title'}),
         Input({name: 'seo.meta_title', label: 'Meta Title', placeholder: "Enter meta title"}),

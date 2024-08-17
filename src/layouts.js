@@ -2,7 +2,7 @@ import hbs from 'handlebars'
 
 export default {
     default: hbs.compile(`<!DOCTYPE html>
-    <html lang="en">
+    <html lang="{{lang}}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,7 +48,7 @@ export default {
 
         {{{head}}}
     </head>
-    <body>
+    <body dir="{{dir}}">
         <div>
             {{{body}}}
         </div>
