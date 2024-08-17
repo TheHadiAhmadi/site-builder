@@ -17,7 +17,7 @@ export function FileUploader(el) {
     el.appendChild(element)
     
     function setValue(id) {
-        
+
         console.log('setValue', {id, imagePreview})
         if(imagePreview) {
             imagePreview.setAttribute('src', '/files/' + id)
@@ -35,7 +35,7 @@ export function FileUploader(el) {
     
     el.querySelector('[data-file]').addEventListener('change', async event => {
         const form = new FormData()
-        form.set('file', el.files[0])
+        form.set('file', event.target.files[0])
         const res = await fetch('/api/file/upload', {method: 'POST', body: form}).then(res => res.json())
 
         setValue(res.id)
