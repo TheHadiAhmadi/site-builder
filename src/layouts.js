@@ -16,6 +16,7 @@ export default {
         <meta name="robots" content="{{seo.robots}}">
         
         <!-- Open Graph Tags -->
+        <meta property="og:site_name" content="{{settings.site_name}}">
         <meta property="og:title" content="{{seo.title}}">
         <meta property="og:type" content="{{seo.og_type}}">
         <meta property="og:description" content="{{seo.meta_description}}">

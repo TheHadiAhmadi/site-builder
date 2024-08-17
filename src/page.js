@@ -283,12 +283,13 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
                     load: 'settings.load',
                     handler: 'settings.save',
                     fields: [
-                        Input({name: 'title', label: 'Site Title'}),
-                        Input({name: 'meta_title', label: 'Default Site Meta Title'}),
+                        Input({name: 'site_name', label: 'Site Name', placeholder: 'Enter Site Name'}),
+                        Input({name: 'title', label: 'Site Title', placeholder: 'Enter Default Site Title'}),
+                        Input({name: 'meta_title', label: 'Site Meta Title', placeholder: 'Enter Default Site Meta Title'}),
                         Textarea({name: 'meta_description', label: 'Default Site Meta Description'}),
+                        Input({name: 'gtags', label: 'Google tags ID', placeholder: 'Enter Google tags ID'}),
                         File({name: 'favicon', label: 'Favicon', type: 'image'}),
                         File({name: 'logo', label: 'Logo', type: 'image'}),
-                        Input({name: 'gtags', label: 'Google tags ID'}),
                     ]
                 }),
                 '<br/>',
@@ -461,7 +462,6 @@ export async function renderPage(req, res) {
     let {head} = page;
     let modules = await getPageModules(page.id)
 
-    console.log(props)
     const seo = {}
     for(let key in page.seo) {
         seo[key] = hbs.compile(page.seo[key])(props)
