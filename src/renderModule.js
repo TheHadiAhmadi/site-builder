@@ -4,14 +4,20 @@ import { getDataTableItems } from './handlers.js';
 
 export async function renderModule(module, {props, mode, definitions, permissions}) {
     module.props ??= {}
+    const settings = await db('settings').query().first() ?? {}
+
 
     let definition = definitions[module.definitionId]
 
-    if(props.collection && props.pageContent) {
-        if(module.links) {
-            for(let key in module.links) {
-                module.props[key] = props.pageContent[module.links[key]]
+    if(module.links) {
+        for(let key in module.links) {
+            const [firstpart, secondpart] = module.links[key].split('.')
+            if(firstpart == 'content') {
+                module.props[key] = props.pageContent[secondpart]
+            } else if(firstpart === 'settings') {
+                module.props[key] = settings[secondpart]
             }
+          
         }
     }
 

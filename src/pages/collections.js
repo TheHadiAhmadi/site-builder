@@ -82,6 +82,7 @@ export function FieldInput(field) {
     if(field.type === 'file') {
         options.type = field.file_type
         options.multiple = field.multiple
+        options.size = field.size
     }
 
     const inputs = {

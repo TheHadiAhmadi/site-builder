@@ -78,5 +78,21 @@ export default {
             return DataTable({filters, selectable, actions, collectionId: collection.id, fields: collection.fields, items })
         }
 
+    },
+    settings: {
+        async load(body) {
+            const settings = await db('settings').query().first()
+
+            return settings ?? {}
+        },
+        async save(body) {
+            const existing = await db('settings').query().first()
+            if(existing) {
+                await db('settings').update({...existing, ...body})
+
+            } else {
+                await db('settings').insert(body)
+            }
+        }
     }
 }

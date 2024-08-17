@@ -1,5 +1,5 @@
 import hbs from 'handlebars'
-import { Button, DeleteConfirm, EmptyTable, Form, Input, Modal, Page, Table } from './components.js'
+import { Button, Card, CardBody, DeleteConfirm, EmptyTable, File, Form, Input, Label, Modal, Page, Table, Textarea } from './components.js'
 
 import { db } from "#services";
 import layouts from "./layouts.js";
@@ -279,9 +279,32 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
         sidebar = 'settings'
         if(query.category === 'general') {
             content = Page({title: 'General settings', body: [
-                `<form method="POST" action="/api/export">${Button({color: 'primary', text: 'Export', type: 'submit'})}</form>`
+                Form({
+                    load: 'settings.load',
+                    handler: 'settings.save',
+                    fields: [
+                        Input({name: 'title', label: 'Site Title'}),
+                        Input({name: 'meta_title', label: 'Default Site Meta Title'}),
+                        Textarea({name: 'meta_description', label: 'Default Site Meta Description'}),
+                        File({name: 'favicon', label: 'Favicon', type: 'image'}),
+                        File({name: 'logo', label: 'Logo', type: 'image'}),
+                    ]
+                }),
+                '<br/>',
+                Card([
+                    CardBody([
+                        Label({
+                            symbolic: true,
+                            text: 'Backup site',
+                            body: `<form method="POST" action="/api/export">${Button({color: 'primary', text: 'Backup', type: 'submit'})}</form>`
+
+                        })
+                    ])
+                ])
+
                 // Form()
             ]})
+        
         } else if(query.category === 'appearance') {
             content = Page({title: 'Appearance settings', body: 'Content'})
         } else if(query.category === 'profile') {
@@ -444,7 +467,8 @@ export async function renderPage(req, res) {
         title: hbs.compile(title)(props),
         script: page.script,
         style: page.style,
-        seo: page.seo
+        seo: page.seo,
+        settings: await db('settings').query().first() ?? {}
     })
 
     res.send(html)

@@ -97,7 +97,12 @@
 
 [data-file-type="image"] {
     height: 200px;
+    padding: 0;
     overflow: hidden;
+}
+
+[data-file-type="image"][data-file-size="small"] {
+    height: 120px;
 }
 
 [data-image-preview] {

@@ -131,9 +131,13 @@ export function setFormValue(form, value) {
     form.querySelectorAll('[name]').forEach(input => {
         const name = input.getAttribute('name')
         if(formValue[name] || formValue[name] == '' || formValue[name] == 0 || value[name]) {
-            console.log(input)
-            if(input.hasAttribute('data-file-input')) {
-                input.setValue(formValue[name])
+            console.log(input, formValue[name])
+            if(input.hasAttribute('data-file-label')) {
+                // input.setValue(formValue[name])
+                setTimeout(() => {
+                    console.log('setValue', input.setValue, {input})
+                    input.setValue(formValue[name])
+                }, 100)
 
             } else if(input.hasAttribute('data-checkbox')) {
                 console.log('checkbox', name, formValue)

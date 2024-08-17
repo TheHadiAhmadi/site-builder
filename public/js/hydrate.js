@@ -12,7 +12,7 @@ import { RichText } from './rich-text.js'
 const components = Components()
 
 components.register('action', Action)
-components.register('file', FileUploader)
+components.register('file-label', FileUploader)
 components.register('form', Form)
 components.register('enhance', Link)
 components.register('modal', Modal)

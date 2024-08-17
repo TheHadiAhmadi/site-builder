@@ -1,4 +1,6 @@
 [data-badge] {
+    display: inline-flex;
+    align-items: center;
     padding: 2px 12px;
     border-radius: 16px;
     background-color: #4060f034;

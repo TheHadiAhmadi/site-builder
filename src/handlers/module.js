@@ -7,14 +7,42 @@ function DynamicFieldInput(field, fields, linked, module) {
     function getLinkedText(key) {
         return fields.find(x => x.slug === key)?.label ?? key
     }
+
+    function fieldTypeSupports(thisField, otherField) {
+        console.log('fieldTypeSupports', thisField, otherField)
+        if(thisField.type === 'file') {
+            return otherField.type === 'file' && otherField.file_type === thisField.file_type && otherField.multiple === thisField.multiple
+        }
+        if(thisField.type === 'relatin') {
+            return otherField.type === 'relation' && otherField.collectionId === thisField.collectionId && otherField.multiple === thisField.multiple
+        }
+
+        if(thisField.type === 'textarea') {
+            return ['textarea', 'rich-text', 'input'].includes(otherField.type)
+        }
+        if(thisField.type === 'input') {
+            return ['textarea', 'rich-text', 'input'].includes(otherField.type)
+        }
+        if(thisField.type === 'select') {
+            return ['select'].includes(otherField.type)
+        }
+        if(thisField.type === 'checkbox') {
+            return otherField.type === 'checkbox'
+        }
+        
+        return thisField.type === otherField.type
+    }
+
+    const availableFields = fields.filter(otherField => fieldTypeSupports(field, otherField))
     function getLabel(label) {
+        if(availableFields.length === 0) return `<span>${label}</span>`
         return `
             <span>${label}</span>    
 
             ${linked ? `
-                <div style="padding: 0; display: flex; align-items: center; border-radius: 10px; font-size: 12px; background-color: #0040f050; color: blue">
-                    <span style="padding: 4px;">${getLinkedText(linked)}</span>
-                    <div style="width: 16px; height: 16px; cursor: pointer" data-action="unlink-module-prop" data-prop="${field.slug}" data-mod-id="${module.id}">
+                <div data-badge>
+                    <span style="font-weight: normal;">${getLinkedText(linked)}</span>
+                    <div style="margin-left: 8px; width: 16px; height: 16px; cursor: pointer" data-action="unlink-module-prop" data-prop="${field.slug}" data-mod-id="${module.id}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m8.382 17.025l-1.407-1.4L10.593 12L6.975 8.4L8.382 7L12 10.615L15.593 7L17 8.4L13.382 12L17 15.625l-1.407 1.4L12 13.41z"/></svg>
                     </div>
                 </div>
@@ -25,25 +53,37 @@ function DynamicFieldInput(field, fields, linked, module) {
                     </div>
  
                     <div data-dropdown-menu>
-                        ${fields.map(x => `<div data-action="link-module-prop" data-mod-id="${module.id}" data-prop="${field.slug}" data-field="${x.slug}" data-dropdown-item>${x.label}</div>`).join('')}
+                        ${availableFields.map(x => `<div data-action="link-module-prop" data-mod-id="${module.id}" data-prop="${field.slug}" data-field="${x.slug}" data-dropdown-item>${x.label}</div>`).join('')}
                     </div>
                 </div>
             `}
         `
 
     }
+
+    let resultField = field;
+
+    if(linked) {
+        resultField = JSON.parse(JSON.stringify(fields.find(x => x.slug === linked)));
+        resultField.slug = field.slug
+    }
     
     let options = {
-        ...field,
+        ...resultField,
+
         // slug: field.slug, 
         label: getLabel(field.label),
         placeholder: 'Enter ' + field.label
     }
-    if(field.type === 'select') {
+    if(options.type === 'select') {
         // options.items = field.items
         // options.multiple = field.multiple
         options.placeholder = 'Choose' + field.label
         // return Input({name: field.slug, label: field.name, placeholder: 'Enter ' + field.name})
+    }
+
+    if(options.type === 'file' && options.file_type === 'image') {
+        options.size = 'small'
     }
     
     console.log(FieldInput(options))
@@ -51,29 +91,24 @@ function DynamicFieldInput(field, fields, linked, module) {
 }
 
 function sidebarModuleSettings(definition, module, collection) {
-    if(!collection) {
-        return html`
-            <div data-sidebar-module-settings-title data-sidebar-title>
-                <span>${definition.name} Settings</span>
-            </div>
-            <div data-sidebar-module-settings-body data-sidebar-body>
-                ${Form({
-                    name: 'module-settings',
-                    handler: 'module.saveSettings',
-                    cancelAction: 'open-add-module',
-                    fields: [
-                        `<input type="hidden" name="id" value="${module.id}">`,
-                        definition.props.map(prop => FieldInput(prop)).join('')
-                    ],
-                    cancelAction: 'open-add-module'
-                })}
-            </div>
-        `
+    
+    const fields = []
+    fields.push({slug: 'settings.logo', label: 'Logo', type: 'file', multiple: false, file_type: 'image'})
+    fields.push({slug: 'settings.favicon', label: 'Favicon', type: 'file', multiple: false, file_type: 'image'})
+    fields.push({slug: 'settings.title', label: 'Title', type: 'input'})
+    fields.push({slug: 'settings.meta_title', label: 'Meta Title', type: 'input'})
+    fields.push({slug: 'settings.meta_description', label: 'Meta Description', type: 'textarea'})
+    
+    if(collection) {
+        for(let field of collection.fields) {
+
+            fields.push({...field, slug: 'content.' + field.slug})
+        }
     }
 
     return html`
             <div data-sidebar-module-settings-title data-sidebar-title>
-                <span>${definition.name} Settings *</span>
+                <span>${definition.name} Settings</span>
             </div>
             <div data-sidebar-module-settings-body data-sidebar-body>
                 ${Form({
@@ -83,7 +118,7 @@ function sidebarModuleSettings(definition, module, collection) {
                     fields: [
                         `<input type="hidden" name="slug" value="">`,
                         `<input type="hidden" name="id" value="${module.id}">`,
-                        definition.props.map(prop => DynamicFieldInput(prop, collection.fields, module.links?.[prop.slug], module)).join('')
+                        definition.props.map(prop => DynamicFieldInput(prop, fields, module.links?.[prop.slug], module)).join('')
                     ],
                     cancelAction: 'open-add-module'
                 })}
@@ -163,6 +198,7 @@ export default {
     async loadSettings(body) {
         const {slug} = body
         const original = await db('modules').query().filter('id', '=', body.id).first()
+        const settings = await db('settings').query().first()
         const page = await getPageFromModule(original)
         let props = original.props ?? {}
 
@@ -194,9 +230,23 @@ export default {
 
                 for(let key in original.links ?? {}) {
                     // content[original.links[key]] = props[key]
-                    props[key] = content[original.links[key]]
+                    const [first, second] = original.links[key].split('.')
+                    if(first == 'content') {
+                        props[key] = content[second]
+                    } else {
+                        props[key] = settings[second]
+                    }
                 }
                 // await db('contents').update(content)
+            }
+        } else {
+            console.log('here', settings, original)
+            for(let key in original.links ?? {}) {
+                const [first, second] = original.links[key].split('.')
+                console.log({first, second, key, settings})
+                if(first == 'settings') {
+                    props[key] = settings[second]
+                }
             }
         }
 
@@ -239,11 +289,25 @@ export default {
             
 
                 for(let key in original.links) {
-                    content[original.links[key]] = props[key]
+                    const [first, second] = original.links[key].split('.')
+                    
+                    if(first === 'content') {
+                        content[second] = props[key]
+                    }
                 }
                 await db('contents').update(content)
             }
         }
+
+        let settings = await db('settings').query().first()
+
+        for(let key in original.links) {
+            const [first, second] = original.links[key].split('.')
+            if(first === 'settings') {
+                settings[second] = props[key]
+            }
+        }
+        await db('settings').update(settings)
 
         await db('modules').update({...original, props})
     },
