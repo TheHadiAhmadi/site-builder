@@ -48,7 +48,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
         if(field.type === 'checkbox') return item[field.slug] ? 'Yes' : 'No'
         if(field.type === 'select') return `<span data-badge>${item[field.slug]}</span>`
         if(field.type === 'file') {
-            console.log(field, item)
+            if(!item[field.slug]) return ''
             
             function renderFile(file) {
                 if(field.file_type == 'image') {
@@ -86,7 +86,6 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
         if(field.type === 'relation') {
             if(!item[field.slug]) return ''
 
-            console.log(item, item[field.slug])
             if(item[field.slug].filters) {
                 return Stack({}, item[field.slug].filters.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`))
             } else {
