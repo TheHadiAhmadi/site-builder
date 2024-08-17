@@ -8,6 +8,8 @@ export default {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.tailwindcss.com"></script>
         
+        <link rel="icon" href="/files/{{settings.favicon}}.svg" type="image/svg+xml">
+
         <title>{{seo.title}}</title>
         <meta name="description" content="{{seo.meta_description}}">
         <meta name="keywords" content="{{seo.meta_keywords}}">

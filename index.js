@@ -12,6 +12,7 @@ import { File, Form, Input, Select } from './src/components.js'
 import { setupCms} from './services/setup.js'
 import hbs from 'handlebars'
 import JSZip from 'jszip'
+import path from 'node:path'
 
 const compile = hbs.compile
 
@@ -133,6 +134,10 @@ app.get('/sitemap.xml', async(req, res) => {
         'Content-Type': 'application/xml'
     })
     return res.end(result)
+})
+
+app.get('/files/:name', (req, res) => {
+    res.sendFile(path.resolve('./uploads/' + req.params.name.split('.')[0]))
 })
 
 // #region file upload
