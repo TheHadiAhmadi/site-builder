@@ -478,6 +478,8 @@ export async function renderPage(req, res) {
         body: await renderBody(modules, {...req.query, props, mode, url: req.url, view}), 
         script: page.script,
         style: page.style,
+        dir: page.dir,
+        lang: page.lang,
         seo,
         settings: await db('settings').query().first() ?? {}
     })
