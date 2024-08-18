@@ -12,7 +12,7 @@ function DynamicFieldInput(field, fields, linked, module) {
         if(thisField.type === 'file') {
             return otherField.type === 'file' && otherField.file_type === thisField.file_type && otherField.multiple === thisField.multiple
         }
-        if(thisField.type === 'relatin') {
+        if(thisField.type === 'relation') {
             return otherField.type === 'relation' && otherField.collectionId === thisField.collectionId && otherField.multiple === thisField.multiple
         }
 
