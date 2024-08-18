@@ -9,3 +9,7 @@
 [data-section-resizer] {
     display: none;
 }
+
+[data-dir="rtl"] [data-module-content] * {
+    direction: rtl;
+}

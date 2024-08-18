@@ -20,7 +20,3 @@
 [data-column]:has(.sticky) {
     display: contents;
 }
-
-[data-dir="rtl"] [data-module-content] * {
-    direction: rtl;
-}
