@@ -10,6 +10,7 @@ this project is a Site builder which you can build simple websites without knowi
 ### Site settings:
 
 ### Creating Page:
+[Screencast from 2024-08-18 23-24-31.webm](https://github.com/user-attachments/assets/b4f4062e-a17e-40ce-a0c3-b4adc240c36e)
 
 ### Update Page:
 
