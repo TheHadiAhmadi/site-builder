@@ -6,8 +6,11 @@ this project is a Site builder which you can build simple websites without knowi
 [Screencast from 2024-08-18 23-01-11.webm](https://github.com/user-attachments/assets/c75a926f-21d7-470f-a73b-fc100eb091c2)
 
 ### Using template:
+[Screencast from 2024-08-18 23-26-46.webm](https://github.com/user-attachments/assets/ccf4e344-b32b-48ba-ae01-4978ccc5c109)
 
 ### Site settings:
+I don't know why favicon didn't updated :)
+[Screencast from 2024-08-18 23-29-36.webm](https://github.com/user-attachments/assets/7cafc48e-e336-438e-9a0a-1671cadfe451)
 
 ### Creating Page:
 [Screencast from 2024-08-18 23-24-31.webm](https://github.com/user-attachments/assets/b4f4062e-a17e-40ce-a0c3-b4adc240c36e)
