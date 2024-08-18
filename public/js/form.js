@@ -199,7 +199,7 @@ export function setFormValue(form, value) {
             } else {
                 console.log('here', input, name, formValue[name])
                 if(input.hasAttribute('data-file-input')) {
-                    input.setValue(value[name])
+                    input.setValue(formValue[name])
 
                 } else {
                     input.value = formValue[name]
