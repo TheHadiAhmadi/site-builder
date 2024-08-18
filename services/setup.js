@@ -10,19 +10,20 @@ const defaultModules = {
             {
                 type: 'checkbox',
                 slug: 'fullWidth',
-                label: 'Full Width'
+                label: 'Full Width',
+                defaultValue: true
             },
             {
                 type: 'input',
                 slug: 'paddingTop',
                 label: 'Padding Top',
-                defaultValue: 32
+                defaultValue: 0
             },
             {
                 type: 'input',
                 slug: 'paddingBottom',
                 label: 'Padding Bottom',
-                defaultValue: 32
+                defaultValue: 0
             },
             {
                 type: 'slot',

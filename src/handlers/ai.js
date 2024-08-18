@@ -7,9 +7,10 @@ async function generateResponse(prompt) {
     
     const completion = await oai.chat.completions.create({
         // model: 'mistralai/Mistral-7B-Instruct-v0.2',
+        model: 'openai/gpt-4o',
         // model: 'openai/gpt-4o-mini',
         // model: 'deepseek-ai/deepseek-coder-33b-instruct',
-        model: 'codellama/CodeLlama-34b-Instruct-hf',
+        // model: 'codellama/CodeLlama-34b-Instruct-hf',
         messages: [
             { role: "system", content: "You are a template designer and generate tailwindcss/handlebars based templates for site builder." },
             { role: "user", content: prompt }

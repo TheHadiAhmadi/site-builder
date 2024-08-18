@@ -22,3 +22,9 @@
     background-color: #e8e8e8;
     overflow: auto;
 }
+
+[data-toolbar-logo] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

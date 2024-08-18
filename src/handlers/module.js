@@ -9,7 +9,6 @@ function DynamicFieldInput(field, fields, linked, module) {
     }
 
     function fieldTypeSupports(thisField, otherField) {
-        console.log('fieldTypeSupports', thisField, otherField)
         if(thisField.type === 'file') {
             return otherField.type === 'file' && otherField.file_type === thisField.file_type && otherField.multiple === thisField.multiple
         }
@@ -40,7 +39,7 @@ function DynamicFieldInput(field, fields, linked, module) {
             <span>${label}</span>    
 
             ${linked ? `
-                <div data-badge>
+                <div style="margin-left: auto" data-badge>
                     <span style="font-weight: normal;">${getLinkedText(linked)}</span>
                     <div style="margin-left: 8px; width: 16px; height: 16px; cursor: pointer" data-action="unlink-module-prop" data-prop="${field.slug}" data-mod-id="${module.id}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m8.382 17.025l-1.407-1.4L10.593 12L6.975 8.4L8.382 7L12 10.615L15.593 7L17 8.4L13.382 12L17 15.625l-1.407 1.4L12 13.41z"/></svg>
@@ -85,24 +84,28 @@ function DynamicFieldInput(field, fields, linked, module) {
     if(options.type === 'file' && options.file_type === 'image') {
         options.size = 'small'
     }
+
+    if(linked === 'content') {
+        options.type = 'hidden'
+    }
     
-    console.log(FieldInput(options))
     return FieldInput(options)
 }
 
 function sidebarModuleSettings(definition, module, collection) {
     
     const fields = []
-    fields.push({slug: 'settings.logo', label: 'Logo', type: 'file', multiple: false, file_type: 'image'})
-    fields.push({slug: 'settings.favicon', label: 'Favicon', type: 'file', multiple: false, file_type: 'image'})
-    fields.push({slug: 'settings.title', label: 'Title', type: 'input'})
-    fields.push({slug: 'settings.meta_title', label: 'Meta Title', type: 'input'})
-    fields.push({slug: 'settings.meta_description', label: 'Meta Description', type: 'textarea'})
+    fields.push({slug: 'settings.logo', label: 'Site\'s Logo', type: 'file', multiple: false, file_type: 'image'})
+    fields.push({slug: 'settings.favicon', label: 'Site\'s Favicon', type: 'file', multiple: false, file_type: 'image'})
+    fields.push({slug: 'settings.title', label: 'Site\'s Title', type: 'input'})
+    fields.push({slug: 'settings.meta_title', label: 'Site\'s Meta Title', type: 'input'})
+    fields.push({slug: 'settings.meta_description', label: 'Site\'s Meta Description', type: 'textarea'})
     
     if(collection) {
-        for(let field of collection.fields) {
+        fields.push({type: 'relation', label: 'Item (dynamic)', multiple: false, collectionId: collection.id, slug: 'content'})
 
-            fields.push({...field, slug: 'content.' + field.slug})
+        for(let field of collection.fields) {
+            fields.push({...field, label: 'Item\'s ' + field.label, slug: 'content.' + field.slug})
         }
     }
 
@@ -213,7 +216,6 @@ export default {
             }
             const regex = new RegExp(`^${regexStr}$`);
 
-            console.log('match', slug, regex)
             const match = slug.match(regex);
             if (match) {
                 const params = {};
@@ -231,19 +233,23 @@ export default {
                 for(let key in original.links ?? {}) {
                     // content[original.links[key]] = props[key]
                     const [first, second] = original.links[key].split('.')
-                    if(first == 'content') {
-                        props[key] = content[second]
+                    if(second) {
+                        if(first == 'content') {
+                            props[key] = content[second]
+                        } else {
+                            props[key] = settings[second]
+                        }
                     } else {
-                        props[key] = settings[second]
+                        if(first === 'content') {
+                            props[key] = content
+                        }
                     }
                 }
                 // await db('contents').update(content)
             }
         } else {
-            console.log('here', settings, original)
             for(let key in original.links ?? {}) {
                 const [first, second] = original.links[key].split('.')
-                console.log({first, second, key, settings})
                 if(first == 'settings') {
                     props[key] = settings[second]
                 }
@@ -272,7 +278,6 @@ export default {
             }
             const regex = new RegExp(`^${regexStr}$`);
 
-            console.log('match', slug, regex)
             const match = slug.match(regex);
             if (match) {
                 const params = {};
@@ -291,8 +296,10 @@ export default {
                 for(let key in original.links) {
                     const [first, second] = original.links[key].split('.')
                     
-                    if(first === 'content') {
-                        content[second] = props[key]
+                    if(second) {
+                        if(first === 'content') {
+                            content[second] = props[key]
+                        }
                     }
                 }
                 await db('contents').update(content)

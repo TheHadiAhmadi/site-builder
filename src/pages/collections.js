@@ -106,7 +106,8 @@ export function FieldInput(field) {
         checkbox: Checkbox,
         file: File,
         relation: Relation,
-        'rich-text': RichText
+        'rich-text': RichText,
+        hidden: (options) => Label({text: options.label})
     }
     
     if(inputs[field.type]) {

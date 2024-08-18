@@ -12,16 +12,71 @@ export async function renderModule(module, {props, mode, definitions, permission
     if(module.links) {
         for(let key in module.links) {
             const [firstpart, secondpart] = module.links[key].split('.')
-            if(firstpart == 'content') {
-                module.props[key] = props.pageContent[secondpart]
-            } else if(firstpart === 'settings') {
-                module.props[key] = settings[secondpart]
+            if(secondpart) {
+
+                if(firstpart == 'content') {
+                    module.props[key] = props.pageContent[secondpart]
+                } else if(firstpart === 'settings') {
+                    module.props[key] = settings[secondpart]
+                }
+            } else {
+                if(firstpart == 'content') {
+                    module.props[key] = props.pageContent.id
+                }
             }
           
         }
     }
 
-    for(let item of definition.props ?? []) {
+    async function normalizeCollectionContent(collection, item, depth = 1) {
+        console.log({item})
+        for(let field of collection.fields) {
+            if(field.type === 'relation' && depth < 3) {
+                item[field.slug] = await loadRelationFieldType(item[field.slug], field, depth + 1)
+            }
+        }
+
+        return item
+    }
+
+    async function loadRelationFieldType(value, field, depth = 1) {
+        const collection = await db('collections').query().filter('id', '=', field.collectionId).first()
+            
+        if(field.multiple) {
+            let items = []
+            if(Array.isArray(value)) {
+                items = await db('contents').query().filter('_type', '=', field.collectionId).filter('id', 'in', value).all()
+            } else if(value?.filters) {
+                const {filters, page, perPage} = value
+                items = await getDataTableItems({page, perPage, filters, collection}).then(res => res.data)
+
+            } else {
+                items = []
+            }
+            value = await Promise.all(items.map(item => normalizeCollectionContent(collection, item, depth)))
+
+        } else {
+            let item;
+            if(value?.filters) {
+                const {filters, page, perPage} = value
+                const items = await getDataTableItems({page, perPage, filters, collection})
+                item = items.data[0]
+            } else {
+                const id = module.props[field.slug]
+                item = await db('contents').query().filter('_type', '=', field.collectionId).filter('id', '=', id).first()
+            }
+            if(item) {
+                value = await normalizeCollectionContent(collection, item, depth)
+            } else {
+                value = null
+            }
+        }
+        console.log('after load relation field type', value)
+        return value
+    }
+
+    async function loadModuleProps(definition, module) {
+        for(let item of definition.props ?? []) {
         if(item.type === 'slot') {
             let result = ''
             const modules = await db('modules').query().filter('moduleId', '=', module.id).all().then(res => res.sort((a, b) => a.order > b.order ? 1 : -1))
@@ -52,38 +107,15 @@ export async function renderModule(module, {props, mode, definitions, permission
             }
         } 
         else if(item.type === 'relation') {
-            const collection = await db('collections').query().filter('id', '=', item.collectionId).first()
-            
-
-            if(item.multiple) {
-                const ids = module.props[item.slug]
-                if(Array.isArray(module.props[item.slug])) {
-                    module.props[item.slug] = await db('contents').query().filter('_type', '=', item.collectionId).filter('id', 'in', ids).all()
-                } else if(module.props[item.slug]?.filters) {
-                    const {filters, page, perPage} = module.props[item.slug]
-                    console.log('here: ', filters, page, perPage)
-                    const items = await getDataTableItems({page, perPage, filters, collection})
-                    
-                    module.props[item.slug] = items.data
-                } else {
-                    module.props[item.slug] = []
-
-                }
-            } else {
-                if(module.props[item.slug]?.filters) {
-                    const {filters, page, perPage} = module.props[item.slug]
-                    const items = await getDataTableItems({page, perPage, filters, collection})
-                    console.log('items')
-                    module.props[item.slug] = items.data[0]
-                } else {
-                    const id = module.props[item.slug]
-                    module.props[item.slug] = await db('contents').query().filter('_type', '=', item.collectionId).filter('id', '=', id).first()
-                }
-            }
+            module.props[item.slug] = await loadRelationFieldType(module.props[item.slug], item)
         } else {
             module.props[item.slug] = module.props[item.slug] ?? item.defaultValue
         }
     }
+    }
+    
+    await loadModuleProps(definition, module)
+    
 
     let rendered;
     try {

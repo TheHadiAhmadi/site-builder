@@ -51,6 +51,8 @@
     /* opacity: 0.8; */
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
+
     justify-content: space-between;
     align-items: center;
     font-weight: bolder;

@@ -213,6 +213,8 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
 
     let pages = await db('pages').query().all()
     let collections = await db('collections').query().all()
+    let settings = await db('settings').query().first()
+
     let res = await getPage(url.split('?')[0])
     let currentPage = res.page
 
@@ -323,7 +325,8 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
                 <svg data-toolbar-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 16V8l-4 4zM5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm5-2h9V5h-9z"/></svg>
             </div>
             <div data-toolbar-logo>
-                Logo(from settings)
+                ${settings.logo ? `<img style="height: 24px" src="/files/${settings.logo}">` : ''}
+                ${settings.site_name ?? 'Logo'}
             </div>
         </div>
         <div data-sidebar data-active="${sidebar}">

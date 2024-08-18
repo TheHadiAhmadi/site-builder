@@ -266,11 +266,14 @@ const actions = {
         ev.stopPropagation()
         const mod = getParentModule(el)
 
-        const isFullWidth = mod.querySelector('[data-section]').hasAttribute('data-section-full-width')
+        const section = mod.querySelector('[data-section]')
+        const isFullWidth = section.hasAttribute('data-section-full-width')
         await request('module.saveSettings', {
             id: mod.dataset.moduleId,
             slug: location.pathname,
-            fullWidth: !isFullWidth
+            fullWidth: !isFullWidth,
+            paddingTop: +section.style.paddingTop.replace('px', ''),
+            paddingBottom: +section.style.paddingBottom.replace('px', ''),
         })
     },
     async 'open-module-settings'(el, ev) {

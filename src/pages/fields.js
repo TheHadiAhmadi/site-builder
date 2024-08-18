@@ -12,6 +12,7 @@ const fieldTypes = [
 ]
 
 function fieldTypeText(key) {
+    console.log(key)
     return fieldTypes.find(x => x.value === key).text
 }
 
