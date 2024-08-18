@@ -24,7 +24,7 @@ async function SetupPage() {
     return layouts.default({
         head: '<link rel="stylesheet" href="/css/components.css">',
         title: 'Setup CMS',
-        body: `<div style="display: flex; height: 100vh; align-items: center; justify-content: center;">
+        body: `<div style="background-color: #e8e8e8; display: flex; height: 100vh; align-items: center; justify-content: center;">
             ${Form({
                 handler: 'setup.setup',
                 fields: [
@@ -42,7 +42,7 @@ async function SetupPage() {
                     File({
                         name: 'file', 
                         label: 'Import zip'
-                    }),
+                    })
                 ]
             })}
         </div>` + '<script type="module" src="/js/setup.js"></script>'

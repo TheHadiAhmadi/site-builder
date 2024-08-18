@@ -213,7 +213,7 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
 
     let pages = await db('pages').query().all()
     let collections = await db('collections').query().all()
-    let settings = await db('settings').query().first()
+    let settings = await db('settings').query().first() ?? {}
 
     let res = await getPage(url.split('?')[0])
     let currentPage = res.page
