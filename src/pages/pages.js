@@ -17,7 +17,7 @@ function PageEditFields({collections}) {
             placeholder: 'Choose page direction',
             items: [
                 {text: 'left to right', value: 'ltr'},
-                {text: 'right to left', value: 'ltr'},
+                {text: 'right to left', value: 'rtl'},
             ]
         }),
         Select({
