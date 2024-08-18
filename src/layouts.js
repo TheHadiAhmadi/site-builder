@@ -48,7 +48,7 @@ export default {
 
         {{{head}}}
     </head>
-    <body dir="{{dir}}">
+    <body data-dir="{{dir}}">
         <div>
             {{{body}}}
         </div>
