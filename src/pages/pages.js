@@ -72,9 +72,12 @@ function PageEditFields({collections}) {
                 {text: 'Product', value: 'product'}
             ]
         }),
+        `<div style="border-bottom: 1px solid #ddd; padding-top: 1.5rem; font-weight: bold; font-size: 18px; padding-bottom: 0.5rem;">Head</div>`,
+
         Textarea({name: 'script', label: 'Script', placeholder: 'Enter page script'}),
         Textarea({name: 'style', label: 'Style', placeholder: 'Enter page styles'}),
         Textarea({name: 'head', label: 'Head', placeholder: 'Enter Head content'}),
+        Checkbox({name: 'include_site_head', label: 'Include Site\'s Head content'}),
     ]
 }
 

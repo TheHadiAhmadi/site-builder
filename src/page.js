@@ -289,6 +289,7 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
                         Input({name: 'title', label: 'Site Title', placeholder: 'Enter Default Site Title'}),
                         Input({name: 'meta_title', label: 'Site Meta Title', placeholder: 'Enter Default Site Meta Title'}),
                         Textarea({name: 'meta_description', label: 'Default Site Meta Description'}),
+                        Textarea({name: 'head', label: 'Head', placeholder: "Enter site Head content"}),
                         Input({name: 'gtags', label: 'Google tags ID', placeholder: 'Enter Google tags ID'}),
                         File({name: 'favicon', label: 'Favicon', type: 'image'}),
                         File({name: 'logo', label: 'Logo', type: 'image'}),
@@ -480,6 +481,7 @@ export async function renderPage(req, res) {
         style: page.style,
         dir: page.dir,
         lang: page.lang,
+        include_site_head: page.include_site_head,
         seo,
         settings: await db('settings').query().first() ?? {}
     })
