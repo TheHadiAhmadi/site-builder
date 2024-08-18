@@ -32,11 +32,23 @@ export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
 }
 
 function Relation(field) {
+    // let value;
+    // if(!item[field.slug]) value = ''
+
+    // if(item[field.slug].filters) {
+    //     value = Stack({}, item[field.slug].filters.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`))
+    // } else {
+    //     if(field.multiple) {
+    //         value = Stack({}, item[field.slug].map(x => `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${x}" data-badge>${x}</a>`))
+    //     } else {
+    //         value = `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${item[field.slug]}" data-badge>${item[field.slug]}</a>`
+    //     }
+    // }
     return Label({
         symbolic: true,
         text: field.label,
         inline: false,
-        body: Stack({}, [
+        body: Stack({ vertical: true, align: 'start'}, [
             Button({
                 text: 'Choose', 
                 color: 'primary', 
@@ -48,7 +60,9 @@ function Relation(field) {
                     'field-multiple': field.multiple ? true : false
                 }
             }),
-            `<input data-json type="hidden" name="${field.name}" value="">`    
+            `<input data-relation data-json type="hidden" name="${field.name}" value="">`,
+            '<div data-relation-value></div>',
+            
         ]),
     })    
 }

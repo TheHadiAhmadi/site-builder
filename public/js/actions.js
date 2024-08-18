@@ -471,9 +471,22 @@ const actions = {
             result.page = page
             result.perPage = perPage
         }
-        document.querySelector(`[data-form] [name="${fieldName}"]`).value = JSON.stringify(result)
+        const input = document.querySelector(`[data-form] [name="${fieldName}"]`)
+        
+        input.value = JSON.stringify(result)
 
+        const el2 = input.nextElementSibling
 
+        function hasValue(item) {
+            if(Array.isArray(item.value) && item.value.length === 0) return false;
+            return item.value !== ''
+        }            
+        filters = filters.filter(x => hasValue(x))
+        if(!filters.length) {
+            el2.innerHTML = '<span data-badge>All Items</span>'
+        } else {
+            el2.innerHTML = `<div data-stack>${filters.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`).join('')}</div>`
+        }
     },
     async 'choose-collection-items'(el) {
         const modal = document.querySelector(`[data-modal="relation-field-modal"]`)
@@ -482,13 +495,20 @@ const actions = {
         
         delete modal.dataset.modalOpen
 
+        const input = document.querySelector(`[data-form] [name="${fieldName}"]`)
+        const el2 = input.nextElementSibling
+
+
         if(fieldMultiple === "true") {
             let itemIds = [...modal.querySelectorAll('td [data-checkbox]')].filter(x => x.checked).map(item => item.value)
-            document.querySelector(`[data-form] [name="${fieldName}"]`).value = JSON.stringify(itemIds)
+            input.value = JSON.stringify(itemIds)
             
+            el2.innerHTML = `<div data-stack>${itemIds.map(x => `<span data-badge>${x}</span>`).join('')}</div>`
         } else {
             const itemId = modal.querySelector('input[name="data-table-select"]:checked').value;
-            document.querySelector(`[data-form] [name="${fieldName}"]`).value = itemId
+            input.value = itemId
+            el2.innerHTML = `<span data-badge>${itemId}</span>`
+
         }
 
     },

@@ -16,3 +16,15 @@
 [data-stack-justify="end"] {
     justify-content: end;
 }
+
+[data-stack-align="start"] {
+    align-items: start;
+}
+
+[data-stack-align="center"] {
+    align-items: center;
+}
+
+[data-stack-align="end"] {
+    align-items: end;
+}

@@ -131,12 +131,11 @@ export function setFormValue(form, value) {
     form.querySelectorAll('[name]').forEach(input => {
         const name = input.getAttribute('name')
         if(formValue[name] || formValue[name] == '' || formValue[name] == 0 || value[name]) {
-            console.log(input, formValue[name])
             if(input.hasAttribute('data-file-label')) {
                 // input.setValue(formValue[name])
                 setTimeout(() => {
                     console.log('setValue', input.setValue, {input})
-                    input.setValue(formValue[name])
+                    input.setValue(value[name])
                 }, 100)
 
             } else if(input.hasAttribute('data-checkbox')) {
@@ -156,6 +155,30 @@ export function setFormValue(form, value) {
                     }
                 }
             } else if(input.hasAttribute('data-json')) { 
+                if(input.hasAttribute('data-relation')) {
+                    const el = input.nextElementSibling
+                    const fieldValue = value[name]
+                    if(fieldValue.filters) {
+                        function hasValue(item) {
+                            if(Array.isArray(item.value) && item.value.length === 0) return false;
+                            return item.value !== ''
+                        }
+                
+                        let filters = fieldValue.filters.filter(hasValue)
+                        if(!filters.length) {
+                            el.innerHTML = '<span data-badge>All Items</span>'
+                        } else {
+                            el.innerHTML = `<div data-stack>${filters.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`).join('')}</div>`
+                        }
+                    } else if(fieldValue) {
+                        if(Array.isArray(fieldValue)) {
+                            el.innerHTML = `<div data-stack>${fieldValue.map(x => `<span data-badge>${x}</span>`).join('')}</div>`
+                        } else {
+                            el.innerHTML = `<span data-badge>${fieldValue}</span>`
+                        }
+                    }
+                }
+                
                 if(value[name]) {
                     if(typeof value[name] == 'object') {
                         input.value = JSON.stringify(value[name])
@@ -174,8 +197,13 @@ export function setFormValue(form, value) {
                     }, 200)
                 }
             } else {
-                console.log('here', name)
-                input.value = formValue[name]
+                console.log('here', input, name, formValue[name])
+                if(input.hasAttribute('data-file-input')) {
+                    input.setValue(value[name])
+
+                } else {
+                    input.value = formValue[name]
+                }
             }
         }
     })

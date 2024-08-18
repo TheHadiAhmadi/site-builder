@@ -72,7 +72,6 @@ function PageEditFields({collections}) {
                 {text: 'Product', value: 'product'}
             ]
         }),
-        Input({name: 'seo.gtags', label: 'Google Tags ID', placeholder: 'Enter Google tags ID'}),
         Textarea({name: 'script', label: 'Script', placeholder: 'Enter page script'}),
         Textarea({name: 'style', label: 'Style', placeholder: 'Enter page styles'}),
         Textarea({name: 'head', label: 'Head', placeholder: 'Enter Head content'}),

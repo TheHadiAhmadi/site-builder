@@ -54,7 +54,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                 if(field.file_type == 'image') {
                     return `
                         <a href="/files/${file.id}" style="max-height: 40px; overflow: hidden">
-                            <img src="/files/${file.id}" style="width: 64px; height: auto"/>
+                            <img src="/files/${file.id}" style="border: 1px solid #ccc; border-radius: 4px; min-width: 40px; height: 40px"/>
                         </a>
                     `
                 }
@@ -77,7 +77,10 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
             }
 
             if(field.multiple && Array.isArray(item[field.slug])) {
-                return Stack({}, item[field.slug].map(x => renderFile(x)))
+                return Stack({align: 'center'}, [
+                    item[field.slug].slice(0, 3).map(x => renderFile(x)).join(''),
+                    item[field.slug].length > 3 ? '+' : ''
+                ])
             }
 
             return renderFile(item[field.slug])
@@ -87,7 +90,15 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
             if(!item[field.slug]) return ''
 
             if(item[field.slug].filters) {
-                return Stack({}, item[field.slug].filters.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`))
+                function hasValue(item) {
+                    if(Array.isArray(item.value) && item.value.length === 0) return false;
+                    return item.value !== ''
+                }        
+                let filters = item[field.slug].filters.filter(hasValue)
+                if(!filters.length) {
+                    return '<span data-badge>All Items</span>'
+                }
+                return Stack({}, filters.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`))
             } else {
                 if(field.multiple) {
                     return Stack({}, item[field.slug].map(x => `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${x}" data-badge>${x}</a>`))

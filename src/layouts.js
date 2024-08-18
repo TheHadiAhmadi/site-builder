@@ -34,15 +34,15 @@ export default {
         </style>
         
         
-        {{#if seo.gtags}}
+        {{#if settings.gtags}}
             <!-- Google tag (gtag.js) -->
-            <script async src="https://www.googletagmanager.com/gtag/js?id={{seo.gtags}}"></script>
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{settings.gtags}}"></script>
             <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', '{{seo.gtags}}');
+            gtag('config', '{{settings.gtags}}');
             </script>
         {{/if}}
 
