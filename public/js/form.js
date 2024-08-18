@@ -172,7 +172,11 @@ export function setFormValue(form, value) {
                         }
                     } else if(fieldValue) {
                         if(Array.isArray(fieldValue)) {
-                            el.innerHTML = `<div data-stack>${fieldValue.map(x => `<span data-badge>${x}</span>`).join('')}</div>`
+                            if(fieldValue.length === 0) {
+                                el2.innerHTML = `<span data-badge>No Items</span>`
+                            } else {
+                                el.innerHTML = `<div data-stack>${fieldValue.map(x => `<span data-badge>${x}</span>`).join('')}</div>`
+                            }
                         } else {
                             el.innerHTML = `<span data-badge>${fieldValue}</span>`
                         }

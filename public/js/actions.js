@@ -481,11 +481,11 @@ const actions = {
             if(Array.isArray(item.value) && item.value.length === 0) return false;
             return item.value !== ''
         }            
-        filters = filters.filter(x => hasValue(x))
-        if(!filters.length) {
+        let filters2 = filters.filter(x => hasValue(x))
+        if(!filters2.length) {
             el2.innerHTML = '<span data-badge>All Items</span>'
         } else {
-            el2.innerHTML = `<div data-stack>${filters.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`).join('')}</div>`
+            el2.innerHTML = `<div data-stack>${filters2.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`).join('')}</div>`
         }
     },
     async 'choose-collection-items'(el) {
@@ -502,8 +502,12 @@ const actions = {
         if(fieldMultiple === "true") {
             let itemIds = [...modal.querySelectorAll('td [data-checkbox]')].filter(x => x.checked).map(item => item.value)
             input.value = JSON.stringify(itemIds)
+            if(itemIds.length === 0) {
+                el2.innerHTML = `<span data-badge>No Items</span>`
+            } else {
+                el2.innerHTML = `<div data-stack>${itemIds.map(x => `<span data-badge>${x}</span>`).join('')}</div>`
+            }
             
-            el2.innerHTML = `<div data-stack>${itemIds.map(x => `<span data-badge>${x}</span>`).join('')}</div>`
         } else {
             const itemId = modal.querySelector('input[name="data-table-select"]:checked').value;
             input.value = itemId
