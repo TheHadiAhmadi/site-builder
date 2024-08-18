@@ -53,8 +53,8 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
             function renderFile(file) {
                 if(field.file_type == 'image') {
                     return `
-                        <a href="/files/${file.id}" style="max-height: 40px; overflow: hidden">
-                            <img src="/files/${file.id}" style="border: 1px solid #ccc; border-radius: 4px; min-width: 40px; height: 40px"/>
+                        <a href="/files/${file}" style="max-height: 40px; overflow: hidden">
+                            <img src="/files/${file}" style="border: 1px solid #ccc; border-radius: 4px; min-width: 40px; height: 40px"/>
                         </a>
                     `
                 }
@@ -70,7 +70,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                         <svg data-download-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-6 4q-.825 0-1.412-.587T4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413T18 20z"/></svg>
                         ${file_icons[field.file_type]}
                         <div>
-                            ${file.name ?? 'Download'}
+                            Download
                         </div>
                     </div>
                 `

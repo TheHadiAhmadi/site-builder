@@ -43,17 +43,17 @@ export async function getDataTableItems({page = 1, perPage = 10, collection, fil
 
     items.perPage = +perPage
 
-    for(let item of items.data) {
-        for(let field of collection.fields) {
-            if(field.type == 'file') {
-                if(field.multiple) {
-                    item[field.slug] = await db('files').query().filter('id', 'in', item[field.slug]).all()
-                } else {
-                    item[field.slug] = await db('files').query().filter('id', '=', item[field.slug]).first()
-                }
-            }
-        }
-    }
+    // for(let item of items.data) {
+    //     for(let field of collection.fields) {
+    //         if(field.type == 'file') {
+    //             if(field.multiple) {
+    //                 item[field.slug] = await db('files').query().filter('id', 'in', item[field.slug]).all()
+    //             } else {
+    //                 item[field.slug] = await db('files').query().filter('id', '=', item[field.slug]).first()
+    //             }
+    //         }
+    //     }
+    // }
 
     return items
 }
