@@ -38,28 +38,25 @@ export default {
         }
     ],
     template,
-    async load({request, definition, module}) {
-        const collectionId = definition.props.find(x => x.slug === 'items').collectionId
+    async load({ request, module }) {
+        // module.props
+        const carsCollection = await db('collections').query().filter('name', '=', 'Cars').first()
         const categoriesCollection = await db('collections').query().filter('name', '=', 'Categories').first()
-        console.log(categoriesCollection)
         const categories = await db('contents').query().filter('_type', '=', categoriesCollection.id).all()
 
-        let query = db('contents').query().filter('_type', '=', collectionId)
+        let query = db('contents').query().filter('_type', '=', carsCollection.id)
 
         if(request.query.q) {
             query = query.filter('name', 'like', request.query.q)
         }
 
-
-        
         const category = categories.find(x => x.slug === request.params.slug)
         if(request.params.slug && category) {
             query = query.filter('category', '=', category.id)
         }
 
-            const items = await query.all()
+        const items = await query.all()
 
-            console.log({categories, category, items})
         return {
             items
         }
