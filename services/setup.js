@@ -110,19 +110,41 @@ export async function setupCms(req, res) {
                         }
 
                         if(prop.type === 'file' && !page.dynamic) {
-                            const {id} = await db('files').insert({
-                                name: value
-                            })
-                            
-                            afterInsertActions.push({
-                                type: 'move-file',
-                                value: {
-                                    name: value,
-                                    id
+                            if(prop.multiple) {
+                                let result = []
+                                for(let item of value ?? []) {
+
+                                    const {id} = await db('files').insert({
+                                        name: item
+                                    })
+                                    
+                                    afterInsertActions.push({
+                                        type: 'move-file',
+                                        value: {
+                                            name: item,
+                                            id
+                                        }
+                                    })
+                                    result.push(id)
                                 }
-                            })
-                            
-                            module.props[prop.slug] = id
+                                
+                                module.props[prop.slug] = result
+                            } else {
+
+                                const {id} = await db('files').insert({
+                                    name: value
+                                })
+                                
+                                afterInsertActions.push({
+                                    type: 'move-file',
+                                    value: {
+                                        name: value,
+                                        id
+                                    }
+                                })
+                                
+                                module.props[prop.slug] = id
+                            }
                         }
 
                         if(prop.type === 'slot') {
@@ -220,17 +242,34 @@ export async function setupCms(req, res) {
                     }
 
                     if(!field) console.log('Field not found: ', key, fields)
-                    if(field.type === 'file' && !field.multiple) {
-                        const {id} = await db('files').insert({
-                            name: prop
-                        })
-
-                        if(file) {
-                            cpSync(`./temp/site/files/${prop}`, `./uploads/${id}`)
+                    if(field.type === 'file') {
+                        if(field.multiple) {
+                            let result;
+                            for(let name of prop) {
+                                const {id} = await db('files').insert({
+                                    name
+                                })
+                            
+                                if(file) {
+                                    cpSync(`./temp/site/files/${name}`, `./uploads/${id}`)
+                                } else {
+                                    cpSync(`./templates/${template}/files/${name}`, `./uploads/${id}`)
+                                }
+                                result.push(id)
+                            }
+                            item[key] = result
                         } else {
-                            cpSync(`./templates/${template}/files/${prop}`, `./uploads/${id}`)
+                            const {id} = await db('files').insert({
+                                name: prop
+                            })
+                        
+                            if(file) {
+                                cpSync(`./temp/site/files/${prop}`, `./uploads/${id}`)
+                            } else {
+                                cpSync(`./templates/${template}/files/${prop}`, `./uploads/${id}`)
+                            }
+                            item[key] = id
                         }
-                        item[key] = id
                     }
                     
                 }

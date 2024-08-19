@@ -5,7 +5,21 @@ export default [
         seo: {
 
         },
-        modules: []
+        modules: [
+            {
+                definition: 'Section',
+                props: {
+                    content: [
+                        {
+                            definition: 'CompanyLogos',
+                            props: {
+                                images: ["82IaUIrT", "vEgJiKHj", "PgXL8C0k", "3rI6ilHQ", "Tqk8icck"]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
     },
     {
         name: 'Car list',
@@ -31,7 +45,7 @@ export default [
     },
     {
         name: 'Car detail',
-        slug: '/cars/{{slug}}',
+        slug: '/cars/{{id}}',
         seo: {
             
         },

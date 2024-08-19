@@ -4,7 +4,7 @@ let template = `
     <div class="-m-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {{#each items}}
             <div class="p-2">
-                <div class="border rounded-lg overflow-hidden">
+                <a href="/cars/{{this.id}}" class="border rounded-lg overflow-hidden">
                     <img class="w-full" src="/files/{{this.image}}" alt="{{this.name}}">
                     <div class="px-6 py-4">
                         <div class="font-bold text-xl mb-2">
@@ -20,7 +20,7 @@ let template = `
                             Price: \${{this.price}}
                         </p>
                     </div>
-                </div>
+                </a>
             </div>
         {{/each}}
     </div>
