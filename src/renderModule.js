@@ -2,7 +2,7 @@ import { html } from 'svelite-html';
 import { db } from '#services';
 import { getDataTableItems } from './handlers.js';
 
-export async function renderModule(module, {props, mode, definitions, permissions}) {
+export async function renderModule(module, {props, mode, definitions, permissions, request}) {
     module.props ??= {}
     const settings = await db('settings').query().first() ?? {}
 
@@ -86,11 +86,11 @@ export async function renderModule(module, {props, mode, definitions, permission
                     const cols = mod.cols ?? 12
                     result += `
                         <div data-column data-cols="${cols}">
-                            ${await renderModule(mod, { props, mode, definitions, permissions})}
+                            ${await renderModule(mod, { props, request, mode, definitions, permissions})}
                         </div>
                     `
                 } else {
-                    result += await renderModule(mod, { props, mode, definitions, permissions})
+                    result += await renderModule(mod, { props, request, mode, definitions, permissions})
                 }
                 index = index + 1;
             }
@@ -116,6 +116,14 @@ export async function renderModule(module, {props, mode, definitions, permission
     
     await loadModuleProps(definition, module)
     
+    console.log(definition)
+    if(definition.load) {
+        // console.log('Module has load function')
+        module.props = {
+            ...module.props, 
+            ...(await definition.load({request, db, definition, module}))
+        }
+    }
 
     let rendered;
     try {

@@ -57,9 +57,9 @@ async function loadModuleDefinitions() {
     const defs = await db('definitions').query().all()
     
     for(let definition of defs) {
-        if(definition.path) {
+        if(definition.file) {
             try {
-                definitions[definition.id] = await import(definition.path).then(res => res.default)
+                definitions[definition.id] = await import(definition.file).then(res => res.default)
             } catch(err) {
                 definitions[definition.id] = {}
             }
@@ -195,7 +195,7 @@ async function DynamicPageSelect(page, params) {
 }
 
 //#region Render body
-export async function renderBody(body, {props, mode, url, view, ...query}) {
+export async function renderBody(body, {props, mode, url, view, params, ...query}) {
     // const permissions = {} 
     const permissions = {
         page_create: true,
@@ -389,8 +389,13 @@ export async function renderBody(body, {props, mode, url, view, ...query}) {
         `
         }
 
+    const request = {
+        query,
+        params
+    }
+
     return `<div data-body data-page-id="${currentPage.id}">
-        ${(await Promise.all(body.map(x => renderModule(x, {props, mode, definitions, permissions})))).join('')}
+        ${(await Promise.all(body.map(x => renderModule(x, {props, mode, definitions, permissions, request})))).join('')}
             ${previewContent}
         </div>`
 }
@@ -476,7 +481,7 @@ export async function renderPage(req, res) {
 
     const html = renderTemplate(layouts.default, {
         head: (head?? '') + (stylesheet ?? ''), 
-        body: await renderBody(modules, {...req.query, props, mode, url: req.url, view}), 
+        body: await renderBody(modules, {...req.query, props, params, mode, url: req.url, view}), 
         script: page.script,
         style: page.style,
         dir: page.dir,

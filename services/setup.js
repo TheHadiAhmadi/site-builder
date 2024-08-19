@@ -96,13 +96,15 @@ export async function setupCms(req, res) {
 
                         if(prop.type === 'relation') {
                             const value = module.props[prop.slug]
-                            if(prop.multiple) {
-                                if(value) {
-                                    module.props[prop.slug] = value.map(x => idMap[x])
-                                }
-                            } else {
-                                if(value) {
-                                    module.props[prop.slug] = idMap[value]
+                            if(value && !value.filters) {
+                                if(prop.multiple) {
+                                    if(value) {
+                                        module.props[prop.slug] = value.map(x => idMap[x])
+                                    }
+                                } else {
+                                    if(value) {
+                                        module.props[prop.slug] = idMap[value]
+                                    }
                                 }
                             }
                         }
@@ -191,7 +193,17 @@ export async function setupCms(req, res) {
         console.log('import Collections', collections)
 
         for(let collection of collections) {
-            const {name, fields, contents} = collection
+            let {name, fields, contents} = collection
+
+            const nameField = fields.find(x => x.slug === 'name')
+            if(nameField) {
+                nameField.default = true
+            } else {
+                fields = [
+                    {slug: 'name', label: 'Name', default: true, type: 'input'},
+                    ...fields
+                ]
+            }
             
             const res = await db('collections').insert({name, fields})  
             _collections[res.name] = res
@@ -336,12 +348,14 @@ export async function setupCms(req, res) {
             for (let definition of mod.default.definitions) {
                 let def = definition
                 if(definition.file) {
+                    definition.file = `../templates/${template}/definitions/${definition.file}`
                     def = {
+                    
                         ...def, 
-                        ...(await import(`../templates/${template}/definitions/${definition.file}`)).default
+                        ...(await import(definition.file)).default
                     }
 
-                    delete def.load
+                    // delete def.load
                 }
                 const res = await db('definitions').insert({...def})
                 _definitions[res.name] = res

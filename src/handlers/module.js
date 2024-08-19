@@ -306,7 +306,7 @@ export default {
             }
         }
 
-        let settings = await db('settings').query().first()
+        let settings = await db('settings').query().first() ?? {}
 
         for(let key in original.links) {
             const [first, second] = original.links[key].split('.')
@@ -314,7 +314,9 @@ export default {
                 settings[second] = props[key]
             }
         }
-        await db('settings').update(settings)
+        if(settings.id) {
+            await db('settings').update(settings)
+        }
 
         await db('modules').update({...original, props})
     },
