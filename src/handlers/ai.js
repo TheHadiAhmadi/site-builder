@@ -4,10 +4,10 @@ import {OpenAI} from 'openai'
 
 async function generateResponse(prompt) {
     const oai = new OpenAI({})
-    
+    console.log('waiting for ai response...')
     const completion = await oai.chat.completions.create({
         // model: 'mistralai/Mistral-7B-Instruct-v0.2',
-        model: 'openai/gpt-4o',
+        model: 'Openai/gpt-4o-mini',
         // model: 'openai/gpt-4o-mini',
         // model: 'deepseek-ai/deepseek-coder-33b-instruct',
         // model: 'codellama/CodeLlama-34b-Instruct-hf',
@@ -18,6 +18,7 @@ async function generateResponse(prompt) {
         response_format: { "type": "json_object" }
     })
 
+    console.log('ai response received')
     if(completion.choices[0].message) {
 
         const content = completion.choices[0].message.content
