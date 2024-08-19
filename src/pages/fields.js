@@ -13,7 +13,7 @@ const fieldTypes = [
 
 function fieldTypeText(key) {
     console.log(key)
-    return fieldTypes.find(x => x.value === key).text
+    return fieldTypes.find(x => x.value === key)?.text ?? '---'
 }
 
 export function FieldModal({id}) {
@@ -166,7 +166,7 @@ export function FieldsList({name, updateAction = 'open-edit-field-modal', action
                     <td>${item.label}</td>
                     <td>${fieldTypeText(item.type)}</td>
                     <td>
-                        ${Stack({}, [
+                        ${Stack({}, item.default ? [] : [
                             Button({
                                 text: 'Edit', 
                                 size: 'small', 

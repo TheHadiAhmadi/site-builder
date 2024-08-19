@@ -8,7 +8,10 @@ export default {
     },
     async create(body) {
         // create content type
-        body.fields ??= []
+        body.fields = [
+            {slug: "name", label: 'Name', type: 'input', default: true}
+        ]
+        
         const res = await db('collections').insert(body)
 
         return {

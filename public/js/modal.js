@@ -1,9 +1,9 @@
 export function Modal(el) {
-    el.addEventListener('click', () => {
-        delete el.dataset.modalOpen
-    })
+    const content = el.querySelector('[data-modal-content]')
 
-    el.querySelector('[data-modal-content]').addEventListener('click', e => {
-        e.stopPropagation()
+    window.addEventListener('click', (e) => {
+        if(!content.contains(e.target)) {
+            delete el.dataset.modalOpen
+        }
     })
 }

@@ -67,8 +67,6 @@ export async function setupCms(req, res) {
     let _collections = {}
     const idMap = {}
 
-    const files = {}
-
     async function importPages(pages) {
         for(let page of pages) {
             const request = {
@@ -336,11 +334,21 @@ export async function setupCms(req, res) {
     
         if(mod.default) {
             for (let definition of mod.default.definitions) {
-                const def = (await definition).default
+                let def = definition
+                if(definition.file) {
+                    def = {
+                        ...def, 
+                        ...(await import(`../templates/${template}/definitions/${definition.file}`)).default
+                    }
+
+                    delete def.load
+                }
                 const res = await db('definitions').insert({...def})
                 _definitions[res.name] = res
             }
     
+            await importCollections(mod.default.collections)
+
     
             for(let key in _definitions) {
                 const definition = _definitions[key]
@@ -354,7 +362,6 @@ export async function setupCms(req, res) {
                 await db('definitions').update(definition)
             }
 
-            await importCollections(mod.default.collections)
             
             await importPages(mod.default.pages)
     
