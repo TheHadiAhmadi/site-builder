@@ -1,0 +1,895 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "password": "_%Passw0rd!%_",
+      "id": "kOxEVx5J",
+      "createdAt": 1724007579554,
+      "updatedAt": 0
+    }
+  ],
+  "definitions": [
+    {
+      "name": "Section",
+      "props": [
+        {
+          "type": "checkbox",
+          "slug": "fullWidth",
+          "label": "Full Width",
+          "defaultValue": true
+        },
+        {
+          "type": "input",
+          "slug": "paddingTop",
+          "label": "Padding Top",
+          "defaultValue": 0
+        },
+        {
+          "type": "input",
+          "slug": "paddingBottom",
+          "label": "Padding Bottom",
+          "defaultValue": 0
+        },
+        { "type": "slot", "slug": "content", "label": "Content" }
+      ],
+      "template": "<div data-section {{#if fullWidth}} data-section-full-width {{/if}} style=\"padding-top: {{paddingTop}}px; padding-bottom: {{paddingBottom}}px;\">{{{content}}}</div>",
+      "id": "4IDsKJJu",
+      "createdAt": 1724007579554,
+      "updatedAt": 1724007579555
+    },
+    {
+      "name": "RichText",
+      "props": [{ "type": "rich-text", "slug": "content", "label": "Content" }],
+      "template": "<div data-html data-rich-text-inline>{{{content}}}</div>",
+      "id": "X0aO9TQ7",
+      "createdAt": 1724007579554,
+      "updatedAt": 1724007579555
+    },
+    {
+      "name": "Columns",
+      "props": [{ "type": "slot", "slug": "content", "label": "Content" }],
+      "template": "<div data-columns>{{{content}}}</div>",
+      "id": "3usqx1dR",
+      "createdAt": 1724007579554,
+      "updatedAt": 1724007579555
+    },
+    {
+      "name": "Fixed Image",
+      "template": "<img src=\"/files/{{src}}\"/>",
+      "props": [
+        {
+          "type": "file",
+          "slug": "src",
+          "label": "Src",
+          "file_type": "image",
+          "multiple": false
+        }
+      ],
+      "id": "9V0gSDzY",
+      "createdAt": 1724008488332,
+      "updatedAt": 1724008616025,
+      "settings": [],
+      "contentType": [],
+      "multiple": false
+    },
+    {
+      "name": "BlogList",
+      "template": "\n<div class=\"container mx-auto px-4 py-6\">\n    <h2 class=\"text-3xl font-bold mb-4\">Blog Posts</h2>\n    <div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">\n        {{#each getBlogs}}\n        <div class=\"bg-white p-6 rounded-lg shadow-md\">\n            <h3 class=\"text-xl font-semibold mb-2\">{{title}}</h3>\n            <p class=\"text-gray-700\">{{content}}</p>\n        </div>\n        {{/each}}\n    </div>\n</div>",
+      "props": [
+        {
+          "type": "relation",
+          "slug": "getBlogs",
+          "label": "Get Blogs",
+          "collectionId": "ANvluvjR",
+          "multiple": true
+        }
+      ],
+      "owner": "ai",
+      "prompt": {
+        "template": "Create blogs list module which shows title and description of post",
+        "fields": "get blogs as relation type"
+      },
+      "id": "mbJEtcP5",
+      "createdAt": 1724008832551,
+      "updatedAt": 0
+    },
+    {
+      "name": "Blog detail",
+      "template": "<h1>{{title}}</h1>\n\n<p>{{content}}</p>",
+      "props": [
+        { "type": "input", "slug": "title", "label": "Title" },
+        { "type": "textarea", "slug": "content", "label": "Content" }
+      ],
+      "id": "NbAB7Dly",
+      "createdAt": 1724008998726,
+      "updatedAt": 1724009015348
+    },
+    {
+      "name": "blogsList",
+      "template": "<div class=\"container mx-auto py-5\">\n    <h2 class=\"text-2xl font-bold mb-4\">Blogs List</h2>\n    <div class=\"space-y-4\">\n        {{#each blogs}}\n        <div class=\"p-4 border rounded shadow-md bg-white\">\n            <h3 class=\"text-xl font-semibold\">{{this.title}}</h3>\n            <p class=\"text-gray-700\">{{this.content}}</p>\n        </div>\n        {{/each}}\n    </div>\n</div>",
+      "props": [
+        {
+          "type": "relation",
+          "slug": "blogs",
+          "label": "Get Blogs",
+          "collectionId": "ANvluvjR",
+          "multiple": true
+        }
+      ],
+      "owner": "ai",
+      "prompt": {
+        "template": "Create blogs list module which shows title and description of post",
+        "fields": "get blogs as relation type"
+      },
+      "id": "kJwpNYw7",
+      "createdAt": 1724012924247,
+      "updatedAt": 0
+    },
+    {
+      "name": "CarListPlugin",
+      "template": "<div class=\"-m-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3\">\n{{#each cars}}<div class=\"p-2\"><div class=\"border rounded-lg overflow-hidden\"><img class=\"w-full\" src=\"/files/{{this.image}}\" alt=\"{{this.name}}\"><div class=\"px-6 py-4\"><div class=\"font-bold text-xl mb-2\">{{this.name}}</div><p class=\"text-gray-700 text-base\">Passengers: {{this.passengers}}</p><p class=\"text-gray-700 text-base\">Transmission: {{this.transmission}}</p><p class=\"text-gray-700 text-base\">Price: ${{this.price}}</p></div></div></div>{{/each}}\n</div>",
+      "props": [
+        {
+          "type": "relation",
+          "slug": "cars",
+          "label": "Get Cars",
+          "collectionId": "8rmIWDKJ",
+          "multiple": true
+        }
+      ],
+      "owner": "ai",
+      "prompt": {
+        "template": "create car list plugin",
+        "fields": "get cars relation type"
+      },
+      "id": "Z2xVEWvN",
+      "createdAt": 1724076221350,
+      "updatedAt": 1724077589597,
+      "settings": [],
+      "contentType": [],
+      "multiple": false
+    },
+    
+      "owner": "ai",
+      "prompt": {
+        "template": "create module which shows logos of companies in landing page.\n",
+        "fields": "get images prop as file multiple"
+      },
+      "id": "xHP8ilJo",
+      "createdAt": 1724076839628,
+      "updatedAt": 1724076972960,
+      "settings": [],
+      "contentType": [],
+      "multiple": false
+    },
+    {
+      "name": "Section Heading",
+      "template": "<div class=\"my-8\">\n<h1 class=\"text-center font-bold text-4xl mb-4\">{{title}}</h1>\n<p class=\"mx-auto max-w-2xl text-sm text-gray-700 text-center\">{{description}}</p>\n</div>",
+      "props": [
+        { "type": "input", "slug": "title", "label": "Title" },
+        { "type": "textarea", "slug": "description", "label": "Description" }
+      ],
+      "id": "uTcfAbU7",
+      "createdAt": 1724077514419,
+      "updatedAt": 1724077533959
+    },
+    {
+      "name": "CarSearch",
+      "template": "<div class=\"flex flex-col w-64 p-4 border rounded bg-white shadow-lg\">\n    <h2 class=\"text-lg font-semibold mb-2\">Search Cars</h2>\n<a href=\"/categories\">All</a>\n     {{#each categories}}\n            <a href=\"/categories/{{this.slug}}\">{{this.name}}</a>\n      {{/each}}\n            \n</div>",
+      "props": [
+        { "type": "input", "slug": "passengers", "label": "Passenger count" },
+        {
+          "type": "checkbox",
+          "slug": "recent-arrivals",
+          "label": "Recent Arrivals"
+        },
+        {
+          "type": "relation",
+          "slug": "categories",
+          "label": "Categories",
+          "collectionId": "SOYzKEc2",
+          "multiple": true
+        },
+        { "type": "input", "slug": "curernt", "label": "Current category" }
+      ],
+      "owner": "ai",
+      "prompt": {
+        "template": "create search plugin for cars which shows search inputs. usage be very easy. will show this on left side of page, for each property show a title and below of title show available options as checkbox. when an item changes, search form should be submitted",
+        "fields": ""
+      },
+      "id": "ZAWq0HUJ",
+      "createdAt": 1724077689349,
+      "updatedAt": 1724078524678,
+      "settings": [],
+      "contentType": [],
+      "multiple": false
+    }
+  ],
+  "settings": [
+    {
+      "favicon": "",
+      "logo": "LCb4Ukaa",
+      "site_name": "Site Name",
+      "title": "",
+      "meta_title": "",
+      "gtags": "",
+      "meta_description": "",
+      "head": "",
+      "id": "UptcCEZH",
+      "createdAt": 1724007599237,
+      "updatedAt": 1724081556680
+    }
+  ],
+  "files": [
+    { "id": "MOa3pwKH", "createdAt": 1724007608911, "updatedAt": 0 },
+    { "id": "o3VoXCTC", "createdAt": 1724007612784, "updatedAt": 0 },
+    { "id": "LCb4Ukaa", "createdAt": 1724007786702, "updatedAt": 0 },
+    { "id": "kyjjzmeh", "createdAt": 1724007912851, "updatedAt": 0 },
+    { "id": "2226ardR", "createdAt": 1724008561048, "updatedAt": 0 },
+    { "id": "k7G5c5oR", "createdAt": 1724008625426, "updatedAt": 0 },
+    { "id": "4J9MNtwk", "createdAt": 1724076308161, "updatedAt": 0 },
+    { "id": "QapOf23t", "createdAt": 1724076340459, "updatedAt": 0 },
+    { "id": "s4WdCNQP", "createdAt": 1724076374057, "updatedAt": 0 },
+    { "id": "82IaUIrT", "createdAt": 1724076918288, "updatedAt": 0 },
+    { "id": "vEgJiKHj", "createdAt": 1724076918301, "updatedAt": 0 },
+    { "id": "PgXL8C0k", "createdAt": 1724076918309, "updatedAt": 0 },
+    { "id": "3rI6ilHQ", "createdAt": 1724076918319, "updatedAt": 0 },
+    { "id": "Tqk8icck", "createdAt": 1724076918325, "updatedAt": 0 },
+    { "id": "poHx58is", "createdAt": 1724077443488, "updatedAt": 0 }
+  ],
+  "pages": [
+    {
+      "seo": {
+        "social_image": "kyjjzmeh",
+        "title": "Page Title",
+        "meta_title": "Meta title",
+        "meta_description": "meta description",
+        "meta_keywords": "keyword1, 2, 3, ...",
+        "robots": "index, follow",
+        "twitter_card": "summary_large_image",
+        "og_type": "website"
+      },
+      "name": "Updated name",
+      "slug": "/updated",
+      "script": "",
+      "style": "",
+      "head": "",
+      "collectionId": "null",
+      "dir": "ltr",
+      "lang": "fa",
+      "dynamic": false,
+      "include_site_head": false,
+      "id": "1SVve48K",
+      "createdAt": 1724007833638,
+      "updatedAt": 1724007922247
+    },
+    {
+      "seo": {
+        "social_image": "",
+        "title": "",
+        "meta_title": "",
+        "meta_description": "",
+        "meta_keywords": "",
+        "robots": "null",
+        "twitter_card": "null",
+        "og_type": "null"
+      },
+      "name": "Blog detail",
+      "slug": "/blogs/{{id}}",
+      "script": "",
+      "style": "",
+      "head": "",
+      "collectionId": "ANvluvjR",
+      "dir": "null",
+      "lang": "null",
+      "dynamic": true,
+      "include_site_head": false,
+      "id": "2cw83G9T",
+      "createdAt": 1724008939592,
+      "updatedAt": 0
+    },
+    {
+      "seo": {
+        "social_image": "",
+        "title": "",
+        "meta_title": "",
+        "meta_description": "",
+        "meta_keywords": "",
+        "robots": "null",
+        "twitter_card": "null",
+        "og_type": "null"
+      },
+      "name": "Cars",
+      "slug": "/cars",
+      "script": "",
+      "style": "",
+      "head": "",
+      "collectionId": "null",
+      "dir": "null",
+      "lang": "null",
+      "dynamic": false,
+      "include_site_head": false,
+      "id": "pmPgmaOr",
+      "createdAt": 1724076244094,
+      "updatedAt": 0
+    },
+    {
+      "seo": {
+        "social_image": "",
+        "title": "",
+        "meta_title": "",
+        "meta_description": "",
+        "meta_keywords": "",
+        "robots": "null",
+        "twitter_card": "null",
+        "og_type": "null"
+      },
+      "name": "Category detail",
+      "slug": "/categories/{{slug}}",
+      "script": "",
+      "style": "",
+      "head": "",
+      "collectionId": "SOYzKEc2",
+      "dir": "ltr",
+      "lang": "en",
+      "dynamic": true,
+      "include_site_head": false,
+      "id": "FqNoVPPK",
+      "createdAt": 1724078234408,
+      "updatedAt": 0
+    },
+    {
+      "seo": {
+        "social_image": "",
+        "title": "",
+        "meta_title": "",
+        "meta_description": "",
+        "meta_keywords": "",
+        "robots": "null",
+        "twitter_card": "null",
+        "og_type": "null"
+      },
+      "name": "All Categories",
+      "slug": "/categories",
+      "script": "",
+      "style": "",
+      "head": "",
+      "collectionId": "null",
+      "dir": "null",
+      "lang": "null",
+      "dynamic": false,
+      "include_site_head": false,
+      "id": "vxswCbYi",
+      "createdAt": 1724078537133,
+      "updatedAt": 0
+    }
+  ],
+  "modules": [
+    {
+      "moduleId": "vkYBaQnG",
+      "definitionId": "3usqx1dR",
+      "order": 0,
+      "props": { "cols": [], "colsLg": [] },
+      "links": {},
+      "id": "76GSb8yH",
+      "createdAt": 1724007960922,
+      "updatedAt": 0
+    },
+    {
+      "moduleId": "CPP8cnOg",
+      "definitionId": "3usqx1dR",
+      "order": 0,
+      "props": { "cols": [], "colsLg": [] },
+      "links": {},
+      "id": "WzLM6raf",
+      "createdAt": 1724007967385,
+      "updatedAt": 0
+    },
+    {
+      "moduleId": "mbOG8gPH",
+      "definitionId": "3usqx1dR",
+      "order": 0,
+      "props": { "cols": [], "colsLg": [] },
+      "links": {},
+      "id": "k2xZPpHE",
+      "createdAt": 1724007968114,
+      "updatedAt": 0
+    },
+    {
+      "moduleId": "76GSb8yH",
+      "definitionId": "X0aO9TQ7",
+      "order": 1,
+      "cols": 12,
+      "props": { "content": "<p>This is content...</p>" },
+      "links": {},
+      "id": "blpzit4K",
+      "createdAt": 1724008003985,
+      "updatedAt": 1724008061157
+    },
+    {
+      "pageId": "1SVve48K",
+      "definitionId": "4IDsKJJu",
+      "order": 1,
+      "props": { "fullWidth": false },
+      "links": {},
+      "id": "BqVxiDHX",
+      "createdAt": 1724008553667,
+      "updatedAt": 1724012936376
+    },
+    {
+      "moduleId": "BqVxiDHX",
+      "definitionId": "3usqx1dR",
+      "order": 0,
+      "props": { "cols": [], "colsLg": [] },
+      "links": {},
+      "id": "jHUorwZH",
+      "createdAt": 1724008553667,
+      "updatedAt": 0
+    },
+    {
+      "moduleId": "jHUorwZH",
+      "definitionId": "9V0gSDzY",
+      "order": 1,
+      "cols": 12,
+      "props": { "src": "k7G5c5oR" },
+      "links": {},
+      "id": "46ixNbzj",
+      "createdAt": 1724008555593,
+      "updatedAt": 1724012936376
+    },
+    {
+      "moduleId": "jHUorwZH",
+      "definitionId": "mbJEtcP5",
+      "order": 2,
+      "cols": 12,
+      "props": { "getBlogs": ["bHXpIWUz", "nN1qtti8"] },
+      "links": {},
+      "id": "2jnEDHRd",
+      "createdAt": 1724008836299,
+      "updatedAt": 1724012936376
+    },
+    {
+      "pageId": "2cw83G9T",
+      "definitionId": "4IDsKJJu",
+      "order": 1,
+      "props": { "fullWidth": false },
+      "links": {},
+      "id": "hELpzc5Z",
+      "createdAt": 1724008941240,
+      "updatedAt": 1724009022023
+    },
+    {
+      "moduleId": "hELpzc5Z",
+      "definitionId": "3usqx1dR",
+      "order": 0,
+      "props": { "cols": [], "colsLg": [] },
+      "links": {},
+      "id": "Ugutmqib",
+      "createdAt": 1724008941240,
+      "updatedAt": 0
+    },
+    {
+      "moduleId": "Ugutmqib",
+      "definitionId": "X0aO9TQ7",
+      "order": 1,
+      "cols": 12,
+      "props": {},
+      "links": {},
+      "id": "QCumjxKc",
+      "createdAt": 1724008945978,
+      "updatedAt": 1724009022023
+    },
+    {
+      "moduleId": "Ugutmqib",
+      "definitionId": "NbAB7Dly",
+      "order": 1,
+      "cols": 12,
+      "props": {
+        "title": "Another item",
+        "content": "Update content from page"
+      },
+      "links": { "title": "content.title", "content": "content.content" },
+      "id": "7hepcA9g",
+      "createdAt": 1724009021992,
+      "updatedAt": 1724009086009
+    },
+    {
+      "moduleId": "jHUorwZH",
+      "definitionId": "kJwpNYw7",
+      "order": 3,
+      "cols": 12,
+      "props": { "blogs": ["bHXpIWUz", "nN1qtti8"] },
+      "links": {},
+      "id": "vtVKwCQd",
+      "createdAt": 1724012936350,
+      "updatedAt": 1724012943416
+    },
+    {
+      "pageId": "pmPgmaOr",
+      "definitionId": "4IDsKJJu",
+      "order": 1,
+      "props": { "fullWidth": false },
+      "links": {},
+      "id": "EoFfPMu7",
+      "createdAt": 1724076246984,
+      "updatedAt": 1724077735779
+    },
+    {
+      "moduleId": "EoFfPMu7",
+      "definitionId": "3usqx1dR",
+      "order": 0,
+      "props": { "cols": [], "colsLg": [] },
+      "links": {},
+      "id": "ZRy27uWZ",
+      "createdAt": 1724076246984,
+      "updatedAt": 0
+    },
+    {
+      "moduleId": "ZRy27uWZ",
+      "definitionId": "Z2xVEWvN",
+      "order": 4,
+      "cols": 12,
+      "props": {
+        "cars": {
+          "filters": [
+            { "field": "name", "operator": "=", "value": "R" },
+            { "field": "transmission", "operator": "=", "value": [] }
+          ],
+          "page": 1,
+          "perPage": 10
+        }
+      },
+      "links": {},
+      "id": "3mAHhQe0",
+      "createdAt": 1724076249159,
+      "updatedAt": 1724081098279
+    },
+    {
+      "moduleId": "ZRy27uWZ",
+      "definitionId": "xHP8ilJo",
+      "order": 1,
+      "cols": 12,
+      "props": {
+        "images": ["82IaUIrT", "vEgJiKHj", "PgXL8C0k", "3rI6ilHQ", "Tqk8icck"]
+      },
+      "links": {},
+      "id": "aAWxNWDX",
+      "createdAt": 1724076860380,
+      "updatedAt": 1724077735779
+    },
+    {
+      "moduleId": "ZRy27uWZ",
+      "definitionId": "uTcfAbU7",
+      "order": 3,
+      "cols": 12,
+      "props": {
+        "title": "Popular Car Rentals Deals",
+        "description": "ranging from elegant sedans to powerful sport cars, all carefully selected to provide our customers with the ultimate driving experience."
+      },
+      "links": {},
+      "id": "ZtduJI1f",
+      "createdAt": 1724077552228,
+      "updatedAt": 1724077735779
+    },
+    {
+      "moduleId": "ZRy27uWZ",
+      "definitionId": "ZAWq0HUJ",
+      "order": 2,
+      "cols": 12,
+      "props": {
+        "categories": {
+          "filters": [{ "field": "slug", "operator": "=", "value": "u" }],
+          "page": 1,
+          "perPage": 10
+        },
+        "passengers": "",
+        "curernt": "",
+        "recent-arrivals": false
+      },
+      "links": {},
+      "id": "3bQX1etD",
+      "createdAt": 1724077699010,
+      "updatedAt": 1724081290549
+    },
+    {
+      "pageId": "FqNoVPPK",
+      "definitionId": "4IDsKJJu",
+      "order": 1,
+      "props": { "fullWidth": false },
+      "links": {},
+      "id": "UOCHoczl",
+      "createdAt": 1724078235952,
+      "updatedAt": 1724078634170
+    },
+    {
+      "moduleId": "UOCHoczl",
+      "definitionId": "3usqx1dR",
+      "order": 0,
+      "props": { "cols": [], "colsLg": [] },
+      "links": {},
+      "id": "I3dGuJA3",
+      "createdAt": 1724078235952,
+      "updatedAt": 0
+    },
+    {
+      "moduleId": "I3dGuJA3",
+      "definitionId": "ZAWq0HUJ",
+      "order": 1,
+      "cols": 3,
+      "props": {
+        "categories": { "filters": [], "page": 1, "perPage": 10 },
+        "passengers": "",
+        "recent-arrivals": false
+      },
+      "links": {},
+      "id": "QwhMsNui",
+      "createdAt": 1724078240199,
+      "updatedAt": 1724078634170
+    },
+    {
+      "pageId": "vxswCbYi",
+      "definitionId": "4IDsKJJu",
+      "order": 1,
+      "props": { "fullWidth": false },
+      "links": {},
+      "id": "RJqoCyva",
+      "createdAt": 1724078540567,
+      "updatedAt": 1724078711681
+    },
+    {
+      "moduleId": "RJqoCyva",
+      "definitionId": "3usqx1dR",
+      "order": 0,
+      "props": { "cols": [], "colsLg": [] },
+      "links": {},
+      "id": "MwItoHH5",
+      "createdAt": 1724078540567,
+      "updatedAt": 0
+    },
+    {
+      "moduleId": "MwItoHH5",
+      "definitionId": "ZAWq0HUJ",
+      "order": 2,
+      "cols": 3,
+      "props": {
+        "categories": { "filters": [], "page": 1, "perPage": 10 },
+        "passengers": "",
+        "curernt": "",
+        "recent-arrivals": false
+      },
+      "links": {},
+      "id": "oP4ptEgR",
+      "createdAt": 1724078542461,
+      "updatedAt": 1724078711681
+    },
+    {
+      "moduleId": "MwItoHH5",
+      "definitionId": "Z2xVEWvN",
+      "order": 3,
+      "cols": 9,
+      "props": { "cars": { "filters": [], "page": 1, "perPage": 10 } },
+      "links": {},
+      "id": "YKdkGeEh",
+      "createdAt": 1724078570117,
+      "updatedAt": 1724078711681
+    },
+    {
+      "moduleId": "I3dGuJA3",
+      "definitionId": "Z2xVEWvN",
+      "order": 2,
+      "cols": 9,
+      "props": { "cars": ["uJe8fckZ"] },
+      "links": { "cars": "content.cars" },
+      "id": "3DfBJIJb",
+      "createdAt": 1724078590691,
+      "updatedAt": 1724081556680
+    },
+    {
+      "moduleId": "I3dGuJA3",
+      "definitionId": "uTcfAbU7",
+      "order": 1,
+      "cols": 12,
+      "props": {
+        "title": "Search cars",
+        "description": "Search cars based on category and other factors"
+      },
+      "links": {},
+      "id": "w3V1Snb8",
+      "createdAt": 1724078634143,
+      "updatedAt": 1724078650002
+    },
+    {
+      "moduleId": "MwItoHH5",
+      "definitionId": "uTcfAbU7",
+      "order": 1,
+      "cols": 12,
+      "props": {
+        "title": "Search Cars",
+        "description": "Search cars based on category and other factors"
+      },
+      "links": {},
+      "id": "YHpOZSDZ",
+      "createdAt": 1724078662034,
+      "updatedAt": 1724078711681
+    }
+  ],
+  "collections": [
+    {
+      "name": "Blogs",
+      "fields": [
+        { "type": "input", "slug": "title", "label": "Title" },
+        { "type": "textarea", "slug": "content", "label": "Content" }
+      ],
+      "id": "ANvluvjR",
+      "createdAt": 1724008660500,
+      "updatedAt": 1724008676483
+    },
+    {
+      "name": "Cars",
+      "fields": [
+        { "type": "input", "slug": "name", "label": "Name" },
+        { "type": "input", "slug": "passengers", "label": "Passenger count" },
+        {
+          "type": "select",
+          "slug": "transmission",
+          "label": "Transmission",
+          "items": ["Auto", "Manual"],
+          "multiple": false
+        },
+        {
+          "type": "file",
+          "slug": "image",
+          "label": "Image",
+          "file_type": "image",
+          "multiple": false
+        },
+        { "type": "input", "slug": "price", "label": "Price" },
+        {
+          "type": "relation",
+          "slug": "category",
+          "label": "Category",
+          "collectionId": "SOYzKEc2",
+          "multiple": false
+        }
+      ],
+      "id": "8rmIWDKJ",
+      "createdAt": 1724074597849,
+      "updatedAt": 1724078061513
+    },
+    {
+      "name": "Categories",
+      "fields": [
+        { "type": "input", "slug": "slug", "label": "Slug" },
+        { "type": "input", "slug": "name", "label": "Name" },
+        {
+          "type": "relation",
+          "slug": "cars",
+          "label": "Cars",
+          "collectionId": "8rmIWDKJ",
+          "multiple": true
+        }
+      ],
+      "id": "SOYzKEc2",
+      "createdAt": 1724077880544,
+      "updatedAt": 1724081415611
+    }
+  ],
+  "contents": [
+    {
+      "_type": "ANvluvjR",
+      "title": "Test item",
+      "content": "content",
+      "id": "bHXpIWUz",
+      "createdAt": 1724008851372,
+      "updatedAt": 1724009029647
+    },
+    {
+      "_type": "ANvluvjR",
+      "title": "Another item",
+      "content": "Update content from page",
+      "id": "nN1qtti8",
+      "createdAt": 1724008859611,
+      "updatedAt": 1724009086009
+    },
+    {
+      "_type": "8rmIWDKJ",
+      "image": "4J9MNtwk",
+      "name": "BMW M8 COUP 2022",
+      "passengers": "4",
+      "price": "2800",
+      "transmission": "Auto",
+      "id": "E6et3YOb",
+      "createdAt": 1724076315353,
+      "updatedAt": 1724078077788,
+      "category": "fvB2U16z"
+    },
+    {
+      "_type": "8rmIWDKJ",
+      "image": "QapOf23t",
+      "name": "FORTUNE GR",
+      "passengers": "4",
+      "price": "2500",
+      "transmission": "Auto",
+      "id": "6sx1r4wf",
+      "createdAt": 1724076344606,
+      "updatedAt": 1724078086232,
+      "category": "CEXnt1fi"
+    },
+    {
+      "_type": "8rmIWDKJ",
+      "image": "s4WdCNQP",
+      "name": "Lamborghini Huracan",
+      "passengers": "2",
+      "price": "3000",
+      "transmission": "Manual",
+      "id": "uJe8fckZ",
+      "createdAt": 1724076379199,
+      "updatedAt": 1724078092581,
+      "category": "xMJSN9xM"
+    },
+    {
+      "_type": "8rmIWDKJ",
+      "image": "poHx58is",
+      "name": "Another Car",
+      "passengers": "4",
+      "price": "3002",
+      "transmission": "Manual",
+      "category": "xMJSN9xM",
+      "id": "5JHGNPIx",
+      "createdAt": 1724077458830,
+      "updatedAt": 1724078099834
+    },
+    {
+      "_type": "SOYzKEc2",
+      "slug": "compact",
+      "name": "Compact",
+      "id": "G84aZdUK",
+      "createdAt": 1724078005390,
+      "updatedAt": 1724081519509,
+      "cars": ["E6et3YOb"]
+    },
+    {
+      "_type": "SOYzKEc2",
+      "slug": "standard",
+      "name": "Standard",
+      "id": "fvB2U16z",
+      "createdAt": 1724078016020,
+      "updatedAt": 1724081505280,
+      "cars": ["6sx1r4wf"]
+    },
+    {
+      "_type": "SOYzKEc2",
+      "slug": "premium",
+      "name": "Premium",
+      "id": "CEXnt1fi",
+      "createdAt": 1724078022251,
+      "updatedAt": 1724081511076,
+      "cars": ["uJe8fckZ", "5JHGNPIx"]
+    },
+    {
+      "_type": "SOYzKEc2",
+      "slug": "premium-plus",
+      "name": "Premium Plus",
+      "id": "xMJSN9xM",
+      "createdAt": 1724078029888,
+      "updatedAt": 0
+    },
+    {
+      "_type": "SOYzKEc2",
+      "slug": "suv",
+      "name": "SUV",
+      "id": "UyO9ajd3",
+      "createdAt": 1724078035939,
+      "updatedAt": 1724081556680,
+      "cars": ["uJe8fckZ"]
+    },
+    {
+      "_type": "SOYzKEc2",
+      "slug": "minivan",
+      "name": "Minivan",
+      "id": "Z5n5013a",
+      "createdAt": 1724078042161,
+      "updatedAt": 0
+    }
+  ]
+}

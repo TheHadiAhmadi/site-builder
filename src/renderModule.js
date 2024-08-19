@@ -29,7 +29,6 @@ export async function renderModule(module, {props, mode, definitions, permission
     }
 
     async function normalizeCollectionContent(collection, item, depth = 1) {
-        console.log({item})
         for(let field of collection.fields) {
             if(field.type === 'relation' && depth < 3) {
                 item[field.slug] = await loadRelationFieldType(item[field.slug], field, depth + 1)
@@ -77,54 +76,56 @@ export async function renderModule(module, {props, mode, definitions, permission
 
     async function loadModuleProps(definition, module) {
         for(let item of definition.props ?? []) {
-        if(item.type === 'slot') {
-            let result = ''
-            const modules = await db('modules').query().filter('moduleId', '=', module.id).all().then(res => res.sort((a, b) => a.order > b.order ? 1 : -1))
-            let index = 0
-            for(let mod of modules) {
-                if(definition.name === 'Columns') {
-                    const cols = mod.cols ?? 12
-                    result += `
-                        <div data-column data-cols="${cols}">
-                            ${await renderModule(mod, { props, request, mode, definitions, permissions})}
-                        </div>
-                    `
-                } else {
-                    result += await renderModule(mod, { props, request, mode, definitions, permissions})
+            if(item.type === 'slot') {
+                let result = ''
+                const modules = await db('modules').query().filter('moduleId', '=', module.id).all().then(res => res.sort((a, b) => a.order > b.order ? 1 : -1))
+                let index = 0
+                for(let mod of modules) {
+                    if(definition.name === 'Columns') {
+                        const cols = mod.cols ?? 12
+                        result += `
+                            <div data-column data-cols="${cols}">
+                                ${await renderModule(mod, { props, request, mode, definitions, permissions})}
+                            </div>
+                        `
+                    } else {
+                        result += await renderModule(mod, { props, request, mode, definitions, permissions})
+                    }
+                    index = index + 1;
                 }
-                index = index + 1;
-            }
 
-            if(result) {
-                if(definition.name === 'Columns' || definition.name === 'Section') {
-                    module.props[item.slug] = result
+                if(result) {
+                    if(definition.name === 'Columns' || definition.name === 'Section') {
+                        module.props[item.slug] = result
+                    }
+                    else {
+                        module.props[item.slug] = `<div data-slot="${module.id}">${result}</div>`
+                    }
+                } else {               
+                    module.props[item.slug] = `<div data-slot="${module.id}" data-action="open-add-module" data-slot-empty></div>`
                 }
-                else {
-                    module.props[item.slug] = `<div data-slot="${module.id}">${result}</div>`
-                }
-            } else {               
-                module.props[item.slug] = `<div data-slot="${module.id}" data-action="open-add-module" data-slot-empty></div>`
+            } 
+            else if(item.type === 'relation') {
+                module.props[item.slug] = await loadRelationFieldType(module.props[item.slug], item)
+            } else {
+                module.props[item.slug] = module.props[item.slug] ?? item.defaultValue
             }
-        } 
-        else if(item.type === 'relation') {
-            module.props[item.slug] = await loadRelationFieldType(module.props[item.slug], item)
-        } else {
-            module.props[item.slug] = module.props[item.slug] ?? item.defaultValue
         }
     }
-    }
     
-    await loadModuleProps(definition, module)
-    
-    console.log(definition)
     if(definition.load) {
-        // console.log('Module has load function')
+        console.log('Module has load function')
         module.props = {
             ...module.props, 
             ...(await definition.load({request, db, definition, module}))
         }
+        if(module.props.items) {
+            console.log(module.props.items.filters)
+        }
     }
 
+    await loadModuleProps(definition, module)
+    
     let rendered;
     try {
         if(definition.name == 'Columns') {
