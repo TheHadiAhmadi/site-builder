@@ -2,6 +2,10 @@ export default [
     {
         name: 'Car List',
         file: 'carList.js'
+    }, 
+    {
+        name: 'Header',
+        file: 'header.js'
     },
     {
         name: "Section Heading",

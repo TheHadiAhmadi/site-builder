@@ -1,3 +1,12 @@
+const header = {
+    definition: 'Section',
+    props: {
+        content: [{
+            definition: 'Header',
+            props: {}
+        }]
+    }
+}
 export default [
     {
         name: 'Landing',
@@ -6,36 +15,16 @@ export default [
 
         },
         modules: [
+            header,
             {
                 definition: 'Section',
                 props: {
+                    fullWidth: false,
                     content: [
                         {
                             definition: 'CompanyLogos',
                             props: {
                                 images: ["82IaUIrT", "vEgJiKHj", "PgXL8C0k", "3rI6ilHQ", "Tqk8icck"]
-                            }
-                        }
-                    ]
-                }
-            }
-        ]
-    },
-    {
-        name: 'Car list',
-        slug: '/cars',
-        seo: {
-            
-        },
-        modules: [
-            {
-                definition: 'Section',
-                props: {
-                    content: [
-                        {
-                            definition: 'Car List',
-                            props: {
-                                
                             }
                         }
                     ]
@@ -51,19 +40,32 @@ export default [
         },
         dynamic: true,
         collection: 'Cars',
-        modules: []
+        modules: [
+            JSON.parse(JSON.stringify(header)),
+        ]
     },
     {
         name: 'All Categories',
         slug: '/categories',
         seo: {},
         modules: [
+            JSON.parse(JSON.stringify(header)),
             {
                 definition: 'Section',
                 props: {
+                    fullWidth: false,
+                    paddingTop: 40,
                     content: [
                         {
+                            definition: 'Section Heading',
+                            props: {
+                                title: "Choose a car",
+                                description: 'Click on a car to see details.'
+                            }
+                        },
+                        {
                             definition: 'CarSearch',
+                            cols: 3,
                             props: {
                                 categories: {
                                     filters: []
@@ -72,6 +74,7 @@ export default [
                         },
                         {
                             definition: 'Car List',
+                            cols: 7,
                             props: {}
                         }
                     ]
@@ -86,12 +89,23 @@ export default [
         dynamic: true,
         collection: 'Categories',
         modules: [
+            JSON.parse(JSON.stringify(header)),
             {
                 definition: 'Section',
                 props: {
+                    fullWidth: false,
+                    paddingTop: 40,
                     content: [
                         {
+                            definition: 'Section Heading',
+                            props: {
+                                title: "Choose a car",
+                                description: 'Click on a car to see details.'
+                            }
+                        },
+                        {
                             definition: 'CarSearch',
+                            cols: 3,
                             props: {
                                 categories: {
                                     filters: []
@@ -100,6 +114,8 @@ export default [
                         },
                         {
                             definition: 'Car List',
+                            cols: 7,
+
                             props: {}
                         }
                     ]

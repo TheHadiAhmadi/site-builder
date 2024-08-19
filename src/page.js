@@ -415,7 +415,7 @@ export async function renderPage(req, res) {
     const view = req.query.view ?? 'iframe'
 
     let props = {}
-    props.settings = await db('settings').query().first()
+    props.settings = await db('settings').query().first() ?? {}
 
     let stylesheet;
     if(mode === 'edit') {

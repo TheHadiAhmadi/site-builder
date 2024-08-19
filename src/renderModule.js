@@ -130,7 +130,7 @@ export async function renderModule(module, {props, mode, definitions, permission
         if(definition.name == 'Columns') {
             rendered = `<div data-columns="${module.id}">${module.props.content}</div>`;
         } else {
-            rendered = definition.template(module.props);
+            rendered = definition.template({settings, ...module.props});
         }
     } catch(err) {
         rendered = 'Something went wrong: ' + err.message
