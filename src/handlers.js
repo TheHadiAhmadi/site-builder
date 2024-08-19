@@ -36,6 +36,12 @@ export async function getDataTableItems({page = 1, perPage = 10, collection, fil
                 query = query.filter(filter.field, filter.operator, filter.value)
             }
         }
+        if(['relation'].includes(field.type)) {
+            filter.operator = '='
+            if(filter.value != '') {
+                query = query.filter(filter.field, filter.operator, filter.value)
+            }
+        }
         // TODO: Other field type filters
     }
     
