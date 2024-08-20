@@ -519,6 +519,13 @@ export async function renderPage(req, res) {
                 if(field.type === 'relation') {
                     props.pageContent[field.slug] = await loadRelationFieldType(props.pageContent[field.slug], field)
                 }
+                if(field.type === 'file') {
+                    if(field.multiple) {
+                        props.pageContent[field.slug] = await db('files').query().filter('id', 'in', props.pageContent[field.slug]).all()
+                    } else {
+                        props.pageContent[field.slug] = await db('files').query().filter('id', '=', props.pageContent[field.slug]).first()
+                    }
+                }
             }
             props.collection = collection
         }
