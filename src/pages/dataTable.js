@@ -1,7 +1,88 @@
 import { html } from "svelite-html";
 import { Button, Checkbox, EmptyTable, Stack, Table } from "../components.js";
+import { db } from "#services";
 
-export function DataTable({filters = [], selectable, items, collectionId, fields, actions = ['edit', 'delete']}) {
+export async function getDataTableItems({page = 1, perPage = 10, query, fields, filters, expandRelations = false}) {
+
+    for(let field of fields) {
+        const filter = filters.find(x => x.field == field.slug)
+
+        if(!filter) continue
+
+
+        if(['select'].includes(field.type)) {
+            filter.operator = 'in'
+            if(filter.value.length) {
+                query = query.filter(filter.field, filter.operator, filter.value)
+            }
+        }
+        if(['checkbox'].includes(field.type)) {
+            filter.operator = 'in'
+            if(filter.value.length) {
+                query = query.filter(filter.field, filter.operator, filter.value.map(x => x === 'true' ? true : false))
+            }
+        }
+
+        if(['input', 'textarea'].includes(field.type)) {
+            filter.operator = 'like'
+            if(filter.value != '') {
+                query = query.filter(filter.field, filter.operator, filter.value)
+            }
+        }
+        if(['relation'].includes(field.type)) {
+            filter.operator = '='
+            if(filter.value != '') {
+                query = query.filter(filter.field, filter.operator, filter.value)
+            }
+        }
+        // TODO: Other field type filters
+    }
+    
+    const items = await query.paginate(+page, +perPage)
+
+    items.perPage = +perPage
+
+    if(expandRelations) {
+        for(let item of items.data) {
+            for(let field of fields) {
+                if(field.type == 'file') {
+                    if(field.multiple) {
+                        item[field.slug] = await db('files').query().filter('id', 'in', item[field.slug]).all()
+                    } else {
+                        item[field.slug] = await db('files').query().filter('id', '=', item[field.slug]).first()
+                    }
+                }
+                if(field.type == 'relation') {
+                    if(item[field.slug].filters) {
+
+                    } else {
+                        if(field.multiple) {
+                            item[field.slug] = await db('contents').query().filter('_type', '=', field.collectionId).filter('id', 'in', item[field.slug]).all()
+                        } else {
+                            item[field.slug] = await db('contents').query().filter('_type', '=', field.collectionId).filter('id', '=', item[field.slug]).first()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return items
+}
+
+
+export async function CollectionDataTable({collectionId, filters, page, perPage, selectable}) {
+    const collection = await db('collections').query().filter('id', '=', collectionId).first()
+
+    const query = db('contents').query().filter('_type', '=', collection.id)
+
+    // TODO:
+    let items = await getDataTableItems({page, perPage, query, fields: collection.fields, expandRelations: true, filters})
+
+    return DataTable({filters, selectable, items, collectionId: collection.id, fields: collection.fields})
+}
+
+export function DataTable({filters = [], selectable, items, collectionId, fields, actions = ['edit', 'delete'], handler}) {
     const filtersObject = filters.reduce((prev, curr) => {
         return {...prev, [curr.field]: curr.value}
     }, {})
@@ -228,7 +309,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
     }
 
     return html`
-        <div data-data-table data-collection-id="${collectionId}" data-selectable="${selectable}">
+        <div data-data-table ${collectionId ? `data-collection-id="${collectionId}"` : `data-handler="${handler}"`}  data-selectable="${selectable}">
             <form data-data-table-filters-form>
                 <div data-data-table-filter-buttons>
                     ${fields.map(x => FilterButton(x))}

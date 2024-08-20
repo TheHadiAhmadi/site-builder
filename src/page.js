@@ -7,6 +7,8 @@ import { pageCreateModule, pageUpdateModule } from './pages/modules.js';
 import { collectionDataCreate, collectionDataList, collectionDataUpdate, CollectionForm, createCollectionPage, FieldInput, RelationFieldModal, updateCollectionPage } from './pages/collections.js';
 import { pageCreatePage, pageUpdatePage } from './pages/pages.js';
 import { loadRelationFieldType, renderModule } from './renderModule.js';
+import { DataTable, getDataTableItems } from './pages/dataTable.js';
+import { userFields, UsersDataTable } from './handlers/user.js';
 
 const definitions = {}
 
@@ -141,6 +143,7 @@ function sidebarSettings() {
         <div data-sidebar-title>Settings</div>
         <div data-sidebar-body>
             <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'general'})}">General</a>
+            <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'users'})}">Users</a>
             <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'appearance'})}">Appearance</a>
             <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'profile'})}">Profile</a>
         </div>
@@ -214,6 +217,7 @@ export async function handleModuleAction({module, method, body}) {
 
     return res;
 }
+
 //#region Render body
 export async function renderBody(body, {props, mode, url, view, params, ...query}) {
     // const permissions = {} 
@@ -332,10 +336,33 @@ export async function renderBody(body, {props, mode, url, view, params, ...query
         
         } else if(query.category === 'appearance') {
             content = Page({title: 'Appearance settings', body: 'Content'})
+        } else if(query.category === 'users') {
+            content = Page({
+                title: 'Users', 
+                actions: [
+                    Button({
+                        href: getUrl({view: 'user-add'}), 
+                        color: 'primary', 
+                        text: 'Add user'
+                    })
+                ],
+                body: await UsersDataTable({})
+            })
         } else if(query.category === 'profile') {
             content = Page({title: 'Profile settings', body: 'Content'})
 
         }
+    } else if(view === 'user-add') {
+        sidebar = 'settings'
+        content = Page({
+            title: 'Add User',
+            body: [
+                Form({
+                    handler: 'user.insert',
+                    fields: userFields.filter(x => !x.hidden || x.slug === 'password').map(x => FieldInput(x))
+                })
+            ]
+        })
     }
 
     if(mode === 'edit') 

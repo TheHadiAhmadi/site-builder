@@ -43,6 +43,8 @@ export function DataTable(el) {
         const value = getFormValue(form)
 
         const collectionId = el.dataset.collectionId
+        const handler = el.dataset.handler
+
         const selectable = el.dataset.selectable
         // const handler = el.dataset.handler
 
@@ -60,12 +62,24 @@ export function DataTable(el) {
         filters = filters.filter(x => x.value !== '' && x.value != [])
         el.dataset.filters = JSON.stringify(filters)
 
-        const res = await request('table.load', {
-            collectionId,
-            selectable,
-            filters,
-            perPage: +(el.querySelector('[name=perPage]').value ?? '10'),
-        })
+        let res;
+        if(collectionId) {
+            res = await request('table.load', {
+                collectionId,
+                selectable,
+                filters,
+                page: 1,
+                perPage: +(el.querySelector('[name=perPage]').value ?? '10'),
+            })
+        } else {
+
+            res = await request(handler, {
+                selectable,
+                filters,
+                page: 1,
+                perPage: +(el.querySelector('[name=perPage]').value ?? '10'),
+            })
+        }
 
         const template = document.createElement('template')
         template.innerHTML = res;

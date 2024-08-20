@@ -1,6 +1,6 @@
 import { html } from 'svelite-html';
 import { db } from '#services';
-import { getDataTableItems } from './handlers.js';
+import { getDataTableItems } from './pages/dataTable.js';
 
 async function normalizeCollectionContent(collection, item, depth = 1) {
     for(let field of collection.fields) {
@@ -14,6 +14,7 @@ async function normalizeCollectionContent(collection, item, depth = 1) {
 
 export async function loadRelationFieldType(value, field, depth = 1) {
     const collection = await db('collections').query().filter('id', '=', field.collectionId).first()
+    let query = db('contents').query().filter('_type', '=', collection.id)
         
     if(field.multiple) {
         let items = []
@@ -21,7 +22,7 @@ export async function loadRelationFieldType(value, field, depth = 1) {
             items = await db('contents').query().filter('_type', '=', field.collectionId).filter('id', 'in', value).all()
         } else if(value?.filters) {
             const {filters, page, perPage} = value
-            items = await getDataTableItems({page, perPage, filters, collection}).then(res => res.data)
+            items = await getDataTableItems({page, perPage, filters, query, fields: collection.fields}).then(res => res.data)
 
         } else {
             items = []
@@ -32,7 +33,8 @@ export async function loadRelationFieldType(value, field, depth = 1) {
         let item;
         if(value?.filters) {
             const {filters, page, perPage} = value
-            const items = await getDataTableItems({page, perPage, filters, collection})
+            
+            const items = await getDataTableItems({page, perPage, filters, query, fields: collection.fields})
             item = items.data[0]
         } else {
             const id = value

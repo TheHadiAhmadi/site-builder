@@ -59,10 +59,15 @@ const defaultModules = {
 export async function setupCms(req, res) {
     const {template, password, file} = req.body
 
-    await db('users').insert({
-        username: 'admin',
-        password: `_%${password}%_`
-    })
+    async function initUsers() {
+        await db('users').insert({
+            name: 'Admin',
+            username: 'admin',
+            password: `_%${password}%_`
+        })
+    
+    }
+
 
     let _definitions = {}
     let _collections = {}
