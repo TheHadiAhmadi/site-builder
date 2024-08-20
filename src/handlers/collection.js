@@ -10,6 +10,7 @@ export default {
         // create content type
         body.fields = [
             {slug: "name", label: 'Name', type: 'input', default: true}
+            {slug: "slug", label: 'Slug', type: 'input', hidden: true}
         ]
         
         const res = await db('collections').insert(body)
