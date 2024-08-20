@@ -63,7 +63,7 @@ function DynamicFieldInput(field, fields, linked, module) {
     let resultField = field;
 
     if(linked) {
-        resultField = JSON.parse(JSON.stringify(fields.find(x => x.slug === linked)));
+        resultField = JSON.parse(JSON.stringify(fields.find(x => x.slug === linked) ?? {}));
         resultField.slug = field.slug
     }
     
@@ -105,7 +105,13 @@ function sidebarModuleSettings(definition, module, collection) {
         fields.push({type: 'relation', label: 'Item (dynamic)', multiple: false, collectionId: collection.id, slug: 'content'})
 
         for(let field of collection.fields) {
-            fields.push({...field, label: 'Item\'s ' + field.label, slug: 'content.' + field.slug})
+            fields.push({...field, label: '' + field.label, slug: 'content.' + field.slug})
+
+            if(field.type === 'relation') {
+                for(let f of field.collection?.fields ?? []) {
+                    fields.push({...f, label: `${field.label}'s ${f.label}`, slug: 'content.' + field.slug + '.' + f.slug})
+                }
+            }
         }
     }
 
@@ -187,6 +193,13 @@ export default {
         
         if(page?.collectionId) {
             const collection = await db('collections').query().filter('id', '=', page.collectionId).first();
+
+            for(let field of collection.fields) {
+                if(field.type === 'relation') {
+                    field.collection = await db('collections').query().filter('id', '=', field.collectionId).first();
+                }
+
+            }
             
             const res = sidebarModuleSettings(definition, module, collection, body.slug)
 

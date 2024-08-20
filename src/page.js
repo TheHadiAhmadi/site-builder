@@ -6,7 +6,7 @@ import layouts from "./layouts.js";
 import { pageCreateModule, pageUpdateModule } from './pages/modules.js';
 import { collectionDataCreate, collectionDataList, collectionDataUpdate, CollectionForm, createCollectionPage, FieldInput, RelationFieldModal, updateCollectionPage } from './pages/collections.js';
 import { pageCreatePage, pageUpdatePage } from './pages/pages.js';
-import { renderModule } from './renderModule.js';
+import { loadRelationFieldType, renderModule } from './renderModule.js';
 
 const definitions = {}
 
@@ -488,6 +488,11 @@ export async function renderPage(req, res) {
             }
 
             props.pageContent = await query.first()
+            for(let field of collection.fields) {
+                if(field.type === 'relation') {
+                    props.pageContent[field.slug] = await loadRelationFieldType(props.pageContent[field.slug], field)
+                }
+            }
             props.collection = collection
         }
     }
