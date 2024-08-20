@@ -20,8 +20,9 @@ function onInit() {
         initSortable()
         
         setTimeout(() => {
+            console.log('calling onIframeInit')
             onIframeInit()
-        }, 1000)
+        }, 2000)
     }
 }
 
