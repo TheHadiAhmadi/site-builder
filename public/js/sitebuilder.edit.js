@@ -21,7 +21,7 @@ function onInit() {
         
         setTimeout(() => {
             onIframeInit()
-        }, 500)
+        }, 1000)
     }
 }
 
