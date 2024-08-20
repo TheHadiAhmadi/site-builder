@@ -193,23 +193,26 @@ export default {
         
         if(page?.collectionId) {
             const collection = await db('collections').query().filter('id', '=', page.collectionId).first();
+            if(collection) {
 
-            for(let field of collection.fields) {
-                if(field.type === 'relation') {
-                    field.collection = await db('collections').query().filter('id', '=', field.collectionId).first();
+                
+                for(let field of collection.fields) {
+                    if(field.type === 'relation') {
+                        field.collection = await db('collections').query().filter('id', '=', field.collectionId).first();
+                    }
+                    
                 }
-
+                
+                const res = sidebarModuleSettings(definition, module, collection, body.slug)
+                
+                return res;
             }
-            
-            const res = sidebarModuleSettings(definition, module, collection, body.slug)
-
-            return res;
 
 
-        } else {
-            const res = sidebarModuleSettings(definition, module)
-            return res
-        }
+        } 
+        
+        const res = sidebarModuleSettings(definition, module)
+        return res
     },
     async loadSettings(body) {
         const {slug} = body
