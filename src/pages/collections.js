@@ -167,7 +167,7 @@ export async function collectionDataList(collection) {
         }
     })
 
-    let items = await getDataTableItems({collection, filters: [], page: 1, perPage: 10})
+    let items = await getDataTableItems({collection, filters: [], page: 1, perPage: 10, expandRelations: true})
 
     let content = DataTable({filters, items, collectionId: collection.id, fields: collection.fields})
     

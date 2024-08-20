@@ -79,12 +79,17 @@ export function FieldForm({handler, collections, id, mode = 'add', type = ''}) {
     
     if(type === 'file') {
         fields.push(
-            Select({name: 'file_type', label: 'Type', items: [
-                {value: 'image', text: 'Image'},
-                {value: 'video', text: 'Video'},
-                {value: 'document', text: 'Document'},
-                {value: 'all', text: 'All Types'},
-            ]})
+            Select({
+                name: 'file_type', 
+                label: 'Type', 
+                placeholder: 'Choose File type',
+                items: [
+                    {value: 'image', text: 'Image'},
+                    {value: 'video', text: 'Video'},
+                    {value: 'document', text: 'Document'},
+                    {value: 'all', text: 'All Types'},
+                ]
+            })
         )
         fields.push(
             Checkbox({name: 'multiple', label: 'Multiple'})
@@ -166,7 +171,7 @@ export function FieldsList({name, updateAction = 'open-edit-field-modal', action
                     <td>${item.label}</td>
                     <td>${fieldTypeText(item.type)}</td>
                     <td>
-                        ${Stack({}, item.default ? [] : [
+                        ${Stack({}, (item.default || item.hidden) ? [] : [
                             Button({
                                 text: 'Edit', 
                                 size: 'small', 

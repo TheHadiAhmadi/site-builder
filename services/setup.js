@@ -2,6 +2,7 @@ import {cpSync, existsSync, readFileSync, rmSync} from 'node:fs'
 import db from "./db.js"
 import JSZip from 'jszip'
 import { mkdir, writeFile } from 'node:fs/promises'
+import { slugify } from '../src/handlers/content.js'
 
 const defaultModules = {
     Section: {
@@ -217,6 +218,15 @@ export async function setupCms(req, res) {
         for(let collection of collections) {
             let {name, fields, contents} = collection
 
+            const slugField = fields.find(x => x.slug === 'slug')
+            if(slugField) {
+                slugField.default = true
+            } else {
+                fields = [
+                    {slug: 'slug', label: 'Slug', hidden: true, type: 'input'},
+                    ...fields
+                ]
+            }
             const nameField = fields.find(x => x.slug === 'name')
             if(nameField) {
                 nameField.default = true
@@ -227,11 +237,15 @@ export async function setupCms(req, res) {
                 ]
             }
             
+            
             const res = await db('collections').insert({name, fields})  
             _collections[res.name] = res
             console.log('set Collections', _collections)
 
             for(let item of contents) {
+                if(!item.slug) {
+                    item.slug = slugify(item.name)
+                }
                 for(let key in item) {
                     const field = fields.find(x => x.slug === key)
                     const prop = item[key]

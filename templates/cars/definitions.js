@@ -4,6 +4,10 @@ export default [
         file: 'carList.js'
     }, 
     {
+        name: 'Contact Us',
+        file: 'contactUs.js'
+    }, 
+    {
         name: 'Header',
         file: 'header.js'
     },

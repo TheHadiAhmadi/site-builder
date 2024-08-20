@@ -53,8 +53,8 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
             function renderFile(file) {
                 if(field.file_type == 'image') {
                     return `
-                        <a href="/files/${file}" style="max-height: 40px; overflow: hidden">
-                            <img src="/files/${file}" style="border: 1px solid #ccc; border-radius: 4px; min-width: 40px; height: 40px"/>
+                        <a href="/files/${file.id}" style="max-height: 40px; overflow: hidden">
+                            <img src="/files/${file.id}" style="border: 1px solid #ccc; border-radius: 4px; min-width: 40px; height: 40px"/>
                         </a>
                     `
                 }
@@ -66,13 +66,13 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                 }
                 
                 return `
-                    <div data-file-item>
+                    <a href="/files/${file.id}" download="${file.name}" data-file-item>
                         <svg data-download-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-6 4q-.825 0-1.412-.587T4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413T18 20z"/></svg>
-                        ${file_icons[field.file_type]}
+                        ${file_icons[field.file_type] ?? file_icons['all']}
                         <div>
-                            Download
+                            ${file.name}
                         </div>
-                    </div>
+                    </a>
                 `
             }
 
@@ -116,12 +116,12 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
         content = Table({
             head: [
                 selectable === 'multi' ? `<th style="width: 0"><input type="checkbox" name="select-all" data-checkbox/></th>` : (selectable === 'single' ?  '<th style="width: 0"></th>' : ''), 
-                fields.map(x => `<th>${x.label}</th>`).join('')
+                fields.filter(x => !x.hidden).map(x => `<th>${x.label}</th>`).join('')
             ].join(''),
             body: items.data.map(item => html`
                 <tr>
                     ${selectable ? `<td><input name="data-table-select" value="${item.id}" type="${selectable === 'multi' ? 'checkbox': 'radio'}" data-${selectable === 'multi' ? 'checkbox': 'radio'}/></td>` : ''}
-                    ${fields.map(x => `<td>${renderField(item, x)}</td>`)}
+                    ${fields.filter(x => !x.hidden).map(x => `<td>${renderField(item, x)}</td>`)}
                     <td>
                         ${ActionButtons(item)}
                     </td>

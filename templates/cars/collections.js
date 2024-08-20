@@ -8,11 +8,6 @@ export default [
                 type: "input",
             },
             {
-                slug: "slug",
-                label: "Slug",
-                type: "input",
-            },
-            {
                 type: "input",
                 slug: "passengers",
                 label: "Passenger count",
@@ -27,9 +22,9 @@ export default [
             },
             {
                 type: "file",
-
                 slug: "image",
                 label: "Image",
+                file_type: 'image',
                 multiple: false,
             },
             {
@@ -48,32 +43,32 @@ export default [
         ],
         contents: [
             {
-                image: "4J9MNtwk",
                 name: "BMW M8 COUP 2022",
+                image: "4J9MNtwk",
                 passengers: "4",
                 price: "2800",
                 transmission: "Auto",
                 category: "fvB2U16z"
             },
             {
-                image: "QapOf23t",
                 name: "FORTUNE GR",
+                image: "QapOf23t",
                 passengers: "4",
                 price: "2500",
                 transmission: "Auto",
                 category: "CEXnt1fi"
             },
             {
-                image: "s4WdCNQP",
                 name: "Lamborghini Huracan",
+                image: "s4WdCNQP",
                 passengers: "2",
                 price: "3000",
                 transmission: "Manual",
                 category: "xMJSN9xM"
             },
             {
-                image: "poHx58is",
                 name: "Another Car",
+                image: "poHx58is",
                 passengers: "4",
                 price: "3002",
                 transmission: "Manual",
@@ -118,5 +113,13 @@ export default [
                 id: "Z5n5013a",
             }
         ]
+    },
+    {
+        name: 'ContactUs',
+        fields: [
+            { type: "input", slug: "subject", label: "Subject" },
+            { type: "textarea", slug: "message", label: "Message" },
+        ],
+        contents: []
     }
 ];

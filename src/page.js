@@ -25,6 +25,16 @@ async function getPage(slug) {
         const dynamicParts = page.slug.split('/').filter(part => part.startsWith('{{') && part.endsWith('}}'));
         const staticParts = page.slug.split('/').filter(part => !part.startsWith('{{') && !part.endsWith('}}'));
 
+        if(page.dynamic && dynamicParts.length === 0) {
+            if(slug.endsWith('/') || slug.length == 1) {
+                slug = slug + '{{slug}}' 
+            } else {
+                slug = slug + '/{{slug}}' 
+            }
+
+            dynamicParts.push('{{slug}}')
+        }
+
         // Build regex to match the dynamic parts
         let regexStr = page.slug;
         for (const dynamicPart of dynamicParts) {
@@ -59,17 +69,22 @@ async function loadModuleDefinitions() {
     for(let definition of defs) {
         if(definition.file) {
             try {
-                definitions[definition.id] = await import(definition.file).then(res => res.default)
+                const module = await import(definition.file).then(res => {
+                    return res.default
+                })
+                definitions[definition.id].load = module.load
+                definitions[definition.id].actions = module.actions
             } catch(err) {
-                definitions[definition.id] = {}
+                definitions[definition.id] = definition
             }
         } else {
-            definitions[definition.id] = {}
+            definitions[definition.id] = definition
         }
-        definitions[definition.id].id = definition.id
-        definitions[definition.id] = {...definitions[definition.id], ...definition }
     
-        definitions[definition.id].template = hbs.compile(definitions[definition.id].template)
+        console.log(definitions[definition.id])
+        if(typeof definitions[definition.id].template === 'string') {
+            definitions[definition.id].template = hbs.compile(definitions[definition.id].template)
+        }
     }   
 }
 
@@ -175,12 +190,7 @@ async function DynamicPageSelect(page, params) {
     const items = await db('contents').query().filter('_type', '=', page.collectionId).all()
 
     function getText(content) {
-        let res = ''
-        for(let item in params) {
-            res += content[item]
-        }
-
-        return res
+        return content.name
     } 
 
     function getValue(content) {
@@ -194,6 +204,16 @@ async function DynamicPageSelect(page, params) {
     </select>`
 }
 
+export async function handleModuleAction({module, method, body}) {
+    const definition = definitions[module.definitionId]
+    let res;
+
+    if(definition.actions && definition.actions[method]) {
+        res = await definition.actions[method](body)
+    }
+
+    return res;
+}
 //#region Render body
 export async function renderBody(body, {props, mode, url, view, params, ...query}) {
     // const permissions = {} 
@@ -387,7 +407,11 @@ export async function renderBody(body, {props, mode, url, view, params, ...query
                 }})}
             </div>
         `
-        }
+    }
+
+    if(mode === 'view') {
+        previewContent = '<script src="/js/sitebuilder.view.js"></script>'
+    }
 
     const request = {
         query,

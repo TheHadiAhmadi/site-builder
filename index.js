@@ -4,7 +4,7 @@ import { db } from '#services'
 import handlers from './src/handlers.js'
 import { existsSync, readFileSync, rmSync } from 'node:fs'
 import {mkdir, readdir, writeFile} from 'node:fs/promises'
-import { renderPage } from './src/page.js'
+import { handleModuleAction, renderPage } from './src/page.js'
 import cookieParser from 'cookie-parser'
 import { LoginPage } from './src/pages/login.js'
 import layouts from './src/layouts.js'
@@ -55,7 +55,7 @@ const app = express()
 app.use(cookieParser())
 
 app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.urlencoded({extended: true}))
 app.use(express.static('./public'))
 
 app.use('/', async (req, res, next) => {
@@ -167,6 +167,14 @@ app.post('/api/file/upload', async (req, res) => {
     })
 })
 //#endregion
+
+app.post('/api/module/:id/:name', async(req, res) => {
+    const method = req.params.name
+    const module = await db('modules').query().filter('id', '=', req.params.id).first()
+    const resp = await handleModuleAction({module, method, body: req.body})
+
+    res.json(resp ?? {reload: true})
+})
 
 //#region Api Query
 app.post('/api/query', async (req, res) => {

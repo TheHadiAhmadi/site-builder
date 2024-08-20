@@ -8,7 +8,7 @@ import page from "./handlers/page.js"
 import setup from "./handlers/setup.js"
 import { DataTable } from "./pages/dataTable.js"
 
-export async function getDataTableItems({page = 1, perPage = 10, collection, filters}) {
+export async function getDataTableItems({page = 1, perPage = 10, collection, filters, expandRelations = false}) {
     let query = db('contents').query().filter('_type', '=', collection.id)
 
     for(let field of collection.fields) {
@@ -49,17 +49,31 @@ export async function getDataTableItems({page = 1, perPage = 10, collection, fil
 
     items.perPage = +perPage
 
-    // for(let item of items.data) {
-    //     for(let field of collection.fields) {
-    //         if(field.type == 'file') {
-    //             if(field.multiple) {
-    //                 item[field.slug] = await db('files').query().filter('id', 'in', item[field.slug]).all()
-    //             } else {
-    //                 item[field.slug] = await db('files').query().filter('id', '=', item[field.slug]).first()
-    //             }
-    //         }
-    //     }
-    // }
+    if(expandRelations) {
+        for(let item of items.data) {
+            for(let field of collection.fields) {
+                if(field.type == 'file') {
+                    if(field.multiple) {
+                        item[field.slug] = await db('files').query().filter('id', 'in', item[field.slug]).all()
+                    } else {
+                        item[field.slug] = await db('files').query().filter('id', '=', item[field.slug]).first()
+                    }
+                }
+                if(field.type == 'relation') {
+                    if(item[field.slug].filters) {
+
+                    } else {
+                        if(field.multiple) {
+                            item[field.slug] = await db('contents').query().filter('_type', '=', field.collectionId).filter('id', 'in', item[field.slug]).all()
+                        } else {
+                            item[field.slug] = await db('contents').query().filter('_type', '=', field.collectionId).filter('id', '=', item[field.slug]).first()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     return items
 }
@@ -79,7 +93,7 @@ export default {
 
             const collection = await db('collections').query().filter('id', '=', collectionId).first()
             
-            const items = await getDataTableItems({collection, page, perPage, filters})
+            const items = await getDataTableItems({collection, page, perPage, filters, expandRelations: true})
             
             return DataTable({filters, selectable, actions, collectionId: collection.id, fields: collection.fields, items })
         }

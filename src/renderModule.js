@@ -106,6 +106,7 @@ export async function renderModule(module, {props, mode, definitions, permission
                 }
             } 
             else if(item.type === 'relation') {
+                console.log(module.props[item.slug], item)
                 module.props[item.slug] = await loadRelationFieldType(module.props[item.slug], item)
             } else {
                 module.props[item.slug] = module.props[item.slug] ?? item.defaultValue

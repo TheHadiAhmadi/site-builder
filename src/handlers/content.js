@@ -1,41 +1,18 @@
 import { db } from "#services"
+// import slugify from "slugify"
+
+export function slugify(name) {
+    const uniqueString = Math.random().toString(36).substring(2, 6);
+    return name.replace(/ /g, '-').replace(/[*+~.()'"!:@]/g, '').toLowerCase() + '-' + uniqueString
+}
+
 export default {
-    async create(body) {
-        const moduleId = body.moduleId
-        const content = body.content
-        const _type = body._type
-
-        await db('contents').insert({
-            moduleId,
-            _type,
-            ...content
-        })
-    },
-    async update(body) {
-        const moduleId = body.moduleId
-        const content = body.content
-
-        await db('contents').update({
-            moduleId,
-            ...content
-        })
-    },
-    async get(body) {
-        const contentId = body.contentId
-
-        return {
-            data: await db('contents').query().filter('id', '=', contentId).all()
-        }
-    },
-    async delete(body) {
-        const moduleId = body.moduleId
-        const id = body.id
-
-        await db('contents').remove(id)
-    },
-
     async insertCollectionContent(body) {
         if(!body._type) return;
+
+        if(body.name) {
+            body.slug = slugify(body.name);
+        }
 
         const res = await db('contents').insert(body)
 
