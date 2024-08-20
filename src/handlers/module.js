@@ -107,7 +107,7 @@ function sidebarModuleSettings(definition, module, collection) {
         for(let field of collection.fields) {
             fields.push({...field, label: '' + field.label, slug: 'content.' + field.slug})
 
-            if(field.type === 'relation') {
+            if(field.type === 'relation' && !field.multiple) {
                 for(let f of field.collection?.fields ?? []) {
                     fields.push({...f, label: `${field.label}'s ${f.label}`, slug: 'content.' + field.slug + '.' + f.slug})
                 }
