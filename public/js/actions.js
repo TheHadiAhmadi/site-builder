@@ -270,7 +270,7 @@ const actions = {
         const isFullWidth = section.hasAttribute('data-section-full-width')
         await request('module.saveSettings', {
             id: mod.dataset.moduleId,
-            slug: location.pathname,
+            slug: decodeURIComponent(location.pathname),
             fullWidth: !isFullWidth,
             paddingTop: +section.style.paddingTop.replace('px', ''),
             paddingBottom: +section.style.paddingBottom.replace('px', ''),
@@ -288,12 +288,12 @@ const actions = {
         mod.dataset.active = true
 
         // reload(`?mode=edit&moduleId=` + moduleId)
-        const settings = await request('module.loadSettings', {id: moduleId, slug: window.location.pathname})
+        const settings = await request('module.loadSettings', {id: moduleId, slug: decodeURIComponent(location.pathname)})
         const template = await request('module.getSettingsTemplate', {id: moduleId})
         const moduleSettingsSidebar = document.querySelector('[data-name="sidebar-module-settings"]')
         moduleSettingsSidebar.innerHTML = template
 
-        settings.slug = location.pathname
+        settings.slug = decodeURIComponent(location.pathname)
         setFormValue(moduleSettingsSidebar, settings)
         delete moduleSettingsSidebar.querySelector('[data-form]').dataset.load
         document.querySelector('[data-sidebar]').dataset.active = 'module-settings'

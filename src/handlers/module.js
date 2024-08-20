@@ -226,10 +226,11 @@ export default {
 
                 let query = db('contents').query().filter('_type', '=', collection.id)
                 for(let key in params) {
+                    console.log('filter', key, params[key])
                     query = query.filter(key, '=', params[key])
                 }
                 const content = await query.first()
-
+            console.log(content)
                 for(let key in original.links ?? {}) {
                     // content[original.links[key]] = props[key]
                     const [first, second] = original.links[key].split('.')

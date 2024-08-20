@@ -189,7 +189,7 @@ export function collectionDataCreate(collection, items) {
                 handler: 'content.insertCollectionContent',
                 fields: [
                     `<input type="hidden" value="${collection.id}" name="_type">`, 
-                    collection.fields.map(field => FieldInput(field)).join('')
+                    collection.fields.filter(x => !x.hidden).map(field => FieldInput(field)).join('')
                 ],
                 cancelAction: ''
             }),
@@ -210,7 +210,7 @@ export function collectionDataUpdate(collection, data) {
                 fields: [
                     '<input type="hidden" value="' + id + '" name="id">',
                     '<input type="hidden" value="' + data._type + '" name="_type">',
-                    collection.fields.map(field => FieldInput(field)).join('')
+                    collection.fields.filter(x => !x.hidden).map(field => FieldInput(field)).join('')
                 ],
                 cancelHref: '?mode=edit&view=collection-data-list&id=' + collection.id
             }),
