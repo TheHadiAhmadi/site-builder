@@ -12,7 +12,7 @@ import { File, Form, Input, Select } from './src/components.js'
 import { setupCms} from './services/setup.js'
 import hbs from 'handlebars'
 import JSZip from 'jszip'
-import path from 'node:path'
+import path, { basename } from 'node:path'
 
 const compile = hbs.compile
 
@@ -213,7 +213,13 @@ app.post('/api/export', async(req, res) => {
         } else {
             for(let prop of definition.props ?? []) {
                 if(prop.type == 'file') {
-                    files[module.props[prop.slug]] = true
+                    if(prop.multiple) {
+                        for(let item of module.props[prop.slug] ?? []) {
+                            files[item] = true
+                        }
+                    } else {
+                        files[module.props[prop.slug]] = true
+                    }
                 }
                 if(prop.type == 'slot') {
                     const res = await getModules({moduleId: module.id})
@@ -263,8 +269,13 @@ app.post('/api/export', async(req, res) => {
         delete page.updatedAt
     }
 
+    let definitionFiles = []
     const definitions = await db('definitions').query().all()
     for(let definition of definitions) {
+
+        if(definition.file) {
+            definitionFiles.push(definition.file)
+        }
 
         for(let prop of definition.props) {
             if(prop.type === 'relation') {
@@ -322,7 +333,31 @@ app.post('/api/export', async(req, res) => {
             jszip.file('site/files/' + file, readFileSync('./uploads/' + file))
         }
     }
+
+    const settings = await db('settings').query().first()
+
+    delete settings.createdAt
+    delete settings.updatedAt
+    delete settings.id
     
+
+    const users = await db('users').query().all()
+
+    for(let user of users) {
+        delete user.password
+        delete user.createdAt
+        delete user.updatedAt
+        delete user.id
+    }
+
+    for(let file of definitionFiles) {
+        // TODO: Cleanup
+        file = file.replace('../template', './template')
+        jszip.file('site/definitions/' + basename(file), readFileSync(file, 'utf-8'))
+    }
+
+    jszip.file('site/settings.json', JSON.stringify(settings, null, 4))
+    jszip.file('site/users.json', JSON.stringify(users, null, 4))
     jszip.file('site/pages.json', JSON.stringify(pages, null, 4))
     jszip.file('site/definitions.json', JSON.stringify(definitions, null, 4))
     jszip.file('site/collections.json', JSON.stringify(collections, null, 4))
