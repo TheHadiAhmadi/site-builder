@@ -17,8 +17,8 @@
 }
 [data-data-table-filter-button] {
     border-radius: 16px;
-    background-color: white;
-    border: 1px solid #aaa;
+    background-color: var(--table-filter-bg);
+    border: 1px solid var(--table-filter-border);
     display: flex;
     align-items: center;
     padding: 0px 16px;
@@ -28,46 +28,32 @@
 }
 
 [data-data-table-button-has-value] {
-    background-color: #889cf752;
-    border: 1px solid #2248ef;
-    color: #2248ef;
+    background-color: var(--table-filter-active-bg);
+    border: 1px solid var(--table-filter-active-border);
+    color: var(--table-filter-active-color);
 }
+
 [data-data-table-filter-button-icon] {
     border-radius: 16px;
     display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 18px; margin-right: -16px;
 }
 
-
 [data-file-item] {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border-radius: 16px;
     height: 32px;
     padding-left: 12px;
     padding-right: 8px;
-    background-color: #1081232a;
-    color: #0c751e;
     cursor: pointer;
 }
 
-[data-file-item]:hover {
-    background-color: #10812336;
-    color: #086117;
-}
-
-[data-file-icon] {
+[data-file-icon], [data-download-icon] {
     display: block;
     width: 24px;
     height: 24px; 
     opacity: 0.7;
 }
+
 [data-download-icon] {
     display: none;
-    width: 24px;
-    height: 24px; 
-    opacity: 0.7;
-
 }
 
 [data-file-item]:hover [data-file-icon] {

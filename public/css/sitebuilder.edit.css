@@ -2,8 +2,64 @@
 
 :root {
     --sidebar-width: 300px;
+    --iframe-border: #aaa;
+    --iframe-bg: white;
+    --iframe-shadow-color: #666479;
+    --toolbar-color: #505050;
+    --toolbar-bg: #f1f1f1;
+    --toolbar-border: #aaa;
+    --sidebar-bg: #f1f1f1;
+    --sidebar-color: #404040;
+    --sidebar-primary-bg: #dddddd;
+    --sidebar-primary-border: #b3b3b3;
+    --sidebar-primary-item-hover-bg: #d6d6d6;
+    --sidebar-primary-item-hover-border: #464646;
+    --sidebar-secondary-bg: #f1f1f1;
+    --sidebar-secondary-border: #aaa;
+    --sidebar-item-bg: #f7f7f7;
+    --sidebar-item-border: #dddddd;
+    --sidebar-item-hover-bg: #fafafa;
+    --sidebar-item-shadow-color: black;
+    --sidebar-primary-item-hover-color: black;
+    --sidebar-item-icon-border: #dddddd;
+    --sidebar-item-icon-shadow-color: #b3b3b3;
+    --sidebar-item-icon-bg: #f1f1f1;
+    --body-bg: #e8e8e8;
+    --body-color: black;
 }
+@media (prefers-color-scheme: dark) {
+    :root {
+      --iframe-border: #4b5563;
+      --iframe-bg: #1f2937;
+      --iframe-shadow-color: #334155;
+      --toolbar-color: #d1d5db;
+      --toolbar-bg: #374151;
+      --toolbar-border: #4b5563;
+      --sidebar-bg: #1f2937;
+      --sidebar-color: #e5e7eb;
+      --sidebar-primary-bg: #334155;
+      --sidebar-primary-border: #475569;
+      --sidebar-primary-item-hover-bg: #3b4f66;
+      --sidebar-primary-item-hover-border: #7086c2;
+      --sidebar-primary-item-hover-color: white;
+      --sidebar-secondary-bg: #1f2937;
+      --sidebar-secondary-border: #4b5563;
+      --sidebar-item-bg: #1e293b;
+    --sidebar-item-border: #334155;
+      --sidebar-item-hover-bg: #2c3b50;
+      --sidebar-item-shadow-color: #111827;
+      --sidebar-item-icon-border: #3b4f66;
+      --sidebar-item-icon-shadow-color: #475569;
+      --sidebar-item-icon-bg: #1f2937;
+      --body-bg: #111827;
+      --body-color: #e5e7eb;
+    }
 
+    body {
+        color-scheme: dark;
+    }
+  }
+  
 body, html {
     height: 100vh;    
 }
@@ -22,10 +78,10 @@ iframe {
     border: none;
     width: 100%;
     height: 100%;
-    border: 1px solid #aaa;
+    border: 1px solid var(--iframe-border);
     border-radius: 8px;
-    background-color: white;
-    box-shadow: 0 2px 4px -2px rgb(102, 100, 121);
+    background-color: var(--iframe-bg);
+    box-shadow: 0 2px 4px -2px var(--iframe-shadow-color);
 }
 
 [data-toolbar] {
@@ -35,10 +91,10 @@ iframe {
     top: 0;
     right: 0;
     left: 0px;
-    color: #606060;
+    color: var(--toolbar-color);
     height: 40px;
-    background-color: #f1f1f1;
-    border-bottom: 1px solid #aaa;
+    background-color: var(--toolbar-bg);
+    border-bottom: 1px solid var(--toolbar-border);
 }
 
 [data-toolbar-icon] {
@@ -60,8 +116,8 @@ iframe {
     left: 0;
     display: flex;
     width: var(--sidebar-width);
-    background-color: #f1f1f1;
-    color: black;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-color);
 }    
 
 [data-sidebar-title] {
@@ -73,8 +129,9 @@ iframe {
 [data-sidebar-primary] {
     width: 48px;
     height: 100%;
-    background-color: #dddddd;
-    border-right: 1px solid #b3b3b3;
+    background-color: var(--sidebar-primary-bg);
+    color: var(--sidebar-color);
+    border-right: 1px solid var(--sidebar-primary-border);
     flex-shrink: 0;
 }
 
@@ -83,26 +140,25 @@ iframe {
     width: 47px;
     height: 47px;
     text-align: center;
-    color: black;
     padding: 12px;
-    /* border: 1px solid transparent; */
+    border-right: 2px solid transparent;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 [data-sidebar-item-small]:hover {
-    background-color: #ebebeb;
-    border-color: #cccccc;
+    background-color: var(--sidebar-primary-item-hover-bg);
+    border-color: var(--sidebar-primary-item-hover-border);
+    color: var(--sidebar-primary-item-hover-color);
 }
 
 [data-sidebar-secondary] {
     width: calc(309px - 48px);
     height: 100%;
     transition: all 0.3s ease;
-    background-color: #f1f1f1;
-    border-right: 1px solid #aaa;
-    color: #404040;
+    background-color: var(--sidebar-secondary-bg);
+    border-right: 1px solid var(--sidebar-secondary-border);
     overflow: auto;
 }
 
@@ -125,31 +181,32 @@ iframe {
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    background-color: #f7f7f7;
+    background-color: var(--sidebar-item-bg);
     padding: 8px;
-    color: #404040f0;
+    /* #404040f0 */
+    color: var(--sidebar-color);
     font-weight: bold;
-    border: 1px solid #dddddd;
+    border: 1px solid var(--sidebar-item-border);
 }
 
 [data-sidebar-item]:hover {
-    background-color: #fafafa;
-    box-shadow: 0 1px 8px -8px black;
+    background-color: var(--sidebar-item-hover-bg);
+    box-shadow: 0 1px 8px -8px var(--sidebar-item-shadow-color);
 }
 
 [data-secondary-sidebar-item-icon] {
     width: 24px;
     height: 24px;
     padding: 4px;
-    border: 1px solid #dddddd;
+    border: 1px solid var(--sidebar-item-icon-border);
     border-radius: 4px;
     opacity: 0;
     pointer-events: none;
 }
 
 [data-secondary-sidebar-item-icon]:hover {
-    box-shadow: 0 1px 4px -2px #b3b3b3;
-    background-color:#f1f1f1;
+    box-shadow: 0 1px 4px -2px var(--sidebar-item-icon-shadow-color);
+    background-color:var(--sidebar-item-icon-bg);
     border-radius: 4px;
     opacity: 0;
     pointer-events: none;
@@ -168,28 +225,17 @@ iframe {
 }
 
 
-[data-sidebar-create-button] {
-    background-color: #2a63ff;
-    border: 1px solid #2a98ff;
+[data-sidebar-item-button] {
     justify-content: start;
-    text-align: center;
-    width: 100%;
-    margin-top: 8px;
-    color: white;
-    gap: 8px;
-}
-[data-sidebar-create-button]:hover {
-    background-color: #43a3fc;
-    border: 1px solid #2a98ff;
-    width: 100%;
+    height: 42px;
 }
 
 [data-content-type-field-row] {
     display: flex;
     width: 100%;
     gap: 0.5rem;
-
 }
+
 [data-content-type-fields] {
     display: flex;
     flex-direction: column;
@@ -237,7 +283,8 @@ iframe {
     width: calc(100vw - var(--sidebar-width));
     height: calc(100vh - 40px);
     overflow: auto;
-    background-color: #e8e8e8;
+    background-color: var(--body-bg);
+    color: var(--body-color);
 }
 
 
@@ -260,7 +307,3 @@ iframe {
     gap: 16px;
     padding-bottom: 1rem;
 } 
-
-[data-definition-ai] {
-    border-color: #4060f0;
-}

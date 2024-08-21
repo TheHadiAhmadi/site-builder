@@ -1,5 +1,93 @@
 :root {
+    --color-default: #fafafa;
+    --color-default-content: #1d1d1d;
+    --color-default-border: #d5d5d5;
+    --color-default-hover: #f0f0f0;
+
+    --color-primary: #4070f0;
+    --color-primary-hover: #4d78ee;
+    --color-primary-content: white;
+    --color-primary-border: #2759e4;
+
+    --color-danger: #cc2e2e;
+    --color-danger-hover: #d14949;
+    --color-danger-content: white;
+    --color-danger-border: #d12828;
+
     --modal-backdrop: #40404040;
     --border-color: #dedede;
+    --modal-bg: white;
+    --modal-color: #202020;
+    --card-border: var(--border-color);
+    --card-bg: white;
+    --dropdown-bg: white;
+    --dropdown-border: #dfdfdf;
+    --dropdown-item-hover-bg: #f0f0f0;
+    --badge-bg: #4060f034;
+    --badge-color: #4060f0;
+    --input-bg: white;
+    --input-file-remove-color: #404040;
+    --input-file-border: #ccc;
+    --input-focus-border: #4070f0;
+    --page-bg: #e8e8e8;
+    --table-bg: #aaa;
+    --table-border: #aaa;
+    --table-body-bg: white;
+    --table-filter-bg: white;
+    --table-filter-border: #aaa;
+    --table-filter-active-bg: #889cf752;
+    --table-filter-active-border: #2248ef;
+    --table-filter-active-color: #2248ef;
+
+    --table-head-bg: #dedede;
+    --table-head-color: #404040;
+    
     /*  */
 }
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-default: #374151;
+        --color-default-content: #e5e7eb;
+        --color-default-border: #4b5563;
+        --color-default-hover: #4b5563;
+
+      /* --color-primary: #a3bffa;
+      --color-primary-hover: #8aa3f0;
+      --color-primary-content: #1e3a8a;
+      --color-primary-border: #3b82f6; */
+  
+      --color-danger: #f87171;
+      --color-danger-hover: #f43f5e;
+      --color-danger-content: #7f1d1d;
+      --color-danger-border: #dc2626;
+  
+      --modal-backdrop: #1e1e1e80;
+      --border-color: #4b5563;
+      --modal-bg: #1f2937;
+      --modal-color: #e5e7eb;
+      --card-border: var(--border-color);
+      --card-bg: #1f2937;
+      --dropdown-bg: #1f2937;
+      --dropdown-border: #374151;
+      --dropdown-item-hover-bg: #4b5563;
+      --badge-bg: #1e3a8a66;
+      --badge-color: #a3bffa;
+      --input-bg: #374151;
+      --input-file-remove-color: #d1d5db;
+      --input-file-border: #6b7280;
+      --input-focus-border: #60a5fa;
+      --page-bg: #111827;
+      --table-bg: #4b5563;
+      --table-border: #4b5563;
+      --table-body-bg: #1f2937;
+      --table-filter-bg: #374151;
+      --table-filter-border: #4b5563;
+      --table-filter-active-bg: #275aada8;
+      --table-filter-active-border: #2563eb;
+      --table-filter-active-color: #93c5fd;
+      --table-head-bg: #293545;
+      --table-head-color: #d9d9d9;
+  
+    }
+  }

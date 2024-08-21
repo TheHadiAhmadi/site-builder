@@ -146,17 +146,27 @@ export function File({name, label, type, multiple, size = 'medium'}) {
     })
 }
 
-export function Form({name ='', handler, fields, cancelAction, cancelHref = undefined, load, id, onSubmit}) {
-    return html`
+export function Form({name ='', handler, fields, cancelAction, cancelHref = undefined, load, id, onSubmit, card = true}) {
+
+    const form = html`
         <form${onSubmit ? ` data-action="${onSubmit}" data-trigger="submit"` : ''} data-form="${name}" ${load ? `data-load="${load}" data-id=${id}` : ''}>
             <input type="hidden" name="_handler" value="${handler}"/>
             ${fields}
-            <div data-form-actions>
-                ${Button({text: 'Cancel', type: 'button', color: 'default', href: cancelHref, action: cancelAction})}
-                ${Button({text: 'Submit', type: 'submit', color: 'primary'})}
-            </div>
+            ${Stack({justify: 'end'}, [
+                Button({text: 'Cancel', type: 'button', color: 'default', href: cancelHref, action: cancelAction}),
+                Button({text: 'Submit', type: 'submit', color: 'primary'})
+            ])}
         </form>
     `
+
+    if(card) {
+        return Card([
+            CardBody([
+                form
+            ])
+        ])
+    }
+    return form;
 }
 
 export function Button({href, text, color, block, action, outline = false, size="medium", dataset = {} , type="button"}) {

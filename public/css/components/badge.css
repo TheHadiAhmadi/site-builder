@@ -2,7 +2,19 @@
     display: inline-flex;
     align-items: center;
     padding: 2px 12px;
+    gap: 8px;
+
     border-radius: 16px;
-    background-color: #4060f034;
-    color: #4060f0;
+    background-color: var(--badge-bg);
+    color: var(--badge-color);
+}
+
+[data-badge-color="success"] {
+    --badge-bg: #1081232a;
+    --badge-color: #0c751e;
+}
+
+[data-badge-color="success"]:hover {
+    --badge-bg: #10812336;
+    --badge-color: #086117;
 }

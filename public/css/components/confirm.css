@@ -1,9 +1,5 @@
 
 [data-delete-confirm] {
-    --modal-bg: white;
-    --modal-color: #202020;
-
-
     display: none;
     background-color: var(--modal-backdrop);
     top: 0;
@@ -33,7 +29,7 @@
     font-size: 16px;
 }
 [data-confirm-description] {
-    color: #404040;
+    opacity: 0.7;
     font-size: 12px;
 }
 [data-confirm-actions] {

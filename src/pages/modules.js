@@ -75,11 +75,7 @@ export function pageUpdateModule(data) {
                 }),
             ])
         }),
-        // FieldsList({id: data.id, fields: data.props, name: 'props', deleteAction: 'delete-settings-field'}),             
         FieldsList({id: data.id, fields: data.props, updateAction: 'module-open-edit-field-modal', action: 'open-module-add-prop-modal', deleteAction: 'delete-settings-field'}),             
         FieldModal({ id: data.id }),
-        // FieldTypeModal({}),
-        // FieldAddModal({id: data.id, handler: 'definition.addField'}),
-        // FieldEditModal({id: data.id, handler: 'definition.setField'})
     ].join('')
 }

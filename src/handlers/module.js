@@ -124,6 +124,7 @@ function sidebarModuleSettings(definition, module, collection) {
                     name: 'module-settings',
                     cancelAction: 'open-add-module',
                     handler: 'module.saveSettings',
+                    card: false,
                     fields: [
                         `<input type="hidden" name="slug" value="">`,
                         `<input type="hidden" name="id" value="${module.id}">`,

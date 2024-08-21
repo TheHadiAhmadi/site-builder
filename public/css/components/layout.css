@@ -7,6 +7,7 @@
 }
 
 [data-header-title] {
+    color: var(--title-color);
     font-size: 24px;
     font-weight: bold;
 }
@@ -19,7 +20,7 @@
 
 [data-page] {
     padding: 1rem;
-    background-color: #e8e8e8;
+    background-color: var(--page-bg);
     overflow: auto;
 }
 

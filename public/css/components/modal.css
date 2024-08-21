@@ -22,7 +22,6 @@
     border-radius: 8px;
     overflow: hidden;
     --modal-width: 600px;
-    --modal-bg: white;
 
     background-color: var(--modal-bg);
     width: var(--modal-width);

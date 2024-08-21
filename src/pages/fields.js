@@ -113,25 +113,10 @@ export function FieldForm({handler, collections, id, mode = 'add', type = ''}) {
     return Form({
         cancelAction: 'modal.close',
         handler,
+        card: false,
         fields
     })
 }
-
-// export function FieldAddModal({id, collections handler = 'collection.addField'}) {
-//     return Modal({
-//         name: 'field-add', 
-//         title: 'Add Field', 
-//         body: FieldForm({handler, collections, id})
-//     })
-// }
-
-// export function FieldEditModal({id, handler = 'collection.setField'}) {
-//     return Modal({
-//         name: 'field-edit', 
-//         title: 'Edit Field', 
-//         body: FieldForm({handler, collections, id, type: '', mode: 'edit'})
-//     })
-// }
 
 export function FieldsList({name, updateAction = 'open-edit-field-modal', action = 'open-add-field-modal', id, fields, deleteAction = 'delete-field'}) {
     let _fields = JSON.parse(JSON.stringify(fields))
@@ -144,7 +129,6 @@ export function FieldsList({name, updateAction = 'open-edit-field-modal', action
         title: 'Fields',
         actions: [
             Button({
-                // outline: true,
                 block: true,
                 text: 'Add Field', 
                 color: 'primary', 

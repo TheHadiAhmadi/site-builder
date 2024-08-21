@@ -2,7 +2,6 @@
     position: relative;
 }
 
-
 [data-dropdown-placement="start"] [data-dropdown-menu] {
     left: 0
 }
@@ -20,8 +19,8 @@
     flex-direction: column;
     white-space: nowrap;
     font-weight: normal;
-    background-color: white;
-    border: 1px solid #dfdfdf;
+    background-color: var(--dropdown-bg);
+    border: 1px solid var(--dropdown-border);
     min-width: 200px;
 }
 
@@ -32,5 +31,5 @@
 }
 [data-dropdown-item]:hover {
     padding: 4px 8px;
-    background-color: #f0f0f0;
+    background-color: var(--dropdown-item-hover-bg);
 }

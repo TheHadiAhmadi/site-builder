@@ -1,6 +1,6 @@
 
 [data-table] {
-    background-color: #aaa;
+    background-color: var(--table-bg);
     width: 100%;
 
 }
@@ -8,12 +8,12 @@
 [data-table-parent] {
     overflow-x: auto;
     border-radius: 8px;
-    border: 1px solid #aaa;
+    border: 1px solid var(--table-border);
 }
 
 [data-table] thead tr {
-    background-color: #dedede;
-    color: #404040;
+    background-color: var(--table-head-bg);
+    color: var(--table-head-color);
 }
 [data-table] td, [data-table] th {
     text-align: start;
@@ -23,12 +23,12 @@
 
 [data-table] td {
     font-weight: normal;
-    background-color: white;
+    background-color: var(--table-body-bg);
 
 }
 
 [data-table] tr {
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid var(--table-border);
 }
 
 [data-table-actions] {
@@ -38,9 +38,9 @@
 }
 
 [data-empty-table] {
-    border: 1px solid #b8b8b8;
+    border: 1px solid var(--table-border);
     border-radius: 4px;
-    background-color: white;
+    background-color: var(--table-body-bg);
     display: flex;
     align-items: center;
     justify-content: center;

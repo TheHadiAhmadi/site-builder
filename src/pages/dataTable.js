@@ -147,7 +147,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                 }
                 
                 return `
-                    <a href="/files/${file.id}" download="${file.name}" data-file-item>
+                    <a href="/files/${file.id}" download="${file.name}" data-badge data-badge-color="success" data-file-item>
                         <svg data-download-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-6 4q-.825 0-1.412-.587T4 18v-3h2v3h12v-3h2v3q0 .825-.587 1.413T18 20z"/></svg>
                         ${file_icons[field.file_type] ?? file_icons['all']}
                         <div>

@@ -22,9 +22,12 @@ const compile = hbs.compile
 async function SetupPage() {
     const templates = await readdir('./templates');
     return layouts.default({
-        head: '<link rel="stylesheet" href="/css/components.css">',
         title: 'Setup CMS',
-        body: `<div style="background-color: #e8e8e8; display: flex; height: 100vh; align-items: center; justify-content: center;">
+        head: [
+            '<link rel="stylesheet" href="/css/setup.css">',
+            '<script type="module" src="/js/setup.js"></script>'
+        ],
+        body: `<div data-main>
             ${Form({
                 handler: 'setup.setup',
                 fields: [
@@ -45,7 +48,7 @@ async function SetupPage() {
                     })
                 ]
             })}
-        </div>` + '<script type="module" src="/js/setup.js"></script>'
+        </div>`
     })
 }
 
