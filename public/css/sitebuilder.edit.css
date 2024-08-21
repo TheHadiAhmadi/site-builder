@@ -27,8 +27,8 @@
     --body-bg: #e8e8e8;
     --body-color: black;
 }
-@media (prefers-color-scheme: dark) {
-    :root {
+
+[data-theme="dark"] {
       --iframe-border: #4b5563;
       --iframe-bg: #1f2937;
       --iframe-shadow-color: #334155;
@@ -55,10 +55,9 @@
       --body-color: #e5e7eb;
     }
 
-    body {
-        color-scheme: dark;
-    }
-  }
+body[data-theme="dark"] {
+    color-scheme: dark;
+}
   
 body, html {
     height: 100vh;    

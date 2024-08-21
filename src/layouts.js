@@ -52,7 +52,7 @@ export default {
             {{{settings.head}}}
         {{/if}}
     </head>
-    <body data-dir="{{dir}}">
+    <body data-dir="{{dir}}" data-theme="{{theme}}">
         <div>
             {{{body}}}
         </div>

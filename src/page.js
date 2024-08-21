@@ -501,7 +501,8 @@ export async function renderPage(req, res) {
             const html = renderTemplate(layouts.default, {
                 head: stylesheet, 
                 body: await renderBody([], {...req.query, mode, url: req.url, view}), 
-                title: 'Untitled'
+                title: 'Untitled',
+                theme: 'dark'
             })
         
             return res.send(html)
@@ -550,6 +551,7 @@ export async function renderPage(req, res) {
     const html = renderTemplate(layouts.default, {
         head: (head?? '') + (stylesheet ?? ''), 
         body: await renderBody(modules, {...req.query, props, params, mode, url: req.url, view}), 
+        theme: 'dark',
         script: page.script,
         style: page.style,
         dir: page.dir,
