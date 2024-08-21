@@ -1,6 +1,8 @@
+
 /node_modules
-uploads
-data.json
+/definitions
+/uploads
+/data.json
 .env
 temp
 backup.zip

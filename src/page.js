@@ -1,5 +1,6 @@
 import hbs from 'handlebars'
 import { Button, Card, CardBody, DeleteConfirm, EmptyTable, File, Form, Input, Label, Modal, Page, Table, Textarea } from './components.js'
+import {join} from 'path'
 
 import { db } from "#services";
 import layouts from "./layouts.js";
@@ -7,7 +8,6 @@ import { pageCreateModule, pageUpdateModule } from './pages/modules.js';
 import { collectionDataCreate, collectionDataList, collectionDataUpdate, CollectionForm, createCollectionPage, FieldInput, RelationFieldModal, updateCollectionPage } from './pages/collections.js';
 import { pageCreatePage, pageUpdatePage } from './pages/pages.js';
 import { loadRelationFieldType, renderModule } from './renderModule.js';
-import { DataTable, getDataTableItems } from './pages/dataTable.js';
 import { userFields, UsersDataTable } from './handlers/user.js';
 
 const definitions = {}
@@ -71,9 +71,12 @@ async function loadModuleDefinitions() {
     for(let definition of defs) {
         if(definition.file) {
             try {
-                const module = await import(definition.file).then(res => {
+                console.log('definition.file: ', definition.file)
+                const module = await import(join('..', definition.file)).then(res => {
                     return res.default
                 })
+                console.log('module: ', module)
+
                 definitions[definition.id].load = module.load
                 definitions[definition.id].actions = module.actions
             } catch(err) {

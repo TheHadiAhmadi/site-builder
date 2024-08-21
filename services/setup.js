@@ -1,8 +1,9 @@
-import {cpSync, existsSync, readFileSync, rmSync} from 'node:fs'
+import {cpSync, existsSync, mkdirSync, readFileSync, rmSync} from 'node:fs'
 import db from "./db.js"
 import JSZip from 'jszip'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, writeFile } from 'node:fs/promises'
 import { slugify } from '../src/handlers/content.js'
+import { join, basename } from 'node:path'
 
 const defaultModules = {
     Section: {
@@ -82,7 +83,8 @@ export async function setupCms(req, res) {
                 dynamic: page.dynamic,
                 script: page.script,
                 style: page.style,
-                seo: page.seo
+                seo: page.seo,
+                include_site_head: page.include_site_head
             }
 
             if(page.dynamic) {
@@ -115,7 +117,7 @@ export async function setupCms(req, res) {
                             }
                         }
 
-                        if(prop.type === 'file' && !page.dynamic) {
+                        if(prop.type === 'file') {
                             if(prop.multiple) {
                                 let result = []
                                 for(let item of value ?? []) {
@@ -128,6 +130,7 @@ export async function setupCms(req, res) {
                                         type: 'move-file',
                                         value: {
                                             name: item,
+                                            path: file ? `./temp/site/files/${item}` : `./templates/${template}/files/${item}`,
                                             id
                                         }
                                     })
@@ -136,20 +139,21 @@ export async function setupCms(req, res) {
                                 
                                 module.props[prop.slug] = result
                             } else {
-
-                                const {id} = await db('files').insert({
-                                    name: value
-                                })
-                                
-                                afterInsertActions.push({
-                                    type: 'move-file',
-                                    value: {
-                                        name: value,
-                                        id
-                                    }
-                                })
-                                
-                                module.props[prop.slug] = id
+                                if(value) {
+                                    const {id} = await db('files').insert({
+                                        name: value
+                                    })
+                                    
+                                    afterInsertActions.push({
+                                        type: 'move-file',
+                                        value: {
+                                            path: file ? `./temp/site/files/${value}` : `./templates/${template}/files/${value}`,
+                                            id
+                                        }
+                                    })
+                                    
+                                    module.props[prop.slug] = id
+                                }
                             }
                         }
 
@@ -159,7 +163,6 @@ export async function setupCms(req, res) {
                                 value: module.props[prop.slug]
                             })
                             delete module.props[prop.slug]
-
                         }
                     }
                     
@@ -186,7 +189,6 @@ export async function setupCms(req, res) {
                         res2 = await db('modules').insert({
                             definitionId: _definitions[module.definition].id,
                             moduleId,
-                            pageId: moduleId ? undefined : res.id,
                             props: module.props ?? {},
                             links: module.links ?? {},
                             cols: module.cols ?? 12,
@@ -194,16 +196,14 @@ export async function setupCms(req, res) {
                         })
                     }
 
+                    console.log(afterInsertActions)
                     for(let action of afterInsertActions) {
                         if(action.type === 'insert-module') {
                             const res = await addModules(action.value ?? [], res2.id)
                         }
                         if(action.type === 'move-file') {
-                            if(file) {
-                                cpSync(`./temp/site/files/${action.value.name}`, `./uploads/${action.value.id}`)
-                            } else {
-                                cpSync(`./templates/${template}/files/${action.value.name}`, `./uploads/${action.value.id}`)
-                            }
+                            cpSync(action.value.path, `./uploads/${action.value.id}`)
+                            
                         }
                     }
                     afterInsertActions = []
@@ -218,14 +218,12 @@ export async function setupCms(req, res) {
     }
 
     async function importCollections(collections) {
-        console.log('import Collections', collections)
-
         for(let collection of collections) {
             let {name, fields, contents} = collection
 
             const slugField = fields.find(x => x.slug === 'slug')
             if(slugField) {
-                slugField.default = true
+                slugField.hidden = true
             } else {
                 fields = [
                     {slug: 'slug', label: 'Slug', hidden: true, type: 'input'},
@@ -245,7 +243,6 @@ export async function setupCms(req, res) {
             
             const res = await db('collections').insert({name, fields})  
             _collections[res.name] = res
-            console.log('set Collections', _collections)
 
             for(let item of contents) {
                 if(!item.slug) {
@@ -380,6 +377,18 @@ export async function setupCms(req, res) {
                     delete prop.collection
                 }   
             }
+
+            if(definition.file) {
+                const srcFile = './temp/site/definitions/' + basename(definition.file)
+                const destFile = './definitions/' + basename(definition.file)
+                definition.file = destFile
+
+                if(!existsSync('./definitions')) {
+                    mkdirSync('./definitions')
+                }
+                cpSync(srcFile, destFile)
+            }
+            
             const res = await db('definitions').insert(definition)
 
             _definitions[res.name] = res
@@ -406,11 +415,18 @@ export async function setupCms(req, res) {
             for (let definition of mod.default.definitions) {
                 let def = definition
                 if(definition.file) {
-                    definition.file = `../templates/${template}/definitions/${definition.file}`
+                    const filePath = `./templates/${template}/definitions/${definition.file}`
+                    const newFilePath = './definitions/' + definition.file
+
+                    if(!existsSync('./definitions')) {
+                        mkdirSync('./definitions')
+                    }
+                    await copyFile(filePath, newFilePath)
+
                     def = {
-                    
                         ...def, 
-                        ...(await import(definition.file)).default
+                        file: newFilePath,
+                        ...(await import(join('..', newFilePath))).default
                     }
 
                     // delete def.load
@@ -420,7 +436,6 @@ export async function setupCms(req, res) {
             }
     
             await importCollections(mod.default.collections)
-
     
             for(let key in _definitions) {
                 const definition = _definitions[key]
