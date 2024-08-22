@@ -273,7 +273,9 @@ app.post('/api/export', async(req, res) => {
     }
 
     let definitionFiles = []
-    const definitions = await db('definitions').query().all()
+    let definitions = await db('definitions').query().all()
+    definitions = definitions.filter(x => x.name !== 'Rich Text' && x.name !== 'Columns' && x.name !== 'Section')
+    
     for(let definition of definitions) {
 
         if(definition.file) {
@@ -337,7 +339,7 @@ app.post('/api/export', async(req, res) => {
         }
     }
 
-    const settings = await db('settings').query().first()
+    const settings = await db('settings').query().first() ?? {}
 
     delete settings.createdAt
     delete settings.updatedAt
