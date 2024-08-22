@@ -166,6 +166,31 @@ const actions = {
         })
         
     },
+    async 'open-update-module-ai-modal'(el) {
+        document.querySelector('[data-modal="update-ai"]').dataset.modalOpen = true
+
+        setTimeout(() => {
+            document.querySelector('[data-modal="update-ai"]').dataset.modalOpen = true
+
+        }, 100)
+        
+    },
+    async 'open-create-module-ai-modal'(el) {
+        document.querySelector('[data-modal="create-ai"]').dataset.modalOpen = true
+
+        setTimeout(() => {
+            document.querySelector('[data-modal="create-ai"]').dataset.modalOpen = true
+
+        }, 100)
+        
+    },
+    async 'open-seo-update-ai-modal'(el) {
+        document.querySelector('[data-modal="seo-ai"]').dataset.modalOpen = true
+
+        setTimeout(() => {
+            document.querySelector('[data-modal="seo-ai"]').dataset.modalOpen = true
+        }, 100)
+    },
     async 'open-edit-field-modal'(el) {
         const field = el.dataset
         

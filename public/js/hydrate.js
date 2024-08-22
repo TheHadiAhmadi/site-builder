@@ -8,6 +8,7 @@ import { Dropdown } from "./dropdown.js"
 import { DataTable } from './data-table.js'
 import { SectionResizer } from './section-resizer.js'
 import { RichText } from './rich-text.js'
+import { Tabs } from "./tabs.js"
 
 const components = Components()
 
@@ -17,6 +18,7 @@ components.register('form', Form)
 components.register('enhance', Link)
 components.register('modal', Modal)
 components.register('dropdown', Dropdown)
+components.register('tabs', Tabs)
 components.register('data-table', DataTable)
 components.register('section-resizer', SectionResizer)
 components.register('rich-text', RichText)

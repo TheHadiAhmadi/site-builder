@@ -1,10 +1,32 @@
-import { Button, Form, Input, Page, Stack, Textarea } from "../components.js"
+import { Button, CardBody, Form, Input, Modal, Page, Stack, Textarea } from "../components.js"
 import { FieldModal, FieldsList } from "./fields.js"
+
+function CreateModuleAiModal() {
+    return Modal({
+        name: 'create-ai',
+        title: `Create Module with AI`,
+        body: Form({
+            card: false,
+            cancelAction: 'modal.close',
+            handler: 'ai.createModule',
+            fields: [
+                Input({label: 'Name', placeholder: 'Enter Module name', name: 'name'}),
+                Textarea({
+                    label: 'Describe ui design of module', 
+                    rows: 5, 
+                    placeholder: `Create Card with red background and white text...`, 
+                    name: 'template'
+                })
+            ]
+        })
+    })
+}
 
 export function pageCreateModule() {
     return [
         Page({
             actions: [
+                Button({text: 'Create With AI', color: 'primary', action: "open-create-module-ai-modal"}),
                 Button({text: 'Cancel', action: "navigation.navigate-to-default-view"})
             ].join(''),
             title: `Create New Module`,
@@ -19,35 +41,7 @@ export function pageCreateModule() {
                 })
             ]
         }),
-        Page({
-            // actions: [
-            //     Button({
-            //         text: 'Cancel', 
-            //         action: "navigation.navigate-to-default-view"
-            //     })
-            // ].join(''),
-            title: `Create Module with AI`,
-            body: [
-                Form({
-                    cancelAction: 'navigation.navigate-to-default-view',
-                    handler: 'ai.createModule',
-                    fields: [
-                        Textarea({
-                            label: 'Describe ui design of module', 
-                            rows: 5, 
-                            placeholder: `should have red background initially and when hovered it should be changed to blue. should have title and description with a hidden button aligned vertically. when hovered, hide texts and only show button.`, 
-                            name: 'template'
-                        }),
-                        Textarea({
-                            label: 'Describe props of module', 
-                            rows: 5, 
-                            placeholder: `title and description props are string button link and button text props are string too.`,
-                            name: 'fields'
-                        }),
-                    ]
-                })
-            ]
-        })
+        CreateModuleAiModal()
     ].join('')
 }
 
@@ -55,12 +49,12 @@ export function pageUpdateModule(data) {
     return [
         Page({
             actions: [
-                Button({text: 'Cancel', action: "navigate-to-default-view"})
+                Button({text: 'Update With AI', color: 'primary', action: "open-update-module-ai-modal"}),
+                Button({text: 'Cancel', action: "navigate-to-default-view"}),
+                
             ].join(''),
             title: `Update Module (${data.name})`,
-            body: Stack({vertical: true}, [
-                data.prompt ? `<div style="border-radius: 4px; border: 1px solid #d0d0d0; background-color: #f0f0ff; padding: 1rem"><div class="font-bold">TEMPLATE:</div> ${(data.prompt?.template ?? '').replace('<', '&lt;')}</div>` : '', 
-                data.prompt ? `<div style="border-radius: 4px; border: 1px solid #d0d0d0; background-color: #f0f0ff; padding: 1rem"><div class="font-bold">FIELDS:</div> ${data.prompt?.fields ?? ''}</div>` : '', 
+            body: Stack({vertical: true, gap: 'lg'}, [
                 Form({
                     load: 'definition.load',
                     id: data.id,
@@ -77,5 +71,33 @@ export function pageUpdateModule(data) {
         }),
         FieldsList({id: data.id, fields: data.props, updateAction: 'module-open-edit-field-modal', action: 'open-module-add-prop-modal', deleteAction: 'delete-settings-field'}),             
         FieldModal({ id: data.id }),
+        UpdateModuleAiModal({id: data.id}),
+        Page({
+            title: 'Previous Prompts',
+            body:[
+            data.prompt ? Stack({vertical: true, gap: 'sm'}, [
+                (typeof data.prompt.template === 'string' ? [data.prompt.template] : data.prompt.template).map(x => `
+                    <div style="border-radius: 4px; border: 1px solid var(--border-color); background-color: var(--card-bg); padding: 1rem">
+                        ${(x).replace('<', '&lt;')}
+                    </div>
+                `).join('')
+            ]) : '', 
+        ]})
     ].join('')
+}
+
+function UpdateModuleAiModal({id}) {
+    return Modal({
+        name: 'update-ai',
+        title: 'Update Module with AI',
+        footer: '',
+        body: Form({
+            card: false,
+            handler: 'ai.updateModule',
+            fields: [
+                `<input type="hidden" name="id" value="${id}">`,
+                Textarea({name: 'template', label: 'Template', rows: 5, placeholder: 'Which changes do you want to apply for this module?'})
+            ]
+        })
+    })
 }

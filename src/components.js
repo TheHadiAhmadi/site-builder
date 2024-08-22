@@ -214,11 +214,12 @@ export function EmptyTable({title, description, body = ''}) {
     `
 }
 
-export function Stack({vertical = false, wrap, justify, align, ...rest}, body) {
+export function Stack({vertical = false, wrap, justify, align, gap = 'md', ...rest}, body) {
     
     const attrs = attributes({
         ...rest,
         'data-stack': !vertical,
+        'data-stack-gap': gap,
         'data-stack-vertical': vertical,
         'data-stack-justify': justify,
         'data-stack-align': align,
@@ -259,4 +260,31 @@ export function DeleteConfirm() {
             </div>
         </div>
     `
+}
+
+export function Tabs({ items, body }) {
+    return html`
+        <div data-tabs>
+            <ul data-tabs-list>
+                ${items.map((item, index) => `
+                    <li data-tab="${index}" ${index === 0 ? 'data-tab-active' : ''}>
+                        <button type="button" data-tab-trigger="${index}">
+                            ${item}
+                        </button>
+                    </li>
+                `).join('')}
+            </ul>
+            <div data-tabs-content>
+                ${body.map((content, index) => `
+                    <div data-tab-content="${index}" ${index === 0 ? 'data-tab-content-active' : ''}>
+                        ${content}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+export function TabItem(content) {
+    return html`${content}`;
 }

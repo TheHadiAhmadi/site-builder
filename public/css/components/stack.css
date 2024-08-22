@@ -13,6 +13,19 @@
     flex-wrap: wrap;
 }
 
+[data-stack-gap="sm"] {
+    gap: 4px;
+}
+[data-stack-gap="md"] {
+    gap: 8px;
+}
+[data-stack-gap="lg"] {
+    gap: 16px;
+}
+[data-stack-gap="xl"] {
+    gap: 24px;
+}
+
 [data-stack-justify="end"] {
     justify-content: end;
 }

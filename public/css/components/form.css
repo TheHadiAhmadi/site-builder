@@ -35,24 +35,21 @@
 }
 
 [data-input], [data-textarea], [data-select] {
-    --input-border: var(--border-color);
     width: 100%;
     padding: 4px 16px;
     border-radius: 4px;
     outline: none;
-    border: 1px solid var(--input-border);
+    border: 1px solid var(--border-color);
     background-color: var(--input-bg);
 }
 
 [data-file-label] {
-    --input-border: var(--border-color);
     width: 100%;
     padding: 4px 4px;
     border-radius: 4px;
     outline: none;
-    border: 1px solid var(--input-border);
+    border: 1px solid var(--border-color);
     background-color: var(--input-bg);
-
     height: 48px;
     position: relative;
     display: flex;

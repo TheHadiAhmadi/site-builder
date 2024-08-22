@@ -7,6 +7,14 @@ async function normalizeCollectionContent(collection, item, depth = 1) {
         if(field.type === 'relation' && depth < 3) {
             item[field.slug] = await loadRelationFieldType(item[field.slug], field, depth + 1)
         }
+        if(field.type === 'file' && depth < 3) {
+            let query = db('files').query();
+            if(field.multiple) {
+                item[field.slug] = await query.filter('id', 'in', item[field.slug]).all()
+            } else {
+                item[field.slug] = await query.filter('id', '=', item[field.slug]).first()
+            }
+        }
     }
 
     return item
@@ -46,7 +54,6 @@ export async function loadRelationFieldType(value, field, depth = 1) {
             value = null
         }
     }
-    console.log('after load relation field type', value)
     return value
 }
 
@@ -89,8 +96,15 @@ export async function renderModule(module, {props, mode, definitions, permission
                 }
             } 
             else if(item.type === 'relation') {
-                console.log(module.props[item.slug], item)
                 module.props[item.slug] = await loadRelationFieldType(module.props[item.slug], item)
+            } else if(item.type === 'file') {
+                let query = db('files').query();
+                if(item.multiple) {
+                    module.props[item.slug] = await query.filter('id', 'in', module.props[item.slug]).all()
+                } else {
+                    module.props[item.slug] = await query.filter('id', '=', module.props[item.slug]).first()
+                }
+
             } else {
                 module.props[item.slug] = module.props[item.slug] ?? item.defaultValue
             }
@@ -98,13 +112,10 @@ export async function renderModule(module, {props, mode, definitions, permission
     }
     
     if(definition.load) {
-        console.log('Module has load function')
         module.props = {
             ...module.props, 
             ...(await definition.load({request, db, definition, module}))
-        }
-        if(module.props.items) {
-            console.log(module.props.items.filters)
+        
         }
     }
 
@@ -118,7 +129,6 @@ export async function renderModule(module, {props, mode, definitions, permission
                     return prev[curr]
                 }, {settings, content: props.pageContent})
 
-                console.log('value: ', value, {settings, content: props.pageContent})
                 module.props[key] = value
 
             } else {
