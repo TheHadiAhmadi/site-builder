@@ -2,6 +2,8 @@
 
 - [ ] fix iframe hydration problem
 - [ ] dark/light switch
+- [ ] Delete collection
+- [ ] Delete page
 - [ ] profile avatar in toolbar
 - [ ] rename toolbar to header
 - [ ] review robots.txt file
