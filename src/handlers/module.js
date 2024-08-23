@@ -1,7 +1,7 @@
 import { db } from "#services"
 import { html } from "svelite-html"
-import { Checkbox, File, Form, Input, Select, Textarea } from "../components.js"
-import { FieldInput, RelationFieldModal } from "../pages/collections.js"
+import { Form } from "../components.js"
+import { FieldInput } from "../pages/collections.js"
 
 function DynamicFieldInput(field, fields, linked, module) {
     function getLinkedText(key) {
@@ -69,16 +69,11 @@ function DynamicFieldInput(field, fields, linked, module) {
     
     let options = {
         ...resultField,
-
-        // slug: field.slug, 
         label: getLabel(field.label),
         placeholder: 'Enter ' + field.label
     }
     if(options.type === 'select') {
-        // options.items = field.items
-        // options.multiple = field.multiple
         options.placeholder = 'Choose' + field.label
-        // return Input({name: field.slug, label: field.name, placeholder: 'Enter ' + field.name})
     }
 
     if(options.type === 'file' && options.file_type === 'image') {

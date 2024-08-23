@@ -6,6 +6,7 @@
     --iframe-bg: white;
     --iframe-shadow-color: #666479;
     --toolbar-color: #505050;
+    --toolbar-height: 48px;
     --toolbar-bg: #f1f1f1;
     --toolbar-border: #aaa;
     --sidebar-bg: #f1f1f1;
@@ -91,15 +92,21 @@ iframe {
     right: 0;
     left: 0px;
     color: var(--toolbar-color);
-    height: 40px;
+    height: var(--toolbar-height);
+    padding-inline-end: 1rem;
     background-color: var(--toolbar-bg);
     border-bottom: 1px solid var(--toolbar-border);
+}
+
+[data-body]:has([data-sidebar]:not([data-active])) [data-toolbar-icon] {
+    display: none;
 }
 
 [data-toolbar-icon] {
     width: 48px;
     height: 48px;
     padding: 12px;
+    cursor: pointer;
 }
 
 [data-toolbar-logo] {
@@ -110,7 +117,7 @@ iframe {
 
 [data-sidebar] {
     position: fixed;
-    top: 40px;
+    top: var(--toolbar-height);
     bottom: 0;
     left: 0;
     display: flex;
@@ -278,9 +285,9 @@ iframe {
 [data-main] {
     position: absolute;
     left: var(--sidebar-width);
-    top: 40px;
+    top: var(--toolbar-height);
     width: calc(100vw - var(--sidebar-width));
-    height: calc(100vh - 40px);
+    height: calc(100vh - var(--toolbar-height));
     overflow: auto;
     background-color: var(--body-bg);
     color: var(--body-color);

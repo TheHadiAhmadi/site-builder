@@ -5,6 +5,7 @@
   "imports": {
     "#services": "./services/index.js",
     "#modules": "./modules/index.js",
+    "#components": "./src/components.js",
     "#modules/*": "./modules/*"
   },
   "main": "index.js",

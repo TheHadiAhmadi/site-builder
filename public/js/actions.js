@@ -548,6 +548,14 @@ const actions = {
             })
         }
     },
+    'delete-module'(el) {
+        openConfirm({
+            title: 'Are you sure?',
+            description: 'Are you sure to remove this module definition?',
+            action: 'definition.delete',
+            id: el.dataset.id
+        })
+    },
     'open-delete-collection-content-confirm'(el) {
         const id = el.dataset.contentId
 

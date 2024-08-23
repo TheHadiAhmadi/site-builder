@@ -50,6 +50,7 @@ export function pageUpdateModule(data) {
         Page({
             actions: [
                 Button({text: 'Update With AI', color: 'primary', action: "open-update-module-ai-modal"}),
+                Button({text: 'Delete', color: 'danger', action: "delete-module", dataset: {id: data.id}}),
                 Button({text: 'Cancel', action: "navigate-to-default-view"}),
                 
             ].join(''),

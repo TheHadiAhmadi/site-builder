@@ -2,13 +2,12 @@ import express from 'express'
 import multer from 'multer'
 import { db } from '#services'
 import handlers from './src/handlers.js'
-import { existsSync, readFileSync, rmSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import {mkdir, readdir, writeFile} from 'node:fs/promises'
 import { handleModuleAction, renderPage } from './src/page.js'
 import cookieParser from 'cookie-parser'
 import { LoginPage } from './src/pages/login.js'
-import layouts from './src/layouts.js'
-import { File, Form, Input, Select } from './src/components.js'
+import { SetupPage } from './src/pages/setup.js'
 import { setupCms} from './services/setup.js'
 import hbs from 'handlebars'
 import JSZip from 'jszip'
@@ -19,38 +18,6 @@ const compile = hbs.compile
 // if(existsSync('./data4.json'))
 //     rmSync('./data4.json')
 
-async function SetupPage() {
-    const templates = await readdir('./templates');
-    return layouts.default({
-        title: 'Setup CMS',
-        head: [
-            '<link rel="stylesheet" href="/css/setup.css">',
-            '<script type="module" src="/js/setup.js"></script>'
-        ],
-        body: `<div data-main>
-            ${Form({
-                handler: 'setup.setup',
-                fields: [
-                    Input({ 
-                        name: 'password', 
-                        placeholder: 'Enter Admin Password', 
-                        label: 'Admin Password'
-                    }),
-                    Select({
-                        items: templates, 
-                        name: 'template', 
-                        placeholder: 'Choose a template', 
-                        label: 'Template'
-                    }),
-                    File({
-                        name: 'file', 
-                        label: 'Import zip'
-                    })
-                ]
-            })}
-        </div>`
-    })
-}
 
 let context = {}
 
@@ -69,7 +36,8 @@ app.use('/', async (req, res, next) => {
     if(definitions.length) {
         next()
     } else {
-        res.end(await SetupPage())
+        const templates = await readdir('./templates');
+        res.end(SetupPage({templates}))
     }
 })
 
@@ -373,18 +341,6 @@ app.post('/api/export', async(req, res) => {
     res.setHeader('Content-Type', 'application/zip');
 
     res.send(content)
-})
-
-app.post('/api/import', async(req, res) => {
-   
-    
-
-    // await writeFile('./temp/file.zip', req.files[0].buffer)
-    
-
-
-    res.end('{}')
-
 })
 
 //#region Pages

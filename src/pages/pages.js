@@ -117,7 +117,6 @@ export function pageUpdatePage(page, { collections }) {
                 id: page.id,
                 fields: [
                     `<input type="hidden" name="id" value="${page.id}" />`,
-
                     Tabs({
                         items: ['General', 'Seo', 'Head'], 
                         body: [
@@ -126,43 +125,9 @@ export function pageUpdatePage(page, { collections }) {
                             TabItem([PageHeadFields()]),
                         ]
                     })
-                    // PageEditFields({ collections }).join('')
-                ].join('')
+                ]
             })
         }),
-        // Page({
-        //     title: 'Head Settings',
-        //     actions: '',
-        //     body: Form({
-        //         name: 'page-head-form',
-        //         cancelAction: 'navigate-to-default-view',
-        //         handler: 'page.update',
-        //         load: 'page.load',
-        //         id: page.id,
-        //         fields: [
-        //             `<input type="hidden" name="id" value="${page.id}" />`,
-        //             PageHeadFields()
-        //         ].join('')
-        //     })
-        // }),
-        // Page({
-        //     title: 'Seo Settings',
-        //     actions: [
-        //         Button({text: 'Update with AI', color: 'primary', action: 'open-seo-update-ai-modal'})
-        //     ],
-
-        //     body: Form({
-        //         name: 'page-seo-form',
-        //         cancelAction: 'navigate-to-default-view',
-        //         handler: 'page.update',
-        //         load: 'page.load',
-        //         id: page.id,
-        //         fields: [
-        //             `<input type="hidden" name="id" value="${page.id}" />`,
-        //             PageSeoFields()
-        //         ]
-        //     })
-        // }),
         UpdateSeoAiModal({id: page.id})
     ].join('')
 }

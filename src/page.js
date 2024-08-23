@@ -1,21 +1,17 @@
 import hbs from 'handlebars'
 import './handlebars.js'
-import { Button, Card, CardBody, DeleteConfirm, EmptyTable, File, Form, Input, Label, Modal, Page, Table, Textarea } from './components.js'
+import { Button, Card, CardBody, DeleteConfirm, File, Form, Input, Label, Page, Textarea } from './components.js'
 import {join} from 'path'
 
 import { db } from "#services";
 import layouts from "./layouts.js";
 import { pageCreateModule, pageUpdateModule } from './pages/modules.js';
-import { collectionDataCreate, collectionDataList, collectionDataUpdate, CollectionForm, createCollectionPage, FieldInput, RelationFieldModal, updateCollectionPage } from './pages/collections.js';
+import { collectionDataCreate, collectionDataList, collectionDataUpdate, createCollectionPage, FieldInput, RelationFieldModal, updateCollectionPage } from './pages/collections.js';
 import { pageCreatePage, pageUpdatePage } from './pages/pages.js';
 import { loadRelationFieldType, renderModule } from './renderModule.js';
 import { userFields, UsersDataTable } from './handlers/user.js';
 
-const definitions = {}
-
-function renderTemplate(template, data) {
-    return template(data)
-}
+let definitions = {}
 
 async function getPage(slug) {
     if (!slug.startsWith('/')) {
@@ -26,8 +22,7 @@ async function getPage(slug) {
     
     for (let page of pages) {
         const dynamicParts = page.slug.split('/').filter(part => part.startsWith('{{') && part.endsWith('}}'));
-        const staticParts = page.slug.split('/').filter(part => !part.startsWith('{{') && !part.endsWith('}}'));
-
+        
         if(page.dynamic && dynamicParts.length === 0) {
             if(slug.endsWith('/') || slug.length == 1) {
                 slug = slug + '{{slug}}' 
@@ -38,7 +33,6 @@ async function getPage(slug) {
             dynamicParts.push('{{slug}}')
         }
 
-        // Build regex to match the dynamic parts
         let regexStr = page.slug;
         for (const dynamicPart of dynamicParts) {
             regexStr = regexStr.replace(dynamicPart, '([^/]+)');
@@ -59,16 +53,12 @@ async function getPage(slug) {
         }
     }
     
-    return {}; // Return null if no matching page is found
+    return {}; 
 }
-
-
-// module.collectionId
-// module.contentId
 
 async function loadModuleDefinitions() {
     const defs = await db('definitions').query().all()
-    
+    definitions = {}
     for(let definition of defs) {
         if(definition.file) {
             try {
@@ -148,25 +138,24 @@ function sidebarSettings() {
         <div data-sidebar-body>
             <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'general'})}">General</a>
             <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'users'})}">Users</a>
-            <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'appearance'})}">Appearance</a>
-            <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'profile'})}">Profile</a>
+            <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'appearance'})}">Appearance (Soon)</a>
+            <a data-enhance data-sidebar-item href="${getUrl({view: 'settings', category: 'profile'})}">Profile (Soon)</a>
         </div>
     `
+}
 
+async function getPageSlug(page) {
+    if(page.dynamic) {
+        let query = db('contents').query().filter('_type', '=', page.collectionId);
+
+        const content = await query.first()
+        return getSlug(page.slug, content)
+    }
+    return page.slug
 }
 
 async function sidebarPages(pages, {permissions}) {
-    async function getPageSlug(page) {
-        if(page.dynamic) {
-            let query = db('contents').query().filter('_type', '=', page.collectionId);
 
-
-            const content = await query.first()
-            return getSlug(page.slug, content)
-        }
-        return page.slug
-    }
-    
     return `
         <div data-sidebar-title>Pages</div>
         <div data-sidebar-body>
@@ -205,8 +194,6 @@ async function DynamicPageSelect(page, params) {
     function getValue(content) {
         return hbs.compile(page.slug)(content)
     }
-
-
 
     return `<select style="width: max-content" data-select data-action="change-dynamic-page-content" data-trigger="change">
         ${items.map(x => `<option ${getSlug(page.slug, params) === getValue(x) ? 'selected' : ''} value="${getValue(x)}">${getText(x)}</option>`)}
@@ -394,18 +381,34 @@ export async function renderBody(body, {props, mode, url, view, params, ...query
         ]
     }
 
+    function Toolbar({start, end}) {
+        return `
+            <div data-toolbar>
+                <div data-action="close-sidebar">
+                    <svg data-toolbar-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 16V8l-4 4zM5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm5-2h9V5h-9z"/></svg>
+                </div>
+                ${start}
+                <div style="margin-inline-start: auto"></div>
+                ${end}
+            </div>
+        `
+    }
+    
     if(mode === 'edit') 
         return `
     <div data-body>
-        <div data-toolbar>
-            <div data-action="close-sidebar">
-                <svg data-toolbar-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 16V8l-4 4zM5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm5-2h9V5h-9z"/></svg>
-            </div>
-            <div data-toolbar-logo>
-                ${settings.logo ? `<img style="height: 24px" src="/files/${settings.logo}">` : ''}
-                ${settings.site_name ?? 'Logo'}
-            </div>
-        </div>
+        ${Toolbar({
+            start: `
+                <span data-toolbar-logo>
+                    ${settings.logo ? `<img style="height: 24px" src="/files/${settings.logo}">` : ''}
+                    ${settings.site_name || 'Site builder'}
+                </span>
+            `,
+            end: `<div data-stack>
+                <div>THEME</div>
+                <div>PROFILE</div>
+            </div>`
+        })}
         <div data-sidebar data-active="${sidebar}">
             <div data-sidebar-primary>
                 <div data-sidebar-item-small data-action="navigation.navigate" data-path="pages">
@@ -522,7 +525,7 @@ export async function renderPage(req, res) {
     if(!page) {
         if(mode == 'edit') {
             
-            const html = renderTemplate(layouts.default, {
+            const html = layouts.default({
                 head: stylesheet, 
                 body: await renderBody([], {...req.query, mode, url: req.url, view}), 
                 title: 'Untitled',
@@ -574,7 +577,7 @@ export async function renderPage(req, res) {
 
     const tailwind = JSON.stringify({darkMode: 'class'})
 
-    const html = renderTemplate(layouts.default, {
+    const html = layouts.default({
         head: (head?? '') + (stylesheet ?? ''), 
         body: await renderBody(modules, {...req.query, props, params, mode, url: req.url, view}), 
         theme: 'dark',

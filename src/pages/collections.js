@@ -31,18 +31,6 @@ export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
 }
 
 function Relation(field) {
-    // let value;
-    // if(!item[field.slug]) value = ''
-
-    // if(item[field.slug].filters) {
-    //     value = Stack({}, item[field.slug].filters.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`))
-    // } else {
-    //     if(field.multiple) {
-    //         value = Stack({}, item[field.slug].map(x => `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${x}" data-badge>${x}</a>`))
-    //     } else {
-    //         value = `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${item[field.slug]}" data-badge>${item[field.slug]}</a>`
-    //     }
-    // }
     return Label({
         symbolic: true,
         text: field.label,
@@ -61,7 +49,6 @@ function Relation(field) {
             }),
             `<input data-relation data-json type="hidden" name="${field.name}" value="">`,
             '<div data-relation-value></div>',
-            
         ]),
     })    
 }
@@ -70,9 +57,7 @@ function RichText(field) {
     return Label({
         text: field.label,
         body: `<div data-rich-text-wrapper><div name="${field.name}" data-rich-text></div></div>`
-
     })
-
 }
 
 export function FieldInput(field) {
