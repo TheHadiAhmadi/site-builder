@@ -1,5 +1,10 @@
-- [ ] Page settings (SEO, Head, ....)
-    - [ ] Add Description and og settings for page seo
+- [ ] Show spinner or progress for file uploader
+- [ ] show loading spinner when form submitted
+- [ ] Rahnama detail page doesn't work with dynamic content
+- [ ] For backup site use site name (settings) and current date
+- [ ] structure of zip file should not be specific and any folder name should be allowed (instead of site/)
+- [ ] update videos of readme file
+ 
 - [ ] Global Theme Settings (tailwind config)
 - [ ] Publish/
 - [x] Import/Export site/page
@@ -11,16 +16,11 @@
     - [ ] Responsive
 - [ ] Add field types
     - [x] Select items should be configurable
-    - [ ] Multiple/Single type for Select, file and Relation
-    - [ ] Image should be visible for File Uploader
+    - [ ] Multiple/Single type for Select
+    - [x] Image should be visible for File Uploader
     - [x] Add relation field type
 - [ ] DataTable sort and pagination
 
 - [ ] Modal closable
 - [x] Badge component
 - [ ] 
-
-
-## DB
-- [x] Query (in) operator
-- [ ] Query (like) operator

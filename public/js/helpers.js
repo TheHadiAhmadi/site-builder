@@ -43,6 +43,9 @@ export function Components() {
         },
         init(doc) {
             for(let key in components) {
+                if(doc.hasAttribute && doc.hasAttribute(`data-${key}`)) {
+                    components[key](doc)
+                }
                 doc.querySelectorAll(`[data-${key}]`).forEach(components[key])
             }
         }

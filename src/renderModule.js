@@ -119,8 +119,6 @@ export async function renderModule(module, {props, mode, definitions, permission
         }
     }
 
-    await loadModuleProps(definition, module)
-
     if(module.links) {
         for(let key in module.links) {
             const [firstpart, ...parts] = module.links[key].split('.')
@@ -136,9 +134,10 @@ export async function renderModule(module, {props, mode, definitions, permission
                     module.props[key] = props.pageContent.id
                 }
             }
-          
         }
     }
+    
+    await loadModuleProps(definition, module)
 
     
     let rendered;

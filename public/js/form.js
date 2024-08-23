@@ -60,7 +60,6 @@ export function getFormValue(formEl) {
         }
     }
 
-    
 
     for(let input of formEl.querySelectorAll('[data-textarea][name]')) {
         const name = input.getAttribute('name')
@@ -112,7 +111,9 @@ export function getFormValue(formEl) {
 export function flatObject(object, prefix = '') {
     let flat = {}
     for(let key in object) {
-        if(typeof object[key] =='object') {
+        console.log(object, prefix, key)
+
+        if(typeof object[key] == 'object') {
             const flatted = flatObject(object[key], prefix + key + '.')
             for(let k in flatted) {
                 flat[k] = flatted[k]
@@ -125,12 +126,16 @@ export function flatObject(object, prefix = '') {
 }
 
 export function setFormValue(form, value) {
+    console.log('setFormValue', value)
     if(!form) return;
     let formValue = flatObject(value)    
 
+    form.querySelectorAll('[name]').forEach(input => {console.log(input.getAttribute('name'))})
     form.querySelectorAll('[name]').forEach(input => {
         const name = input.getAttribute('name')
-        if(formValue[name] || formValue[name] == '' || formValue[name] == 0 || value[name]) {
+        const val = name.split('.').reduce((p, c) => p[c], value)
+
+        if(val || val == '' || val == 0 || val == []) {
             if(input.hasAttribute('data-file-label')) {
                 // input.setValue(formValue[name])
                 setTimeout(() => {
@@ -139,16 +144,16 @@ export function setFormValue(form, value) {
                 }, 100)
 
             } else if(input.hasAttribute('data-checkbox')) {
-                console.log('checkbox', name, formValue)
+                console.log('set value for checkbox', name, val)
                 if(input.hasAttribute('data-checkbox-multiple')) {
                     if(input.value === 'true' || input.value === 'false') {
-                        input.checked = formValue[name]?.includes(input.value === 'true' ? true : false)
+                        input.checked = val?.includes(input.value)
 
                     } else {
-                        input.checked = formValue[name]?.includes(input.value)
+                        input.checked = val?.includes(input.value)
                     }
                 } else {
-                    if(formValue[name] === 'true' || formValue[name] === true) {
+                    if(val === 'true' || val === true) {
                         input.checked = true
                     } else {
                         input.checked = false
@@ -182,12 +187,12 @@ export function setFormValue(form, value) {
                         }
                     }
                 }
-                
-                if(value[name]) {
-                    if(typeof value[name] == 'object') {
-                        input.value = JSON.stringify(value[name])
+
+                if(val) {
+                    if(typeof val == 'object') {
+                        input.value = JSON.stringify(val)
                     } else {
-                        input.value = value[name] ?? ''
+                        input.value = val ?? ''
                     }
                 } else {
                     input.value = '{}'
@@ -201,7 +206,6 @@ export function setFormValue(form, value) {
                     }, 200)
                 }
             } else {
-                console.log('here', input, name, formValue[name])
                 if(input.hasAttribute('data-file-input')) {
                     if(Array.isArray(value[name])) {
                         input.setValue(value[name])

@@ -1,5 +1,5 @@
 import { html } from "svelite-html";
-import { Button, Checkbox, EmptyTable, Stack, Table } from "../components.js";
+import { Button, Checkbox, EmptyTable, Modal, Stack, Table } from "../components.js";
 import { db } from "#services";
 
 export async function getDataTableItems({page = 1, perPage = 10, query, fields, filters, expandRelations = false}) {
@@ -9,33 +9,30 @@ export async function getDataTableItems({page = 1, perPage = 10, query, fields, 
 
         if(!filter) continue
 
-
-        if(['select'].includes(field.type)) {
-            filter.operator = 'in'
-            if(filter.value.length) {
-                query = query.filter(filter.field, filter.operator, filter.value)
-            }
-        }
-        if(['checkbox'].includes(field.type)) {
-            filter.operator = 'in'
-            if(filter.value.length) {
-                query = query.filter(filter.field, filter.operator, filter.value.map(x => x === 'true' ? true : false))
-            }
+        if(field.type === 'checkbox') {
+            filter.value = filter.value.map(x => x === 'true' ? true : false)
         }
 
-        if(['input', 'textarea'].includes(field.type)) {
-            filter.operator = 'like'
-            if(filter.value != '') {
-                query = query.filter(filter.field, filter.operator, filter.value)
+        if(field.type === 'relation') {
+            if(filter.value?.filters) {
+                let items = db('contents').query().filter('_type', '=', field.collectionId)
+                for(let filter2 of filter.value?.filters) {
+                    items = items.filter(filter2.field, filter2.operator, filter2.value)
+                    console.log("A", filter2)
+
+                }
+                items = await items.all()
+                // query = query.filter(filter.field, filter.operator, items)
+                console.log("B", items)
+                filter.value = items.map(x => x.id);
             }
         }
-        if(['relation'].includes(field.type)) {
-            filter.operator = '='
-            if(filter.value != '') {
-                query = query.filter(filter.field, filter.operator, filter.value)
-            }
-        }
-        // TODO: Other field type filters
+
+        // if(['select', 'input', 'textarea', 'checkbox', 'relation'].includes(field.type)) {
+            // if(filter.value.length) {
+        query = query.filter(filter.field, filter.operator, filter.value)
+            // }
+        // }
     }
     
     const items = await query.paginate(+page, +perPage)
@@ -71,7 +68,7 @@ export async function getDataTableItems({page = 1, perPage = 10, query, fields, 
 }
 
 
-export async function CollectionDataTable({collectionId, filters, page, perPage, selectable}) {
+export async function CollectionDataTable({collectionId, filters, page, perPage, selectable, relationFilters = false}) {
     const collection = await db('collections').query().filter('id', '=', collectionId).first()
 
     const query = db('contents').query().filter('_type', '=', collection.id)
@@ -79,13 +76,23 @@ export async function CollectionDataTable({collectionId, filters, page, perPage,
     // TODO:
     let items = await getDataTableItems({page, perPage, query, fields: collection.fields, expandRelations: true, filters})
 
-    return DataTable({filters, selectable, items, collectionId: collection.id, fields: collection.fields})
+    return DataTable({filters, selectable, items, collectionId: collection.id, fields: collection.fields, relationFilters})
 }
 
-export function DataTable({filters = [], selectable, items, collectionId, fields, actions = ['edit', 'delete'], handler}) {
+export function DataTable({filters = [], selectable, items, collectionId, fields, actions = ['edit', 'delete'], handler, relationFilters}) {
+    console.log('DataTable', {filters})
     const filtersObject = filters.reduce((prev, curr) => {
-        return {...prev, [curr.field]: curr.value}
+        console.log({curr})
+        if(!curr) return prev
+        return {
+            ...prev, 
+            [curr.field]: {
+                value: curr.value, 
+                operator: curr.operator
+            }
+        }
     }, {})
+    console.log('filtersObject: ', filtersObject)
 
 
     const ActionButtons = (item) => {
@@ -192,7 +199,6 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
 
     let content;
     
-    console.log(items)
     if(items.data.length) {
         content = Table({
             head: [
@@ -217,6 +223,21 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
     }
 
     function FilterContent(field) {
+        const submitButton = `
+            <div data-dropdown-item>
+                ${
+                    Button({
+                        type: 'submit',
+                        text: 'Submit', 
+                        block: true,
+                        color: 'primary',
+                        dataset: {
+                            search: true
+                        }
+                    })
+                }
+            </div>
+        `
         if(field.type === 'select') {
             return `
                 <div style="display: flex; flex-direction: column; gap: 8px">
@@ -224,61 +245,89 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                         <div data-dropdown-item>
                             ${Checkbox({
                                 multiple: true,
-                                name: 'filters.' + field.slug, 
+                                name: 'filters.' + field.slug + '.value', 
                                 label: item, 
-                                checked: filtersObject[field.slug]?.includes(item),
+                                checked: filtersObject[field.slug]?.value?.includes(item),
                                 value: item
                             })} 
                         </div>
                     `).join('')}
-                
+                <input type="hidden" data-input name="filters.${field.slug}.operator" value="in"/>
                 </div>
-            `
+            ` + submitButton
         }
         if(field.type === 'checkbox') {
             return `
                 <div style="display: flex; flex-direction: column; gap: 8px">
                     ${[{key: "true", text: 'True'}, {key: "false", text: 'False'}].map(item => `
                         <div data-dropdown-item>
+                            ${JSON.stringify(filtersObject[field.slug]?.value)}
                             ${Checkbox({
                                 multiple: true,
-                                name: 'filters.' + field.slug, 
+                                name: 'filters.' + field.slug + '.value', 
                                 label: item.text, 
-                                checked: filtersObject[field.slug]?.includes(item.key),
+                                checked: filtersObject[field.slug]?.value?.includes(item.key === 'true' ? true : false),
                                 value: item.key
                             })} 
                         </div>
                     `).join('')}
-                
+                <input type="hidden" data-input name="filters.${field.slug}.operator" value="in"/>
                 </div>
-            `
+            ` + submitButton
         }
         if(field.type === 'input' || field.type === 'textarea') {
             return `
             <div data-dropdown-item>
-                <input data-input name="filters.${field.slug}" placeholder="Search by ${field.label}..." value="${filtersObject[field.slug] ?? ''}"/>
+                <input data-input name="filters.${field.slug}.value" placeholder="Search by ${field.label}..." value="${filtersObject[field.slug]?.value ?? ''}"/>
+                <input type="hidden" data-input name="filters.${field.slug}.operator" value="like"/>
             </div>
-            `
-
+            ` + submitButton
         }
-        return ''
+
+        // Should show filters for relation types?
+        if(field.type === 'relation') return relationFilters;
+     
+        return 
     }
 
     function FilterButton(field) {
         const content = FilterContent(field)
 
         if(!content) return ''
-        const hasFilter = ['select', 'checkbox'].includes(field.type) ? filtersObject[field.slug]?.length : filtersObject[field.slug]
+        let hasFilter = ['select', 'checkbox'].includes(field.type) ? filtersObject[field.slug]?.value?.length : filtersObject[field.slug]?.value
         let filterValue;
         
         if(field.type === 'select') {
-            filterValue = filtersObject[field.slug]?.length + ' Items'
+            filterValue = filtersObject[field.slug]?.value?.length + ' Items'
+        } else if(field.type === 'relation') {
+            if(filtersObject[field.slug]?.value?.filters) {
+                filterValue = filtersObject[field.slug].value.filters.length + ' Filters'
+                hasFilter = filtersObject[field.slug].value.filters.length > 0
+            } else {
+                filterValue = filtersObject[field.slug]?.value?.length + ' Items'
+                hasFilter = filtersObject[field.slug]?.value?.length > 0
+
+            }
+            
         } else if(field.type === 'Checkbox') {
-            filterValue = filtersObject[field.slug].join(' or ')
+            filterValue = filtersObject[field.slug]?.value.join(' or ')
         } else {
-            filterValue = filtersObject[field.slug]
+            filterValue = filtersObject[field.slug]?.value
         }
         
+        if(field.type === 'relation') {
+            return `
+                <input type="hidden" data-json name="filters.${field.slug}.value" value='${JSON.stringify(filtersObject[field.slug]?.value ?? [])}'>
+                <input type="hidden" data-input name="filters.${field.slug}.operator" value="in"/>
+                <button type="button" ${hasFilter ? `data-data-table-button-has-value` : ''} data-data-table-filter-button data-action="open-filter-relation-table" data-slug="${field.slug}" data-collection-id="${field.collectionId}">
+                    ${field.label}${hasFilter ? `: ${filterValue}
+                        <div data-data-table-filter-button-icon data-name="${field.slug}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M6.4 19L5 17.6l5.6-5.6L5 6.4L6.4 5l5.6 5.6L17.6 5L19 6.4L13.4 12l5.6 5.6l-1.4 1.4l-5.6-5.6z"/></svg>
+                        </div>
+                    ` : ''}
+                </button>
+            `
+        }
         return `
             <div data-dropdown data-dropdown-trigger="focus" data-dropdown-placement="start">
                 <button type="button" ${hasFilter ? `data-data-table-button-has-value` : ''} data-data-table-filter-button data-dropdown-target>
@@ -290,29 +339,16 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                 </button>
                 <div data-dropdown-menu>
                     ${FilterContent(field)}
-                    <div data-dropdown-item>
-                        ${
-                            Button({
-                                type: 'submit',
-                                text: 'Submit', 
-                                block: true,
-                                color: 'primary',
-                                dataset: {
-                                    search: true
-                                }
-                            })
-                        }
-                    </div>
                 </div>
             </div>
         `
     }
 
     return html`
-        <div data-data-table ${collectionId ? `data-collection-id="${collectionId}"` : `data-handler="${handler}"`}  data-selectable="${selectable}">
+        <div data-data-table ${collectionId ? `data-collection-id="${collectionId}"` : `data-handler="${handler}"`}  data-selectable="${selectable}" ${relationFilters ? 'data-relation-filters' : ''}>
             <form data-data-table-filters-form>
                 <div data-data-table-filter-buttons>
-                    ${fields.map(x => FilterButton(x))}
+                    ${fields.filter(x => !x.hidden || x.name === 'slug').map(x => FilterButton(x))}
                 </div>
                 <div>
                     
@@ -336,7 +372,19 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                 <div>PAGINATION</div>
             </div>
         </div>
-    `
-     
-            
+    ` + RelationFilterModal()   
+}
+
+export function RelationFilterModal() {
+    return Modal({
+        name: 'relation-filter-modal', 
+        title: 'Choose items',
+        footer: Stack({justify: 'end'}, [
+            Button({text: 'Close', action: 'modal.close'}),
+            Button({color: 'primary', outline:true, text: 'Save Filters', action: 'choose-filter-relation-filters'}),
+            Button({color: 'primary', text: 'Save Items', action: 'choose-filter-relation-items'}),
+        ]),
+        body: `<div></div>`
+
+    })
 }

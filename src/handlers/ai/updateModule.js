@@ -3,60 +3,62 @@ import { generateResponse } from "../ai.js";
 
 function generateUpdateModuleSystemPrompt({ collections, definition }) {
     return `
-    You are a Tailwind CSS and Handlebars template expert.
+    You are an expert tasked with updating a Tailwind CSS/Handlebars module. Please follow the specifications provided to ensure compatibility and design continuity.
 
-    Update an existing Tailwind CSS/Handlebars template based on the following details:
+    - **Module Details**:
+      - **Name**: ${definition.name}
+      - **Previous Version** (for reference, do not execute):
+        ${JSON.stringify(definition.prompt?.template ?? [], null, 2)}
+      - **Current Template**: 
+        \`${definition.template}\`
 
-    - Module name: ${definition.name}.
+    - **Properties**:
+      - **Available Props**:
+        ${JSON.stringify(definition.props, null, 2)}
+      - **Prop Definitions**:
+        - InputProp: { "type": "input", "slug": "string", "label": "string" }
+        - TextareaProp: { "type": "textarea", "slug": "string", "label": "string" }
+        - FileProp: { "type": "file", "slug": "string", "multiple": boolean, "label": "string", "file_type": "image|video|document|all" }
+        - CheckboxProp: { "type": "checkbox", "slug": "string", "label": "string" }
+        - SelectProp: { "type": "select", "slug": "string", "label": "string", "multiple": boolean, "items": "string[]" }
+        - RichTextProp: { "type": "rich-text", "slug": "string", "label": "string" }
+        - RelationProp: { "type": "relation", "slug": "string", "label": "string", "collectionId": "string", "multiple": boolean }
+
+      - **Available Handlebars helpers**: 
+        eq, ifCond, formatDate, json, uppercase, lowercase, times, join, safeString, default
+
+    - **Design Requirements**:
+      - Ensure the template is fully responsive across mobile, tablet, and desktop devices.
+      - Adhere to consistent spacing, margins, and padding regulations for a tidy layout.
+      - Implement a suitable color scheme, including support for dark mode if necessary.
+      - Enhance UI interactivity with appropriate states like hover, focus, and active for elements.
+      - Effectively use UI components such as buttons, cards, modals, and grids for cohesive presentation.
+
+    - **Images Handling**:
+      - Use the prefix URL for files: /files/
+      - Refer to images by their ID: /files/{{imageSlug.id}}.
+
+    - **Constraints and Adjustments**:
+      - Only utilize the collections listed below for relation props:
+        ${JSON.stringify(collections, null, 2)}
+      - Minimize changes to props if possible. Document and justify any modifications or extensions needed for functionality.
+
+    - **Response Format**:
+      Provide the updated module configuration as follows:
+      {
+        "name": "${definition.name}",
+        "template": "Updated Handlebars/Tailwind template string goes here",
+        "props": ${definition.props.length > 0 ? 'List any updated props here' : '[]'}
+      }
     
-    - Previous prompts: 
-    ${JSON.stringify(definition.prompt?.template ?? [])}
-    
-    - Current Template:
-    ${definition.template}
+    - **Code quality**:
+      Format code for more readibility (prettier 4 spaces) 
 
-    - Available Props: 
-    ${definition.props}
-
-    - **UI Design Considerations**:
-        - Ensure the template is fully responsive and works well on different screen sizes (mobile, tablet, desktop).
-        - Use consistent spacing, margins, and padding to create a clean and organized layout.
-        - Implement a color scheme that complements the overall design and supports dark mode if mentioned.
-        - Include hover states, focus states, and active states for interactive elements to improve the user experience.
-        - Use components like buttons, cards, modals, and grids effectively to build a cohesive UI.
-
-    Response format:
-    {
-        "name": "string",
-        "template": "{Handlebars/Tailwind template}",
-        "props": Prop[]
-    }
-
-    Prop types:
-    type Prop = InputProp | TextareaProp | FileProp | SelectProp | BooleanProp | RichTextProp | RelationProp
-
-    type InputProp = { "type": "input", "slug": "string", "label": "string" }
-    type FileProp = { "type": "file", "slug": "string", "multiple": "boolean", "label": "string", "file_type": "image" | "video" | "document" | "all" }
-    type TextareaProp = { "type": "textarea", "slug": "string", "label": "string" }
-    type RichTextProp = { "type": "rich-text", "slug": "string", "label": "string" }
-    type CheckboxProp = { "type": "checkbox", "slug": "string", "label": "string" }
-    type SelectProp = { "type": "select", "slug": "string", "label": "string", "multiple": "boolean", "items": "string[]" }
-    type RelationProp = { "type": "relation", "slug": "string", "label": "string", "collectionId": "string", "multiple": "boolean" }
-
-    
-    If a prop is of type 'relation', only use collections from:
-    ${JSON.stringify(collections)}
-
-    - For image props, use the file URL prefix: /files/
-    - Image prop type has id field use id to get file. (example: /files/{{iamgeSlug.id}})
-
-    You can change props if needed. but try to not update if possible
-    if props didn't changed, return empty array as props field.
-
-    Return only the JSON object as the response.
+    **Important**:
+    - Aim to introduce minimal changes to the props. If no props are altered, return an empty array in the "props" section.
+    - Provide all responses as a JSON object based on the format specified above.
     `;
 }
-
 function generateUpdateModulePrompt({ template }) {
     return `Here is The UI consideration:
 

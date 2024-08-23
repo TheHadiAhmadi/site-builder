@@ -40,6 +40,7 @@ export const userFields = [
         label: 'Password',
         type: 'input',
         hidden: true,
+        input_type: 'password'
     },
 ]
 
@@ -62,8 +63,8 @@ export async function UsersDataTable({filters = [], perPage = 10, page = 1, sele
         fields: userFields, 
         items,
         actions: [
-            { text: 'edit', color: 'primary', href: `?mode=edit&view=user-add` },
-            { text: 'delete', color: 'danger', action: 'user.delete' },
+            { text: 'edit', color: 'primary', action: `open-user-edit` },
+            { text: 'delete', color: 'danger', action: 'open-user-delete' },
         ]
     })
 
@@ -74,6 +75,10 @@ export default {
         body.password = hashPassword(body.password)
 
         await db('users').insert(body)
+
+        return {
+            redirect: '?mode=edit&view=settings&category=users'
+        }
     },
     async update(body) {
         delete body.password
@@ -91,6 +96,17 @@ export default {
     async loadTable(body) {
         
         return UsersDataTable(body)
+    },
+    async delete(body) {
+        await db('users').remove(body.id)
+
+        return {reload: true}
+    },
+    async load(body) {
+        const user = await db('users').query().filter('id', '=', body.id).first()
+
+        delete user.password
+        return user;
     }
     
 }

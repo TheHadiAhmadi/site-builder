@@ -1,4 +1,6 @@
 [data-modal] {
+    --modal-width: 600px;
+
     background-color: var(--modal-backdrop);
     position: fixed;
     top: 0;
@@ -11,6 +13,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 1rem;
 }
 
 [data-modal-open] {
@@ -21,9 +24,9 @@
 [data-modal-content] {
     border-radius: 8px;
     overflow: hidden;
-    --modal-width: 600px;
 
     background-color: var(--modal-bg);
+    color: var(--color-default-content);
     width: var(--modal-width);
 }
 
@@ -38,11 +41,18 @@
 
 [data-modal-body] {
     padding: 1rem;
-    max-height: 80vh;
+    max-height: 70vh;
     overflow: auto;
 }  
 
 [data-modal-footer] {
     padding: 0.5rem 1rem;
+}
 
+[data-modal-size="small"] {
+    --modal-width: 400px;
+}
+
+[data-modal-size="large"] {
+    --modal-width: 768px;
 }

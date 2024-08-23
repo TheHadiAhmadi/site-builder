@@ -35,7 +35,9 @@ function generateCreateModuleSystemPrompt({ collections, name }) {
     type SelectProp = { "type": "select", "slug": "string", "label": "string", "multiple": "boolean", "items": "string[]" }
     type RelationProp = { "type": "relation", "slug": "string", "label": "string", "collectionId": "string", "multiple": "boolean" }
 
-    
+    Available Handlebars helpers: 
+    eq, ifCond, formatDate, json, uppercase, lowercase, times, join, safeString, default
+       
     If a prop is of type 'relation', only use collections from:
     ${JSON.stringify(collections)}
 

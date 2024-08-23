@@ -46,20 +46,33 @@ export function DataTable(el) {
         const handler = el.dataset.handler
 
         const selectable = el.dataset.selectable
+        const relationFilters = el.hasAttribute('data-relation-filters')
         // const handler = el.dataset.handler
 
         let filters = []
 
         for(let key in value.filters) {
             
-            filters.push({
+            const filter = {
                 field: key, 
-                operator: '=', 
-                value: value.filters[key]
-            })
+                operator: value.filters[key].operator, 
+            }
+
+            if(Array.isArray(value.filters[key].value)) {
+                if(value.filters[key].value.length > 0) {
+                    filter.value = value.filters[key].value
+                }
+            } else {
+                if(value.filters[key].value) {
+                    filter.value = value.filters[key].value
+                }
+            }
+
+            if(filter.value && filter.value != {}) {
+                filters.push(filter)
+            }
         }
 
-        filters = filters.filter(x => x.value !== '' && x.value != [])
         el.dataset.filters = JSON.stringify(filters)
 
         let res;
@@ -67,6 +80,7 @@ export function DataTable(el) {
             res = await request('table.load', {
                 collectionId,
                 selectable,
+                relationFilters,
                 filters,
                 page: 1,
                 perPage: +(el.querySelector('[name=perPage]').value ?? '10'),
@@ -75,6 +89,7 @@ export function DataTable(el) {
 
             res = await request(handler, {
                 selectable,
+                relationFilters,
                 filters,
                 page: 1,
                 perPage: +(el.querySelector('[name=perPage]').value ?? '10'),
@@ -87,7 +102,8 @@ export function DataTable(el) {
         el.innerHTML = template.content.querySelector('[data-data-table]').innerHTML
 
         setTimeout(() => {
-            hydrate(el.parentElement)
+            console.log(el.parentElement.querySelector('[data-data-table]'))
+            hydrate(el.parentElement.querySelector('[data-data-table]'))
         })
     }
     
@@ -97,7 +113,13 @@ export function DataTable(el) {
         icon.addEventListener('click', (e) => {
             e.stopPropagation()
             const value = getFormValue(form)
-            value.filters[icon.dataset.name] = ''
+            console.log(value.filters[icon.dataset.name])
+            if(value.filters[icon.dataset.name].operator === 'in') {
+                value.filters[icon.dataset.name].value = []
+            } else {
+                value.filters[icon.dataset.name].value = '';
+            }
+            console.log(JSON.stringify({value}, null, 2))
             setFormValue(el, value)
             load()
         })

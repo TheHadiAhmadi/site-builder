@@ -98,6 +98,10 @@ export function FieldInput(field) {
         options.size = field.size
     }
 
+    if(field.type === 'input') {
+        options.type = field.input_type
+    }
+
     const inputs = {
         input: Input,
         select: Select,
@@ -118,6 +122,7 @@ export function RelationFieldModal() {
     return Modal({
         name: 'relation-field-modal', 
         title: 'Choose items',
+        size: 'large',
         footer: Stack({justify: 'end'}, [
             Button({text: 'Close', action: 'modal.close'}),
             Button({color: 'primary', outline:true, text: 'Save Filters', action: 'choose-collection-filters'}),
@@ -157,16 +162,7 @@ export function updateCollectionPage(collection) {
 
 
 export async function collectionDataList(collection) {
-    let filters = collection.fields.map(x => {
-        return {
-            label: x.label,
-            slug: x.slug,
-            type: x.type,
-            ...x
-        }
-    })
-
-    let content = await CollectionDataTable({filters, page: 1, perPage: 10, collectionId: collection.id, fields: collection.fields})
+    let content = await CollectionDataTable({filters: [], page: 1, perPage: 10, collectionId: collection.id, fields: collection.fields, relationFilters: true})
     
     return Page({
         title: collection.name + ' List',

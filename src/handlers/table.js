@@ -7,7 +7,7 @@ export default {
 
         const collection = await db('collections').query().filter('id', '=', collectionId).first()
                 
-        return CollectionDataTable({perPage, page, filters, selectable, actions, collectionId: collection.id })
+        return CollectionDataTable({perPage, page, filters, selectable, actions, collectionId: collection.id, relationFilters: body.relationFilters })
     }
 
 }

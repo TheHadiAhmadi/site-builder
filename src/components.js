@@ -62,10 +62,10 @@ export function Label({text, body, inline = false, symbolic = false}) {
     `
 }
 
-export function Input({name, placeholder, label, disabled}) {
+export function Input({name, type = 'text', placeholder, label, disabled}) {
     return Label({
         text: label,
-        body: `<input data-input ${disabled ? 'disabled' : ''} name="${name}" placeholder="${placeholder}"/>`
+        body: `<input data-input type="${type}" ${disabled ? 'disabled' : ''} name="${name}" placeholder="${placeholder}"/>`
     })
 }
 
@@ -76,11 +76,14 @@ export function Select({name, placeholder, label, items = []}) {
     function getValue(option) {
         return typeof option === 'object' ? option.value : option
     }
+    function isSelected(option) {
+        return typeof option === 'object' && option.selected
+    }
     return Label({
         text: label,
         body: `<select data-select name="${name}">
             ${placeholder ? `<option value="null" selected>${placeholder}</option>` : ''}
-            ${items.map(option => `<option value="${getValue(option)}">${getText(option)}</option>`)}
+            ${items.map(option => `<option ${isSelected(option) ? 'selected' : ''} value="${getValue(option)}">${getText(option)}</option>`)}
         </select>`
     })
 }
@@ -229,9 +232,10 @@ export function Stack({vertical = false, wrap, justify, align, gap = 'md', ...re
     return html`<div${attrs}>${body}</div>`
 }
 
-export function Modal({name = '', title, footer, body}) {
+export function Modal({name = '', size = 'medium', title, footer, body}) {
     const attrs = attributes({
-        'data-modal': name
+        'data-modal': name ?? '',
+        'data-modal-size': size
     })
     return html`<div${attrs}>
         <div data-modal-content>

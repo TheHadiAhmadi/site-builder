@@ -1,4 +1,5 @@
 import hbs from 'handlebars'
+import './handlebars.js'
 import { Button, Card, CardBody, DeleteConfirm, EmptyTable, File, Form, Input, Label, Modal, Page, Table, Textarea } from './components.js'
 import {join} from 'path'
 
@@ -355,7 +356,6 @@ export async function renderBody(body, {props, mode, url, view, params, ...query
             })
         } else if(query.category === 'profile') {
             content = Page({title: 'Profile settings', body: 'Content'})
-
         }
     } else if(view === 'user-add') {
         sidebar = 'settings'
@@ -368,6 +368,30 @@ export async function renderBody(body, {props, mode, url, view, params, ...query
                 })
             ]
         })
+    } else if(view === 'user-edit') {
+        sidebar = 'settings'
+        content = [
+            Page({
+                title: 'Edit User',
+                body: [
+                    Form({
+                        load: 'user.load',
+                        id: query.id,
+                        handler: 'user.insert',
+                        fields: userFields.filter(x => !x.hidden).map(x => FieldInput(x))
+                    })
+                ]
+            }),
+            Page({
+                title: 'Set Password',
+                body: [
+                    Form({
+                        handler: 'user.setPassword',
+                        fields: userFields.filter(x => x.slug === 'password').map(x => FieldInput(x))
+                    })
+                ]
+            }),
+        ]
     }
 
     if(mode === 'edit') 

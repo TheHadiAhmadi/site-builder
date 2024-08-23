@@ -58,6 +58,20 @@ export function FieldForm({handler, collections, id, mode = 'add', type = ''}) {
         }),
     ]
 
+    if(type == 'input') {
+        fields.push(
+            Select({
+                name: 'input_type', 
+                label: "Input Type", 
+                items: [
+                    {text: 'Text', value: 'text'},
+                    {text: 'Password', value: 'password'},
+                    {text: 'Number', value: 'number'},
+                    {text: 'Email', value: 'email'},
+                ]
+            })
+        )
+    }
     if(['input', 'textarea'].includes(type)) {
         // fields.push(
         //     Input({

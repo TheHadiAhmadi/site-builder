@@ -145,6 +145,80 @@ const actions = {
             hydrate(el)
         })
     },
+    'open-user-edit'(el) {
+        const userId = el.dataset.id
+
+        reload('?mode=edit&view=user-edit&id=' + userId)
+    },
+    'open-user-delete'(el) {
+        openConfirm({
+            title: 'Are you sure?',
+            description: 'Are you sure to remove this user?',
+            action: 'user.delete',
+            id: el.dataset.id
+        })
+
+        // reload('?mode=edit&view=user-edit&id=' + userId)
+    },
+    async 'open-filter-relation-table'(el) {
+        const slug = el.dataset.slug
+        const html = await request('table.load', {
+            filters: [], 
+            perPage: 10, 
+            selectable: 'multi', 
+            page: 1, 
+            actions: [],
+            collectionId: el.dataset.collectionId
+        })
+        const modal = document.querySelector(`[data-modal="relation-filter-modal"]`)
+        modal.dataset.slug = slug
+        modal.dataset.collectionId = el.dataset.collectionId
+
+        modal.querySelector('[data-modal-body]').innerHTML = html
+        modal.dataset.modalOpen = true
+
+        setTimeout(() => {
+            hydrate(modal.querySelector('[data-modal-body]'))
+        })
+    },
+    async 'choose-filter-relation-items'(el) {
+        const modal = document.querySelector(`[data-modal="relation-filter-modal"]`)
+        modal.dataset.modalOpen = true
+
+        let itemIds = [...modal.querySelectorAll('td [data-checkbox]')].filter(x => x.checked).map(item => item.value)
+        
+        console.log(itemIds)
+        const table = document.querySelector(`[data-page] > [data-data-table]`)
+
+        const input = table.querySelector(`[name="filters.${modal.dataset.slug}.value"]`)
+        input.value = JSON.stringify(itemIds)
+
+        table.querySelector('[data-search="true"]').click()
+
+    },
+    async 'choose-filter-relation-filters'(el) {
+        const modal = document.querySelector(`[data-modal="relation-filter-modal"]`)
+        modal.dataset.modalOpen = true
+        const slug = modal.dataset.slug
+
+
+        const dataTable = modal.querySelector('[data-data-table]')
+        const filters = JSON.parse(dataTable.dataset.filters ?? '[]')
+        const perPage = +dataTable.querySelector('[name="perPage"]').value
+        const page = 1
+
+        const result = {
+            filters,
+            page,
+            perPage
+        }
+
+        const table = document.querySelector(`[data-page] [data-data-table]`)
+        const input =  table.querySelector(`[name="filters.${slug}.value"]`)
+        
+        input.value = JSON.stringify(result)       
+        table.querySelector('[data-search="true"]').click() 
+    },
     async 'add-field-choose-type'(el) {
         const value = el.dataset.value
 

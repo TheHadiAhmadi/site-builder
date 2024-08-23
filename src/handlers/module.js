@@ -13,7 +13,7 @@ function DynamicFieldInput(field, fields, linked, module) {
             return otherField.type === 'file' && otherField.file_type === thisField.file_type && otherField.multiple === thisField.multiple
         }
         if(thisField.type === 'relation') {
-            return otherField.type === 'relation' && otherField.collectionId === thisField.collectionId && otherField.multiple === thisField.multiple
+            return otherField.type === 'relation' && otherField.collectionId === thisField.collectionId && !!otherField.multiple === !!thisField.multiple
         }
 
         if(thisField.type === 'textarea') {
@@ -93,6 +93,7 @@ function DynamicFieldInput(field, fields, linked, module) {
 }
 
 function sidebarModuleSettings(definition, module, collection) {
+    console.log('sidebarModuleSettings', {definition, module, collection}, definition.props)
     
     const fields = []
     fields.push({slug: 'settings.logo', label: 'Site\'s Logo', type: 'file', multiple: false, file_type: 'image'})
@@ -195,8 +196,6 @@ export default {
         if(page?.collectionId) {
             const collection = await db('collections').query().filter('id', '=', page.collectionId).first();
             if(collection) {
-
-                
                 for(let field of collection.fields) {
                     if(field.type === 'relation') {
                         field.collection = await db('collections').query().filter('id', '=', field.collectionId).first();
@@ -218,7 +217,7 @@ export default {
     async loadSettings(body) {
         const {slug} = body
         const original = await db('modules').query().filter('id', '=', body.id).first()
-        const settings = await db('settings').query().first()
+        const settings = await db('settings').query().first() ?? {}
         const page = await getPageFromModule(original)
         let props = original.props ?? {}
 
@@ -247,7 +246,7 @@ export default {
                     query = query.filter(key, '=', params[key])
                 }
                 const content = await query.first()
-            console.log(content)
+            
                 for(let key in original.links ?? {}) {
                     // content[original.links[key]] = props[key]
                     const [first, second] = original.links[key].split('.')

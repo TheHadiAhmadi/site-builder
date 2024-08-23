@@ -80,7 +80,7 @@
   /* Component Colors */
   --border-color: var(--color-default-border);
 
-  --modal-bg: var(--color-base-100);
+  --modal-bg: var(--color-base-300);
   --modal-color: var(--color-default-content);
   --card-border: var(--color-default-border);
   --card-bg: var(--color-base-100);
