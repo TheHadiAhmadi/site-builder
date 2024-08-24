@@ -109,6 +109,7 @@ export async function updateModule(body) {
     }
 
     return {
-        redirect: '?mode=edit&view=iframe'
+        success: true
+        // redirect: '?mode=edit&view=iframe'
     }
 }

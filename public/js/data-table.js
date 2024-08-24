@@ -102,7 +102,7 @@ export function DataTable(el) {
         el.innerHTML = template.content.querySelector('[data-data-table]').innerHTML
 
         setTimeout(() => {
-            console.log(el.parentElement.querySelector('[data-data-table]'))
+            delete el.parentElement.querySelector('[data-data-table]').dataset.hydrated
             hydrate(el.parentElement.querySelector('[data-data-table]'))
         })
     }

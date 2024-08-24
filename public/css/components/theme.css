@@ -1,0 +1,26 @@
+[data-theme-switch] {
+    cursor: pointer;
+}
+
+[data-theme-switch] > svg {
+    width: 20px;
+    height: 20px;
+}
+
+[data-theme-light] {
+    display: none;
+}
+
+[data-theme="dark"] [data-theme-dark] {
+    display: none;
+}
+[data-theme="dark"] [data-theme-light] {
+    display: inline-block;
+}
+
+[data-theme="light"] [data-theme-dark] {
+    display: inline-block;
+}
+[data-theme="light"] [data-theme-light] {
+    display: none;
+}

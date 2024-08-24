@@ -97,7 +97,7 @@ export function pageCreatePage({ collections }) {
         title: 'Create Page',
         actions: '',
         body: Form({
-            cancelAction: 'navigate-to-default-view',
+            cancelAction: 'navigation.navigate-back',
             handler: 'page.create',
             fields: PageEditFields({ collections })
         })
@@ -108,10 +108,14 @@ export function pageUpdatePage(page, { collections }) {
     return [
         Page({
             title: 'Update Page',
-            actions: '',
+            actions: [
+                Button({text: 'Back', href: '?mode=edit'}),
+                Button({text: 'Delete', action: 'delete-page', color: 'danger', dataset: {id: page.id}})
+                
+            ],
             body: Form({
                 name: 'page-update-form',
-                cancelAction: 'navigate-to-default-view',
+                cancelAction: 'navigation.navigate-to-default-view',
                 handler: 'page.update',
                 load: 'page.load',
                 id: page.id,

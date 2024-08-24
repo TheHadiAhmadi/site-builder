@@ -2,13 +2,13 @@
 
 :root {
     --sidebar-width: 300px;
-    --iframe-border: #aaa;
+    --iframe-border: var(--border-color);
     --iframe-bg: white;
     --iframe-shadow-color: #666479;
     --toolbar-color: #505050;
     --toolbar-height: 48px;
     --toolbar-bg: #f1f1f1;
-    --toolbar-border: #aaa;
+    --toolbar-border: var(--border-color);
     --sidebar-bg: #f1f1f1;
     --sidebar-color: #404040;
     --sidebar-primary-bg: #dddddd;
@@ -16,7 +16,7 @@
     --sidebar-primary-item-hover-bg: #d6d6d6;
     --sidebar-primary-item-hover-border: #464646;
     --sidebar-secondary-bg: #f1f1f1;
-    --sidebar-secondary-border: #aaa;
+    --sidebar-secondary-border: var(--border-color);
     --sidebar-item-bg: #f7f7f7;
     --sidebar-item-border: #dddddd;
     --sidebar-item-hover-bg: #fafafa;
@@ -30,33 +30,33 @@
 }
 
 [data-theme="dark"] {
-      --iframe-border: #4b5563;
-      --iframe-bg: #1f2937;
-      --iframe-shadow-color: #334155;
-      --toolbar-color: #d1d5db;
-      --toolbar-bg: #374151;
-      --toolbar-border: #4b5563;
-      --sidebar-bg: #1f2937;
-      --sidebar-color: #e5e7eb;
-      --sidebar-primary-bg: #334155;
-      --sidebar-primary-border: #475569;
-      --sidebar-primary-item-hover-bg: #3b4f66;
-      --sidebar-primary-item-hover-border: #7086c2;
-      --sidebar-primary-item-hover-color: white;
-      --sidebar-secondary-bg: #1f2937;
-      --sidebar-secondary-border: #4b5563;
-      --sidebar-item-bg: #243244;
+    --iframe-border: #4b5563;
+    --iframe-bg: #1f2937;
+    --iframe-shadow-color: #334155;
+    --toolbar-color: #d1d5db;
+    --toolbar-bg: #374151;
+    --toolbar-border: #4b5563;
+    --sidebar-bg: #1f2937;
+    --sidebar-color: #e5e7eb;
+    --sidebar-primary-bg: #334155;
+    --sidebar-primary-border: #475569;
+    --sidebar-primary-item-hover-bg: #3b4f66;
+    --sidebar-primary-item-hover-border: #7086c2;
+    --sidebar-primary-item-hover-color: white;
+    --sidebar-secondary-bg: #1f2937;
+    --sidebar-secondary-border: #4b5563;
+    --sidebar-item-bg: #243244;
     --sidebar-item-border: #334155;
-      --sidebar-item-hover-bg: #2c3b50;
-      --sidebar-item-shadow-color: #111827;
-      --sidebar-item-icon-border: #3b4f66;
-      --sidebar-item-icon-shadow-color: #475569;
-      --sidebar-item-icon-bg: #1f2937;
-      --body-bg: #111827;
-      --body-color: #e5e7eb;
-    }
+    --sidebar-item-hover-bg: #2c3b50;
+    --sidebar-item-shadow-color: #111827;
+    --sidebar-item-icon-border: #3b4f66;
+    --sidebar-item-icon-shadow-color: #475569;
+    --sidebar-item-icon-bg: #1f2937;
+    --body-bg: #111827;
+    --body-color: #e5e7eb;
+}
 
-body[data-theme="dark"] {
+[data-theme="dark"] body {
     color-scheme: dark;
 }
   

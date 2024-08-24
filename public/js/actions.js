@@ -1,5 +1,5 @@
 import { getFormValue, request, setFormValue } from "./form.js"
-import { getParentModule, reload } from "./helpers.js"
+import { getParentModule, reload, reloadIframe } from "./helpers.js"
 import { hydrate } from "./hydrate.js"
 import { updateModules } from "./sortable.js"
 
@@ -66,6 +66,12 @@ const navigationActions = {
     },
     'navigate-to-default-view'() {
         reload(window.location.pathname + '?mode=edit')
+    },
+    'navigate-back'() {
+        history.back()
+        setTimeout(() => {
+            reload(window.location.href)
+        }, 100)
     }
 }
 
@@ -241,7 +247,36 @@ const actions = {
         
     },
     async 'open-update-module-ai-modal'(el) {
-        document.querySelector('[data-modal="update-ai"]').dataset.modalOpen = true
+        const modal = document.querySelector('[data-modal="update-ai"]')
+        modal.dataset.modalOpen = true
+
+        const form = modal.querySelector('[data-form]')
+
+        async function submit() {
+            form.dataset.load = ''
+
+            await request('ai.updateModule', {
+                id: form.querySelector('[name="id"]').value,
+                template: form.querySelector('[name="template"]').value ?? ''
+            }).then(res => {
+                modal.dataset.modalOpen
+                delete form.dataset.load
+
+                form.querySelector('[name="template"]').value = ''
+                reload(window.location.href)
+            })
+        }
+
+        form.querySelector('[name="template"]').addEventListener('keydown', async (e) => {
+            if (e.keyCode === 13 && e.ctrlKey) {
+                await submit()
+            }
+        })
+
+        form.querySelector('button[type="submit"]').addEventListener('click', async (ev) => {
+            ev.preventDefault()
+            await submit()
+        })
 
         setTimeout(() => {
             document.querySelector('[data-modal="update-ai"]').dataset.modalOpen = true
@@ -375,7 +410,54 @@ const actions = {
             paddingBottom: +section.style.paddingBottom.replace('px', ''),
         })
     },
+    'open-edit-module-ai'(el) {
+        document.querySelector('[data-modal="update-ai"]').dataset.modalOpen = true
+
+        const definitionId = el.dataset.id
+
+        const form = document.querySelector('[data-modal="update-ai"] [data-form]')
+        setFormValue(form, { id: definitionId})
+
+        form.querySelector('[name="template"]').addEventListener('keydown', async (e) => {
+            if (e.keyCode === 13 && e.ctrlKey) {
+                await submit()
+            }
+        })
+
+        async function submit() {
+            form.dataset.load = ''
+
+            await request('ai.updateModule', {
+                id: definitionId,
+                template: form.querySelector('[name="template"]').value ?? ''
+            }).then(res => {
+                delete document.querySelector('[data-modal="update-ai"]').dataset.modalOpen
+                delete form.dataset.load
+
+                form.querySelector('[name="template"]').value = ''
+                reloadIframe()
+            })
+        }
+
+        form.querySelector('button[type="submit"]').addEventListener('click', async (ev) => {
+            ev.preventDefault()
+            await submit()
+        })
+        // setTimeout(() => {
+        //     document.querySelector('[data-modal="update-ai"]').dataset.modalOpen = true
+        // }, 100)
+    },
+    'close-module-settings'(el, ev) {
+        ev.stopPropagation();
+
+        document.querySelector('iframe').contentDocument.querySelectorAll('[data-module-id][data-active]').forEach(el => {
+            delete el.dataset.active
+        })
+        document.querySelector('[data-sidebar]').dataset.active = 'modules'
+
+    },
     async 'open-module-settings'(el, ev) {
+        console.log('open-moudule-settings action', el)
         ev.stopPropagation()
 
         const mod = getParentModule(el)
@@ -556,6 +638,22 @@ const actions = {
             id: el.dataset.id
         })
     },
+    'delete-page'(el) {
+        openConfirm({
+            title: 'Are you sure?',
+            description: 'Are you sure to remove this page?',
+            action: 'page.delete',
+            id: el.dataset.id
+        })
+    },
+    'delete-collection'(el) {
+        openConfirm({
+            title: 'Are you sure?',
+            description: 'Are you sure to remove this collection?',
+            action: 'collection.delete',
+            id: el.dataset.id
+        })
+    },
     'open-delete-collection-content-confirm'(el) {
         const id = el.dataset.contentId
 
@@ -595,7 +693,7 @@ const actions = {
         if(!filters2.length) {
             el2.innerHTML = '<span data-badge>All Items</span>'
         } else {
-            el2.innerHTML = `<div data-stack>${filters2.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`).join('')}</div>`
+            el2.innerHTML = `<div data-stack>${filters2.map(x => `<span data-badge>${x.field}: ${x.value}</span>`).join('')}</div>`
         }
     },
     async 'choose-collection-items'(el) {
@@ -607,7 +705,6 @@ const actions = {
 
         const input = document.querySelector(`[data-form] [name="${fieldName}"]`)
         const el2 = input.nextElementSibling
-
 
         if(fieldMultiple === "true") {
             let itemIds = [...modal.querySelectorAll('td [data-checkbox]')].filter(x => x.checked).map(item => item.value)
@@ -625,6 +722,11 @@ const actions = {
 
         }
 
+    },
+    'set-theme'(el) {
+        const theme = el.hasAttribute('data-theme-light') ? 'light' : 'dark'
+        localStorage.setItem('THEME', theme)
+        document.documentElement.dataset.theme = theme
     },
     async 'open-relation-modal'(el) {
         const fieldName = el.dataset.fieldName

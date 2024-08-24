@@ -92,5 +92,17 @@ export default {
         const collections = await db('collections').query().all()
         
         return FieldForm({mode, collections, handler, type, id})
+    },
+    async delete(body) {
+        await db('collections').remove(body.id)
+
+        const data = await db('contents').query().filter('_type', '=', body.id).all()
+        for(let item in data) {
+            await db('contents').remove(item.id)
+        }
+
+        return {
+            redirect: '?mode=edit'
+        }
     }
 }

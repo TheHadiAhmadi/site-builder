@@ -30,6 +30,9 @@ app.use(express.static('./public'))
 
 app.use('/', async (req, res, next) => {
     if(req.method === 'POST') return next()
+    if(req.url.endsWith('/') && req.url !== '/') {
+        req.url = req.url.slice(0, -1)
+    }
 
     const definitions = await db('definitions').query().all()
 

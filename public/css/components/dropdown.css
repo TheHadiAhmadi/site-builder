@@ -19,6 +19,9 @@
     flex-direction: column;
     white-space: nowrap;
     font-weight: normal;
+    overflow: auto;
+    max-height: 400px;
+    box-shadow: 0 1px 4px -2px var(--dropdown-border);
     background-color: var(--dropdown-bg);
     border: 1px solid var(--dropdown-border);
     min-width: 200px;

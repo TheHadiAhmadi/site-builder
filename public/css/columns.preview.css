@@ -33,6 +33,7 @@
     right: -24px;
     width: 48px;
     cursor:col-resize;
+    pointer-events: all;
 }
 
 [data-columns].active .resizer-handle::before {

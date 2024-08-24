@@ -18,21 +18,13 @@ export async function getDataTableItems({page = 1, perPage = 10, query, fields, 
                 let items = db('contents').query().filter('_type', '=', field.collectionId)
                 for(let filter2 of filter.value?.filters) {
                     items = items.filter(filter2.field, filter2.operator, filter2.value)
-                    console.log("A", filter2)
-
                 }
                 items = await items.all()
-                // query = query.filter(filter.field, filter.operator, items)
-                console.log("B", items)
                 filter.value = items.map(x => x.id);
             }
         }
 
-        // if(['select', 'input', 'textarea', 'checkbox', 'relation'].includes(field.type)) {
-            // if(filter.value.length) {
         query = query.filter(filter.field, filter.operator, filter.value)
-            // }
-        // }
     }
     
     const items = await query.paginate(+page, +perPage)
@@ -80,9 +72,7 @@ export async function CollectionDataTable({collectionId, filters, page, perPage,
 }
 
 export function DataTable({filters = [], selectable, items, collectionId, fields, actions = ['edit', 'delete'], handler, relationFilters}) {
-    console.log('DataTable', {filters})
     const filtersObject = filters.reduce((prev, curr) => {
-        console.log({curr})
         if(!curr) return prev
         return {
             ...prev, 
@@ -92,8 +82,6 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
             }
         }
     }, {})
-    console.log('filtersObject: ', filtersObject)
-
 
     const ActionButtons = (item) => {
         return Stack({}, actions.map(action => {
@@ -261,7 +249,6 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                 <div style="display: flex; flex-direction: column; gap: 8px">
                     ${[{key: "true", text: 'True'}, {key: "false", text: 'False'}].map(item => `
                         <div data-dropdown-item>
-                            ${JSON.stringify(filtersObject[field.slug]?.value)}
                             ${Checkbox({
                                 multiple: true,
                                 name: 'filters.' + field.slug + '.value', 

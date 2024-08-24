@@ -132,7 +132,10 @@ export function updateCollectionPage(collection) {
     return [
         Page({
         title: 'Update Collection',
-        actions: [],
+        actions: [
+            Button({text: 'View Data', href: '?mode=edit&view=collection-data-list&id=' + collection.id}),
+            Button({text: 'Delete', color: 'danger', action: 'delete-collection', dataset: {id: collection.id}}),
+        ],
         body: CollectionForm({
                 id: collection.id,
                 fields: collection.fields ?? [],

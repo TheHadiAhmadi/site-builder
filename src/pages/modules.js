@@ -51,7 +51,7 @@ export function pageUpdateModule(data) {
             actions: [
                 Button({text: 'Update With AI', color: 'primary', action: "open-update-module-ai-modal"}),
                 Button({text: 'Delete', color: 'danger', action: "delete-module", dataset: {id: data.id}}),
-                Button({text: 'Cancel', action: "navigate-to-default-view"}),
+                Button({text: 'Cancel', action: "navigation.navigate-to-default-view"}),
                 
             ].join(''),
             title: `Update Module (${data.name})`,
@@ -66,7 +66,7 @@ export function pageUpdateModule(data) {
                         Textarea({label: 'Template', rows: 15, placeholder: 'Enter Module template (Handlebars)', name: 'template'}),
                         
                     ],
-                    cancelAction: 'navigate-to-default-view'
+                    cancelAction: 'navigation.navigate-to-default-view'
                 }),
             ])
         }),
@@ -87,13 +87,14 @@ export function pageUpdateModule(data) {
     ].join('')
 }
 
-function UpdateModuleAiModal({id}) {
+export function UpdateModuleAiModal({id}) {
     return Modal({
         name: 'update-ai',
         title: 'Update Module with AI',
         footer: '',
         body: Form({
             card: false,
+            cancelAction: 'modal.close',
             handler: 'ai.updateModule',
             fields: [
                 `<input type="hidden" name="id" value="${id}">`,

@@ -19,4 +19,22 @@ export default {
             pageReload: true
         }
     },
+    async delete(body) {
+        async function deleteModule(module) {
+            const modules = await db('modules').query().filter('moduleId', '=', module.id).all()
+            for(let mod of modules) {
+                await deleteModule(mod)
+            }
+            await db('modules').remove(module.id)
+        }
+
+        await db('pages').remove(body.id)
+        const modules = await db('modules').query().filter('pageId', '=', 'id').all()
+        for(let module of modules) {
+            deleteModule(module)
+        }
+        return {
+            redirect: '?mode=edit'
+        }
+    }
 }

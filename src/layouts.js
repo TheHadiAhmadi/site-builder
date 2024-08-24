@@ -2,10 +2,14 @@ import hbs from 'handlebars'
 
 export default {
     default: hbs.compile(`<!DOCTYPE html>
-    <html lang="{{lang}}">
+    <html lang="{{lang}}" data-theme="light">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+            const theme = localStorage.getItem('THEME') ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+            document.documentElement.dataset.theme = theme
+        </script>
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {{{ tailwind }}}
@@ -55,7 +59,7 @@ export default {
             {{{settings.head}}}
         {{/if}}
     </head>
-    <body data-dir="{{dir}}" data-theme="{{theme}}">
+    <body data-dir="{{dir}}">
         <div>
             {{{body}}}
         </div>
