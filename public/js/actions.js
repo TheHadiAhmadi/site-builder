@@ -266,21 +266,25 @@ const actions = {
                 reload(window.location.href)
             })
         }
-
-        form.querySelector('[name="template"]').addEventListener('keydown', async (e) => {
+        async function onTextareaKeyDown(e) {
             if (e.keyCode === 13 && e.ctrlKey) {
                 await submit()
             }
-        })
+        }
 
-        form.querySelector('button[type="submit"]').addEventListener('click', async (ev) => {
+        async function onButtonClick(ev) {
             ev.preventDefault()
             await submit()
-        })
+        }
+
+        form.querySelector('[name="template"]').removeEventListener('keydown', onTextareaKeyDown)
+        form.querySelector('[name="template"]').addEventListener('keydown', onTextareaKeyDown)
+
+        form.querySelector('button[type="submit"]').removeEventListener('click', onButtonClick)
+        form.querySelector('button[type="submit"]').addEventListener('click', onButtonClick)
 
         setTimeout(() => {
             document.querySelector('[data-modal="update-ai"]').dataset.modalOpen = true
-
         }, 100)
         
     },
@@ -418,11 +422,23 @@ const actions = {
         const form = document.querySelector('[data-modal="update-ai"] [data-form]')
         setFormValue(form, { id: definitionId})
 
-        form.querySelector('[name="template"]').addEventListener('keydown', async (e) => {
+
+        async function onTextareaKeyDown(e) {
             if (e.keyCode === 13 && e.ctrlKey) {
                 await submit()
             }
-        })
+        }
+
+        async function onButtonClick(ev) {
+            ev.preventDefault()
+            await submit()
+        }
+
+        form.querySelector('[name="template"]').removeEventListener('keydown', onTextareaKeyDown)
+        form.querySelector('[name="template"]').addEventListener('keydown', onTextareaKeyDown)
+
+        form.querySelector('button[type="submit"]').removeEventListener('click', onButtonClick)
+        form.querySelector('button[type="submit"]').addEventListener('click', onButtonClick)
 
         async function submit() {
             form.dataset.load = ''
