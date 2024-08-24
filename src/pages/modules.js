@@ -79,7 +79,7 @@ export function pageUpdateModule(data) {
             data.prompt ? Stack({vertical: true, gap: 'sm'}, [
                 (typeof data.prompt.template === 'string' ? [data.prompt.template] : data.prompt.template).map(x => `
                     <div style="border-radius: 4px; border: 1px solid var(--border-color); background-color: var(--card-bg); padding: 1rem">
-                        ${(x).replace('<', '&lt;')}
+                        ${(x).replace(/</g, '&lt;').replace(/>/g, '&gt;')}
                     </div>
                 `).join('')
             ]) : '', 
