@@ -277,12 +277,19 @@ const actions = {
             await submit()
         }
 
-        form.querySelector('[name="template"]').removeEventListener('keydown', onTextareaKeyDown)
-        form.querySelector('[name="template"]').addEventListener('keydown', onTextareaKeyDown)
+        const textarea = form.querySelector('[name="template"]')
+        const submitButton = form.querySelector('button[type="submit"]')
+        
+        if(textarea.dataset.hydrated !== 'true') {
+            textarea.dataset.hydrated = true
+            textarea.onkeydown = onTextareaKeyDown
+        }
 
-        form.querySelector('button[type="submit"]').removeEventListener('click', onButtonClick)
-        form.querySelector('button[type="submit"]').addEventListener('click', onButtonClick)
-
+        if(submitButton.dataset.hydrated !== 'true') {
+            submitButton.dataset.hydrated = true
+            submitButton.onclick = onButtonClick
+        }
+        
         setTimeout(() => {
             document.querySelector('[data-modal="update-ai"]').dataset.modalOpen = true
         }, 100)
@@ -434,11 +441,18 @@ const actions = {
             await submit()
         }
 
-        form.querySelector('[name="template"]').removeEventListener('keydown', onTextareaKeyDown)
-        form.querySelector('[name="template"]').addEventListener('keydown', onTextareaKeyDown)
+        const textarea = form.querySelector('[name="template"]')
+        const submitButton = form.querySelector('button[type="submit"]')
 
-        form.querySelector('button[type="submit"]').removeEventListener('click', onButtonClick)
-        form.querySelector('button[type="submit"]').addEventListener('click', onButtonClick)
+        if(textarea.dataset.hydrated !== 'true') {
+            textarea.dataset.hydrated = true
+            textarea.onkeydown = onTextareaKeyDown
+        }
+
+        if(submitButton.dataset.hydrated !== 'true') {
+            submitButton.dataset.hydrated = true
+            submitButton.onclick = onButtonClick
+        }
 
         async function submit() {
             form.dataset.load = ''
@@ -452,7 +466,7 @@ const actions = {
 
                 form.querySelector('[name="template"]').value = ''
                 reloadIframe()
-            })
+            }) 
         }
     },
     'close-module-settings'(el, ev) {
