@@ -454,14 +454,6 @@ const actions = {
                 reloadIframe()
             })
         }
-
-        form.querySelector('button[type="submit"]').addEventListener('click', async (ev) => {
-            ev.preventDefault()
-            await submit()
-        })
-        // setTimeout(() => {
-        //     document.querySelector('[data-modal="update-ai"]').dataset.modalOpen = true
-        // }, 100)
     },
     'close-module-settings'(el, ev) {
         ev.stopPropagation();
