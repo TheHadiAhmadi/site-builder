@@ -92,7 +92,7 @@
     align-items: center;
     justify-content: center;
     border: 1px solid #71acce;
-
+    pointer-events: all;
 }
 [data-slot-empty]::before {
     content: 'Drag module here';
