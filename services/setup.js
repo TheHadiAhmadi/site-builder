@@ -56,17 +56,33 @@ const defaultModules = {
     }
 }
 
-
 export async function setupCms(req, res) {
     const {template, password, file} = req.body
 
-    async function initUsers() {
+    async function importUsers(users) {
+        console.log("importUsers", users)
+        const adminUser = users.find(user => user.username === 'admin');
         await db('users').insert({
-            name: 'Admin',
+            name: adminUser ? adminUser.name : 'Admin',
             username: 'admin',
-            password: `_%${password}%_`
-        })
-    
+            password: `_%${password}%_`,
+            slug: adminUser?.slug ?? 'admin',
+            profile: adminUser?.profile ?? '',
+            email: adminUser?.email ?? 'admin@example.com'    
+        });
+
+        for (let user of users) {
+            if (user.username !== 'admin') {
+                await db('users').insert({
+                    name: user.name,
+                    username: user.username,
+                    password: `_%${password}%_`,
+                    slug: user.slug,
+                    profile: user.profile,
+                    email: user.email
+                });
+            }
+        }
     }
 
 
@@ -98,7 +114,7 @@ export async function setupCms(req, res) {
                 let index = 0
                 let afterInsertActions = []
                 for(let module of modules) {
-                    for(let prop of _definitions[module.definition].props) {
+                    for(let prop of _definitions[module.definition].props ?? []) {
                         if(!module.props) continue;
                         const value = module.props[prop.slug]
 
@@ -363,12 +379,16 @@ export async function setupCms(req, res) {
         const pagesFile = './temp/site/pages.json'
         const collectionsFile = './temp/site/collections.json'
         const definitionsFile = './temp/site/definitions.json'
+        const usersFile = './temp/site/users.json'
 
         const pages = JSON.parse(readFileSync(pagesFile))
         const collections = JSON.parse(readFileSync(collectionsFile))
         const definitions = JSON.parse(readFileSync(definitionsFile))
+        const users = JSON.parse(readFileSync(usersFile))
 
         await importCollections(collections)
+
+        await importUsers(users)
 
         for (let definition of definitions) {
             for(let prop of definition.props) {
@@ -434,12 +454,14 @@ export async function setupCms(req, res) {
                 const res = await db('definitions').insert({...def})
                 _definitions[res.name] = res
             }
+
+            await importUsers(mod.default.users ?? []);
     
             await importCollections(mod.default.collections)
     
             for(let key in _definitions) {
                 const definition = _definitions[key]
-                for(let prop of definition.props) {
+                for(let prop of definition.props ?? []) {
                     
                     if(prop.type === 'relation') {
                         prop.collectionId = _collections[prop.collection]?.id
@@ -448,7 +470,6 @@ export async function setupCms(req, res) {
                 }
                 await db('definitions').update(definition)
             }
-
             
             await importPages(mod.default.pages)
     

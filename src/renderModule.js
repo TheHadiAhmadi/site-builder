@@ -2,7 +2,7 @@ import { html } from 'svelite-html';
 import { db } from '#services';
 import { getDataTableItems } from './pages/dataTable.js';
 
-async function normalizeCollectionContent(collection, item, depth = 1) {
+export async function normalizeCollectionContent(collection, item, depth = 1) {
     for(let field of collection.fields) {
         if(field.type === 'relation' && depth < 3) {
             item[field.slug] = await loadRelationFieldType(item[field.slug], field, depth + 1)
@@ -96,15 +96,18 @@ export async function renderModule(module, {props, mode, definitions, permission
                 }
             } 
             else if(item.type === 'relation') {
-                module.props[item.slug] = await loadRelationFieldType(module.props[item.slug], item)
-            } else if(item.type === 'file') {
-                let query = db('files').query();
-                if(item.multiple) {
-                    module.props[item.slug] = await query.filter('id', 'in', module.props[item.slug]).all()
-                } else {
-                    module.props[item.slug] = await query.filter('id', '=', module.props[item.slug]).first()
+                if (!module.links[item.slug]) {
+                    module.props[item.slug] = await loadRelationFieldType(module.props[item.slug], item)
                 }
-
+            } else if(item.type === 'file') {
+                if (!module.links[item.slug]) {
+                    let query = db('files').query();
+                    if(item.multiple) {
+                        module.props[item.slug] = await query.filter('id', 'in', module.props[item.slug]).all()
+                    } else {
+                        module.props[item.slug] = await query.filter('id', '=', module.props[item.slug]).first()
+                    }
+                }
             } else {
                 module.props[item.slug] = module.props[item.slug] ?? item.defaultValue
             }
@@ -119,25 +122,25 @@ export async function renderModule(module, {props, mode, definitions, permission
         }
     }
 
-    if(module.links) {
-        for(let key in module.links) {
-            const [firstpart, ...parts] = module.links[key].split('.')
-            if(parts[0]) {
-                const value = [firstpart, ...parts].reduce((prev, curr) => {
-                    return prev[curr]
-                }, {settings, content: props.pageContent})
-
-                module.props[key] = value
-
+    if (module.links) {
+        for (let key in module.links) {
+            const parts = module.links[key].split('.');
+            if(parts.length > 1) {
+                console.log("link to " + key, module.props, parts, props.pageContent)
+                module.props[key] = parts.reduce((prev, curr) => prev[curr], 
+                { 
+                    settings, 
+                    content: props.pageContent 
+                })
             } else {
-                if(firstpart == 'content') {
-                    module.props[key] = props.pageContent.id
-                }
+                module.props[key] = props.pageContent
             }
         }
     }
     
+    console.log({module})
     await loadModuleProps(definition, module)
+    console.log({module})
 
     
     let rendered;

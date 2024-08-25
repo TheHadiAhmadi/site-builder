@@ -1,5 +1,15 @@
-## General
+## Feedbacks
+- [ ] Some videos won't work
+- [ ] Submit should close forms (And close update module ai modal)
+- [ ] AI should be more visible for users (ai button primary)
+- [ ] Use Ai for writing content
+- [ ] Improve seo and make it more advanced (USE Seo)
+- [ ] More user friendly panel
+- [ ] Rahnama, computer, car, ...
+- [ ] 
 
+## General
+- [ ] edit user creates user instead of edit
 - [ ] profile avatar in toolbar
 - [ ] rename toolbar to header
 - [ ] review robots.txt file

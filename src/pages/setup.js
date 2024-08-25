@@ -5,9 +5,9 @@ export function SetupPage({templates}) {
     return layouts.default({
         title: 'Setup CMS',
         head: [
-            '<link rel="stylesheet" href="/css/setup.css">',
+            '<link rel="stylesheet" href="/pages/setup/style.css">',
             '<script type="module" src="/js/setup.js"></script>'
-        ],
+        ].join(''),
         body: `<div data-main>
             ${Form({
                 handler: 'setup.setup',

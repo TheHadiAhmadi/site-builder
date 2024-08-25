@@ -8,7 +8,7 @@ import layouts from "./layouts.js";
 import { pageCreateModule, pageUpdateModule, UpdateModuleAiModal } from './pages/modules.js';
 import { collectionDataCreate, collectionDataList, collectionDataUpdate, createCollectionPage, FieldInput, RelationFieldModal, updateCollectionPage } from './pages/collections.js';
 import { pageCreatePage, pageUpdatePage } from './pages/pages.js';
-import { loadRelationFieldType, renderModule } from './renderModule.js';
+import { loadRelationFieldType, normalizeCollectionContent, renderModule } from './renderModule.js';
 import { userFields, UsersDataTable } from './handlers/user.js';
 
 let definitions = {}
@@ -363,9 +363,13 @@ export async function renderBody(body, {props, mode, url, view, params, ...query
                 body: [
                     Form({
                         load: 'user.load',
-                        cancelAction: 'navigation.navigate-back',
+                        cancelAction: 'navigation.navigate',
+                        cancelDataset: {
+                            view: 'settings',
+                            category: 'users'
+                        },
                         id: query.id,
-                        handler: 'user.insert',
+                        handler: 'user.update',
                         fields: userFields.filter(x => !x.hidden).map(x => FieldInput(x))
                     })
                 ]
@@ -559,18 +563,8 @@ export async function renderPage(req, res) {
             }
 
             props.pageContent = await query.first()
-            for(let field of collection.fields) {
-                if(field.type === 'relation') {
-                    props.pageContent[field.slug] = await loadRelationFieldType(props.pageContent[field.slug], field)
-                }
-                if(field.type === 'file') {
-                    if(field.multiple) {
-                        props.pageContent[field.slug] = await db('files').query().filter('id', 'in', props.pageContent[field.slug]).all()
-                    } else {
-                        props.pageContent[field.slug] = await db('files').query().filter('id', '=', props.pageContent[field.slug]).first()
-                    }
-                }
-            }
+            props.pageContent = await normalizeCollectionContent(collection, props.pageContent);
+            console.log(props)
             props.collection = collection
         }
     }

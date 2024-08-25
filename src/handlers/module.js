@@ -124,7 +124,7 @@ function sidebarModuleSettings(definition, module, collection) {
                     fields: [
                         `<input type="hidden" name="slug" value="">`,
                         `<input type="hidden" name="id" value="${module.id}">`,
-                        definition.props.map(prop => DynamicFieldInput(prop, fields, module.links?.[prop.slug], module)).join('')
+                        (definition.props ?? []).map(prop => DynamicFieldInput(prop, fields, module.links?.[prop.slug], module)).join('')
                     ],
                     cancelAction: 'open-add-module'
                 })}

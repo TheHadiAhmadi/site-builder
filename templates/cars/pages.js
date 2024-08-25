@@ -34,7 +34,7 @@ export default [
     },
     {
         name: 'Car detail',
-        slug: '/cars/{{id}}',
+        slug: '/cars/{{slug}}',
         seo: {
             
         },
@@ -42,6 +42,28 @@ export default [
         collection: 'Cars',
         modules: [
             JSON.parse(JSON.stringify(header)),
+            {
+                definition: 'Section',
+                props: {
+                    fullWidth: false,
+                    content: [
+                        {
+                            definition: 'Car Details',
+                            links: {
+                                name: 'content.name',
+                                passenger_count: 'content.passenger_count',
+                                transmission: 'content.transmission',
+                                image: 'content.image',
+                                price: 'content.price',
+                                category: 'content.category',
+                            },
+                            props: {
+                                
+                            }
+                        }
+                    ]
+                }
+            }
         ]
     },
     {
