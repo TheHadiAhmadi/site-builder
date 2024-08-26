@@ -134,6 +134,12 @@ iframe {
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
+    height: 4rem;
+}
+
+[data-sidebar-items] {
+    height: calc(100vh - 4rem);
+    overflow: auto;
 }
 
 [data-sidebar-toggler] {

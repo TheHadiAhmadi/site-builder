@@ -187,7 +187,7 @@ export function Button({href, ghost = false, icon = false, text, color, block, a
     if(href) {
         return `<a data-enhance href="${href}" ${attrs} ${outline ? 'data-button-outline' : ''} ${ghost ? 'data-button-ghost' : ''} ${icon ? 'data-button-icon' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}">${text}</a>`
     }
-    return `<button type="${type}" ${attrs} ${outline ? 'data-button-outline' : ''} ${ghost ? 'data-button-ghost' : ''} ${icon ? 'data-button-icon' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}" ${action ? 'data-action="${action}"' : ''}>${text}</button>`
+    return `<button type="${type}" ${attrs} ${outline ? 'data-button-outline' : ''} ${ghost ? 'data-button-ghost' : ''} ${icon ? 'data-button-icon' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}" ${action ? `data-action="${action}"` : ''}>${text}</button>`
 }
 
 export function Table({items, compact = false, head, row, body}) {
