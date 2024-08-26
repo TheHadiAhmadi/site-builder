@@ -104,18 +104,17 @@ export function pageCreatePage({ collections }) {
     })
 }
 
-export function pageUpdatePage(page, { collections }) {
+export function pageUpdatePage(page, { back = '?mode=edit', collections }) {
     return [
         Page({
             title: 'Update Page',
+            back,
             actions: [
-                Button({text: 'Back', href: '?mode=edit'}),
                 Button({text: 'Delete', action: 'delete-page', color: 'danger', dataset: {id: page.id}})
-                
             ],
             body: Form({
                 name: 'page-update-form',
-                cancelAction: 'navigation.navigate-to-default-view',
+                cancelHref: back,
                 handler: 'page.update',
                 load: 'page.load',
                 id: page.id,
