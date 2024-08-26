@@ -9,6 +9,8 @@ import { DataTable } from './data-table.js'
 import { SectionResizer } from './section-resizer.js'
 import { RichText } from './rich-text.js'
 import { Tabs } from "./tabs.js"
+import { NestedSidebar } from "./sidebar.js"
+
 
 const components = Components()
 
@@ -22,6 +24,7 @@ components.register('tabs', Tabs)
 components.register('data-table', DataTable)
 components.register('section-resizer', SectionResizer)
 components.register('rich-text', RichText)
+components.register('nested-sidebar',NestedSidebar)
 
 
 export function hydrate(el) {

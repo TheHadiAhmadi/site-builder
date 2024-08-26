@@ -133,7 +133,7 @@ export function updateCollectionPage(collection) {
         Page({
         title: 'Update Collection',
         actions: [
-            Button({text: 'View Data', href: '?mode=edit&view=collection-data-list&id=' + collection.id}),
+            Button({text: 'View Data', href: '?mode=edit&view=collections.data.list&id=' + collection.id}),
             Button({text: 'Delete', color: 'danger', action: 'delete-collection', dataset: {id: collection.id}}),
         ],
         body: CollectionForm({
@@ -155,7 +155,7 @@ export async function collectionDataList(collection) {
     return Page({
         title: collection.name + ' List',
         actions: [
-            Button({text: 'Insert', color: 'primary', href: `?mode=edit&view=collection-data-create&id=` + collection.id})
+            Button({text: 'Insert', color: 'primary', href: `?mode=edit&view=collections.data.create&id=` + collection.id})
         ],
         body: content    
     })
@@ -168,11 +168,11 @@ export function collectionDataCreate(collection, items) {
         body: [
             Form({
                 handler: 'content.insertCollectionContent',
+                cancelHref: '?mode=edit&view=collections.data.list&id=' + collection.id,
                 fields: [
                     `<input type="hidden" value="${collection.id}" name="_type">`, 
                     collection.fields.filter(x => !x.hidden).map(field => FieldInput(field)).join('')
                 ],
-                cancelAction: ''
             }),
         ]
     })
@@ -188,12 +188,12 @@ export function collectionDataUpdate(collection, data) {
                 load: 'content.loadCollectionContent',
                 id,
                 handler: 'content.updateCollectionContent',
+                cancelHref: '?mode=edit&view=collections.data.list&id=' + collection.id,
                 fields: [
                     '<input type="hidden" value="' + id + '" name="id">',
                     '<input type="hidden" value="' + data._type + '" name="_type">',
                     collection.fields.filter(x => !x.hidden).map(field => FieldInput(field)).join('')
                 ],
-                cancelHref: '?mode=edit&view=collection-data-list&id=' + collection.id
             }),
         ]
     })

@@ -21,6 +21,7 @@
 
 [data-page] {
     padding: 1rem;
+    padding-left: 0;
     background-color: var(--page-bg);
     overflow: auto;
 }

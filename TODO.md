@@ -1,4 +1,5 @@
 ## Feedbacks
+- [ ] Block editor design. preview block, edit in modals. fields another tab or button
 - [ ] Some videos won't work
 - [ ] Submit should close forms (And close update module ai modal)
 - [ ] AI should be more visible for users (ai button primary)

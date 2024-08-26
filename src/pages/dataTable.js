@@ -88,7 +88,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
             if(action === 'edit') {
                 return Button({
                     text: 'Edit',
-                    href: "?mode=edit&view=collection-data-update&id=" + item.id,
+                    href: "?mode=edit&view=collections.data.update&id=" + item.id,
                     outline: true,
                     size: 'small',
                     color: 'primary'

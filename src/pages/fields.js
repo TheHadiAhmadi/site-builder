@@ -133,7 +133,7 @@ export function FieldForm({handler, collections, id, mode = 'add', type = ''}) {
 }
 
 export function FieldsList({name, updateAction = 'open-edit-field-modal', action = 'open-add-field-modal', id, fields, deleteAction = 'delete-field'}) {
-    let _fields = JSON.parse(JSON.stringify(fields))
+    let _fields = JSON.parse(JSON.stringify(fields ?? []))
     for(let field of _fields) {
         if(field.type === 'select')
             field.items = field.items.join('\n')

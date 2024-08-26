@@ -97,7 +97,7 @@ const actions = {
 
     },
     'change-dynamic-page-content'(el) {
-        reload(el.value + '?mode=edit')
+        reload(el.value + '?mode=edit&view=' + new URL(window.location.href).searchParams.get('view'))
     },
     async 'module-add-field-choose-type'(el) {
         const value = el.dataset.value

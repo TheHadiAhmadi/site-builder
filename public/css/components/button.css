@@ -60,3 +60,13 @@
 [data-stack] > [data-button] {
     align-self: flex-end;
 }
+
+[data-button-icon] {
+    width: 36px;
+    padding: 0;
+}
+
+[data-button] [data-icon] {
+    width: 20px;
+    height: 20px;
+}
