@@ -164,6 +164,7 @@ export async function collectionDataList(collection) {
 export function collectionDataCreate(collection, items) {
     return Page({
         title: 'Insert ' + collection.name,
+        back: '?mode=edit&view=collections.data.list&id=' + collection.id,
         actions: [],
         body: [
             Form({

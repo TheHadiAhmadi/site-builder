@@ -51,8 +51,12 @@ body {
 
 [data-module-id] {
     transition: all 0.3s ease;
-    border: 1px solid #00000000;
+    border: 1px solid #00000020;
     position: relative;
+}
+
+[data-action="drag-module-handle"] {
+    cursor: grab !important;
 }
 
 [data-module-id]:hover:not(:has([data-module-id]:hover)) {

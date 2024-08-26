@@ -3,6 +3,9 @@
     flex-direction: column;
     gap: 16px;
     border-radius: 8px;
+    /* background-color: var(--form-bg);
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); Subtle shadow for depth */
 }
 
 [data-form][data-load] {
@@ -24,47 +27,52 @@
 }
 
 [data-label-text] {
-    font-size: 16px;
-    /* opacity: 0.8; */
+    font-size: 14px;
+    color: var(--label-color);
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-
     justify-content: space-between;
     align-items: center;
-    font-weight: bolder;
+    font-weight: 600; /* Slightly bolder text */
 }
 
 [data-input], [data-textarea], [data-select] {
     width: 100%;
-    padding: 4px 16px;
-    border-radius: 4px;
-    outline: none;
+    padding: 8px 12px; /* Increased padding for comfort */
+    border-radius: 6px; /* Slightly rounded corners */
     border: 1px solid var(--border-color);
     background-color: var(--input-bg);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+[data-input]:focus, [data-textarea]:focus, [data-select]:focus {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 3px var(--input-focus-shadow); /* Soft focus ring */
+    outline: none;
 }
 
 [data-file-label] {
     width: 100%;
-    padding: 4px 4px;
-    border-radius: 4px;
-    outline: none;
+    padding: 8px;
+    border-radius: 6px;
     border: 1px solid var(--border-color);
     background-color: var(--input-bg);
     height: 48px;
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-direction: row;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
+
 [data-file-label][data-multiple] {
     align-items: start;
     flex-direction: column;
 }
 
-[data-add-more-wrapper] {
-    padding: 0.5rem;
+[data-file-label]:hover, [data-file-label]:focus-within {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 3px var(--input-focus-shadow);
 }
 
 [data-file-remove] {
@@ -74,14 +82,16 @@
     margin-left: auto;
     cursor: pointer;
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 8px;
+    right: 8px;
+    transition: opacity 0.3s ease; /* Smooth appearance */
 }
 
 [data-file-type="image"] {
     height: 200px;
     padding: 0;
     overflow: hidden;
+    border-radius: 6px;
 }
 
 [data-file-type="image"][data-file-size="small"] {
@@ -97,34 +107,25 @@
     padding: 1rem;
 }
 
-[data-images] [data-file-wrapper] [data-image-preview] {
-    opacity: 1;
-    height: 100%;
-}
 [data-images] [data-file-wrapper] {
     position: relative;
     height: 100%;
     flex-shrink: 0;
     border: 1px solid var(--input-file-border);
-    border-radius: 4px;
+    border-radius: 6px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+[data-images] [data-file-wrapper]:hover [data-file-remove],
 [data-images] [data-file-wrapper] [data-file-remove] {
-
-    opacity: 0;
-    position: absolute;
-    top: 0;
-    right: 0;
-    cursor: pointer;
+    opacity: 0.5;
     pointer-events: all;
 }
-[data-images] [data-file-wrapper]:hover [data-file-remove] {
-    opacity: 0.5;
-}
-[data-images] [data-file-wrapper] [data-file-remove]:hover {
-    opacity: 1;
-}
 
+[data-images] [data-file-wrapper]:hover {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 3px rgba(0, 116, 217, 0.2);
+}
 
 [data-image-preview] {
     opacity: 0;
@@ -134,22 +135,10 @@
 [data-file-label]:not([data-multiple]):has([type="hidden"]:not([value=""])) [data-file-remove] {
     opacity: 1;
     pointer-events: all;
-
 }
 
 [data-file-label]:has([type="hidden"]:not([value=""])) [data-image-preview] {
-    opacity: 0.9;
-}
-
-[data-empty-mode] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top:0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    opacity: 1;
 }
 
 [data-file-label]:has([data-images]:not(:empty)) [data-empty-mode],
@@ -166,7 +155,7 @@
 }
 
 [data-input], [data-select] {
-    height: 36px;
+    height: 40px; /* Slightly taller for better touch targets */
 }
 
 [data-rich-text-wrapper] {
@@ -174,14 +163,22 @@
     flex-direction: column;
     height: 400px;
     width: 100%;
-    border-radius: 4px;
-    outline: none;
+    border-radius: 6px;
     background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
+
 [data-rich-text-wrapper]:focus-within {
-    box-shadow: 0 0 2px var(--input-focus-border);
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 0 3px rgba(0, 116, 217, 0.2);
 }
 
 [data-rich-text] {
     outline: none;
+    padding: 8px 12px;
+    flex: 1;
+    border-radius: 6px;
+    background-color: var(--input-bg);
+    transition: background-color 0.3s ease;
 }

@@ -193,7 +193,7 @@ export async function renderModule(module, {props, mode, definitions, permission
                     definition.name === 'Section' ? '' : '<div data-module-action-text>' + definition.name + '</div>'
                 ].join('')
             }),
-            ModuleAction({icon: iconAi, action: 'open-edit-module-ai', id: definition.id}),
+            !['Section', 'Columns', 'RichText'].includes(definition.name) ? ModuleAction({icon: iconAi, action: 'open-edit-module-ai', id: definition.id}) : '',
 
         ]
         endActions = [
@@ -235,7 +235,7 @@ export async function renderModule(module, {props, mode, definitions, permission
     }
 
     return `
-        <div ${definition.name === 'Section' ? 'data-action="close-module-settings"' : 'data-action="open-module-settings"'} data-module-id="${module.id}">
+        <div ${definition.name === 'Section' ? 'data-action="open-add-module"' : 'data-action="open-module-settings"'} data-module-id="${module.id}">
             <div data-module-content>
                 ${sectionResizer}
                 ${rendered}

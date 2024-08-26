@@ -154,7 +154,7 @@ const actions = {
     'open-user-edit'(el) {
         const userId = el.dataset.id
 
-        reload('?mode=edit&view=user-edit&id=' + userId)
+        reload('?mode=edit&view=settings.users.update&id=' + userId)
     },
     'open-user-delete'(el) {
         openConfirm({
@@ -403,9 +403,8 @@ const actions = {
     },
     'open-add-module'(el, ev) {
         ev.stopPropagation()
-        let sidebarElement = document.querySelector('[data-sidebar]')
-
-        sidebarElement.dataset.active = 'modules'
+        document.querySelector('[data-name="sidebar-add-block"]').style.display = 'block'
+        document.querySelector('[data-name="sidebar-module-settings"]').style.display = 'none'
     },
     async 'toggle-full-width'(el, ev) {
         ev.stopPropagation()
@@ -469,15 +468,6 @@ const actions = {
             }) 
         }
     },
-    'close-module-settings'(el, ev) {
-        ev.stopPropagation();
-
-        document.querySelector('iframe').contentDocument.querySelectorAll('[data-module-id][data-active]').forEach(el => {
-            delete el.dataset.active
-        })
-        document.querySelector('[data-sidebar]').dataset.active = 'modules'
-
-    },
     async 'open-module-settings'(el, ev) {
         console.log('open-moudule-settings action', el)
         ev.stopPropagation()
@@ -489,6 +479,9 @@ const actions = {
         })
 
         mod.dataset.active = true
+
+        document.querySelector('[data-name="sidebar-add-block"]').style.display = 'none'
+        document.querySelector('[data-name="sidebar-module-settings"]').style.display = 'block'
 
         // reload(`?mode=edit&moduleId=` + moduleId)
         const settings = await request('module.loadSettings', {id: moduleId, slug: decodeURIComponent(location.pathname)})

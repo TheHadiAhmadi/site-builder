@@ -110,6 +110,5 @@ export async function updateModule(body) {
 
     return {
         success: true
-        // redirect: '?mode=edit&view=iframe'
     }
 }

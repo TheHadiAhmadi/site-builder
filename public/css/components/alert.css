@@ -1,0 +1,14 @@
+
+[data-alert] {
+    font-size: 12px;
+    display: flex;
+    gap: 8px;
+
+    font-weight: 400;
+    color: var(--color-default-content);
+    
+    padding: 0.5rem;
+    border-radius: 4px;
+    background-color: var(--badge-bg);
+    color: var(--badge-color);
+}

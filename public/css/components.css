@@ -1,5 +1,6 @@
 @import './components/root.css';
 
+@import './components/alert.css';
 @import './components/button.css';
 @import './components/card.css';
 @import './components/badge.css';

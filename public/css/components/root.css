@@ -20,6 +20,7 @@
   --color-base-200: #e8e8e8;
   --color-base-300: #dedede;
 
+  --color-muted-content: #a0a0a0;
   /* Other Colors */
   --border-color: var(--color-default-border);
 
@@ -30,6 +31,8 @@
   --input-file-remove-color: #404040;
   --input-file-border: #ccc;
   --input-focus-border: #4070f0;
+  --input-focus-shadow: rgba(0, 116, 217, 0.2);
+  --label-color: var(--color-default-content);
 
   /* Component Colors */
   --modal-bg: var(--color-base-100);
@@ -40,14 +43,15 @@
   --dropdown-border: var(--color-default-border);
   --dropdown-item-hover-bg: var(--color-default-hover);
   --table-bg: #aaa;
-  --table-border: #aaa;
+  --table-border: #bbb;
   --table-body-bg: var(--color-base-100);
   --table-filter-bg: var(--color-base-100);
-  --table-filter-border: #aaa;
+  --table-filter-border: var(--table-border);
   --table-filter-active-bg: #889cf752;
   --table-filter-active-border: #2248ef;
   --table-filter-active-color: #2248ef;
   --table-head-bg: var(--color-base-300);
+  --table-hover-bg: var(--color-base-200);
   --table-head-color: var(--color-default-content);
 }
 
@@ -68,6 +72,8 @@
   --color-base-200: #374151;
   --color-base-300: #293545;
 
+
+  --color-muted-content: #686a87;
   /* Other Colors */
   --modal-backdrop: #1e1e1e80;
   --badge-bg: #1e3a8a66;
@@ -91,10 +97,10 @@
   --table-border: var(--color-default-border);
   --table-body-bg: var(--color-base-100);
   --table-filter-bg: var(--color-base-200);
-  --table-filter-border: var(--color-default-border);
   --table-filter-active-bg: #275aada8;
   --table-filter-active-border: #2563eb;
   --table-filter-active-color: #93c5fd;
   --table-head-bg: var(--color-base-300);
+  --table-hover-bg: var(--color-base-200);
   --table-head-color: var(--color-default-content);
 }
