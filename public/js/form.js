@@ -133,7 +133,7 @@ export function setFormValue(form, value) {
     form.querySelectorAll('[name]').forEach(input => {console.log(input.getAttribute('name'))})
     form.querySelectorAll('[name]').forEach(input => {
         const name = input.getAttribute('name')
-        const val = name.split('.').reduce((p, c) => p[c], value)
+        const val = name.split('.').reduce((p, c) => p?.[c], value)
 
         if(val || val == '' || val == 0 || val == []) {
             if(input.hasAttribute('data-file-label')) {

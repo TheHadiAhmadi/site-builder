@@ -12,7 +12,6 @@
 ## General
 - [ ] edit user creates user instead of edit
 - [ ] profile avatar in toolbar
-- [ ] rename toolbar to header
 - [ ] review robots.txt file
 - [ ] Show spinner or progress for file uploader
 - [ ] show loading spinner when form submitted
@@ -47,7 +46,9 @@
 ## AI
 - [ ] Create and update collection by AI
 - [ ] Improve seo generator
-
+- [ ] Prop slugs should not contain .
+- [ ] Update module add fields should not replace fields
+- [ ]   
 
 ## Unspecific
 - [ ] Publish/
