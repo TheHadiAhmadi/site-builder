@@ -1,7 +1,7 @@
-import { Button, CardBody, Form, Input, Modal, Page, Stack, Textarea } from "../components.js"
+import { Button, Form, Input, Modal, Page, Stack, Textarea } from "../components.js"
 import { FieldModal, FieldsList } from "./fields.js"
 
-function CreateModuleAiModal() {
+export function CreateModuleAiModal() {
     return Modal({
         name: 'create-ai',
         title: `Create Module with AI`,

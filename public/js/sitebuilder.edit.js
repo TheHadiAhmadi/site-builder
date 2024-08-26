@@ -16,22 +16,9 @@ function onInit() {
     const iframeElement = document.querySelector('iframe')
 
     window.addEventListener("message", function(event) {
-        console.log(event.data)
         if(event.data?.type === 'hydrate') {
-            // hydrate(event.data.element);
-            onIframeInit()
-            
+            onIframeInit()   
         }
-        // Ensure the message is coming from the expected iframe source
-        // if (event.origin !== "https://your-iframe-source.com") {
-        //     return;
-        // }
-
-        // Assuming the message contains the element ID to hydrate
-        // const element = event.data;
-
-        // if (element) {
-        // }
     });
 
     if(iframeElement) {

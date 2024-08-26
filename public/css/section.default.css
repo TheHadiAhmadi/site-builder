@@ -10,10 +10,14 @@
     display: none;
 }
 
-[data-module-id] {
+[data-dir="rtl"] [data-module-content] * {
+    direction: rtl;
+}
+
+[data-dir="rtl"] [data-module-id] > * {
     direction: ltr;
 }
 
-[data-dir="rtl"] [data-module-content] * {
-    direction: rtl;
+[data-dir="rtl"] [data-module-actions], [data-dir="rtl"] [data-module-actions] * {
+    direction: ltr;
 }

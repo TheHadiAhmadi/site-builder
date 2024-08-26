@@ -54,6 +54,7 @@ export function initSortableIframe() {
     new Sortable(bodyElement, {
         group: 'layout',
         animation: 150,
+        direction: 'vertical',
         draggable: '[data-module-id]',
         handle: '[data-action="drag-module-handle"]',
         onEnd(event) {
@@ -67,6 +68,7 @@ export function initSortableIframe() {
         new Sortable(el, {
             group: 'modules',
             animation: 150,
+            direction: 'vertical',
             draggable: '[data-column]',
             handle: '[data-action="drag-module-handle"]',
             onEnd(event) {
@@ -103,30 +105,4 @@ export function initSortable() {
             updateModules()
         }
     })
-
-    // const layoutDefinitionsElement = document.querySelector('[data-definitions-layout]')
-    // Sortable.get(layoutDefinitionsElement)?.destroy()
-    
-    // new Sortable(layoutDefinitionsElement, {
-    //     group: {
-    //         name: 'layout',
-    //         pull: 'clone',
-    //         put: false,
-    //     },
-    //     sort: false,
-    //     draggable: '[data-definition-id]',
-    //     animation: 150,
-    //     async onEnd(event) {
-    //         if(event.to == layoutDefinitionsElement) return;
-    //         const body = { 
-    //             slug: window.location.pathname, 
-    //             definitionId: event.item.dataset.definitionId, 
-    //             pageId: getPageId(),
-    //             index: event.newIndex 
-    //         }
-
-    //         await request('module.create', body)
-    //         updateModules()
-    //     }
-    // })
 }

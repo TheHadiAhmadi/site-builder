@@ -36,6 +36,11 @@
     pointer-events: all;
 }
 
+[data-dir="rtl"] [data-columns].active .resizer-handle {
+    right: unset;
+    left: 16px;
+} 
+
 [data-columns].active .resizer-handle::before {
     content: '';
     position:absolute;
@@ -50,6 +55,10 @@
     background-color: #8a8a8a41;
     cursor: col-resize;
 }
+[data-dir="rtl"] [data-columns].active .resizer-handle::before {
+    right: unset;
+    left: -19px;
+} 
 
 [data-columns].active .resizer-handle::after {
     content: '';
@@ -66,6 +75,11 @@
     background-color: #8a8a8a86;
     cursor: col-resize;
 }
+
+[data-dir="rtl"] [data-columns].active .resizer-handle::after {
+    right: unset;
+    left: -15px;
+} 
 
 [data-columns].active .dragging {
     cursor: col-resize;

@@ -66,6 +66,7 @@ export async function createModule(body) {
     const systemPrompt = generateCreateModuleSystemPrompt({collections, name})
 
     const payload = await generateResponse(systemPrompt, prompt)
+    let res;
 
     if(payload.template) {
         payload.name = name;
@@ -74,7 +75,7 @@ export async function createModule(body) {
         payload.prompt = {
             template: [template]
         }
-        await db('definitions').insert(payload)
+        res = await db('definitions').insert(payload)
     
     } else {
         console.log('something went wrong')
@@ -82,6 +83,8 @@ export async function createModule(body) {
     }
 
     return {
-        redirect: '?mode=edit&view=iframe'
+        // redirect: '?mode=edit&view=iframe'
+        id: res?.id ?? '',
+        success: true
     }
 }

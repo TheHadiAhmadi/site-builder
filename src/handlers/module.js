@@ -73,7 +73,7 @@ function DynamicFieldInput(field, fields, linked, module) {
         placeholder: 'Enter ' + field.label
     }
     if(options.type === 'select') {
-        options.placeholder = 'Choose' + field.label
+        options.placeholder = 'Choose ' + field.label + '...'
     }
 
     if(options.type === 'file' && options.file_type === 'image') {

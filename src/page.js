@@ -5,7 +5,7 @@ import { join } from 'path'
 
 import { db } from "#services";
 import layouts from "./layouts.js";
-import { pageCreateModule, pageUpdateModule, UpdateModuleAiModal } from './pages/modules.js';
+import { CreateModuleAiModal, pageCreateModule, pageUpdateModule, UpdateModuleAiModal } from './pages/modules.js';
 import { collectionDataCreate, collectionDataList, collectionDataUpdate, createCollectionPage, FieldInput, RelationFieldModal, updateCollectionPage } from './pages/collections.js';
 import { pageCreatePage, pageUpdatePage } from './pages/pages.js';
 import { loadRelationFieldType, normalizeCollectionContent, renderModule } from './renderModule.js';
@@ -487,6 +487,7 @@ export async function renderBody(body, { props, mode, url, view, params, ...quer
             ${DeleteConfirm()}
             ${RelationFieldModal()}
             ${UpdateModuleAiModal({ id: null })}
+            ${CreateModuleAiModal({ id: null })}
         `
     }
 

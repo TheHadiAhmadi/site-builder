@@ -96,6 +96,61 @@ const actions = {
         document.querySelector('iframe').contentDocument.querySelector(`[data-module-id="${moduleId}"]`).click()
 
     },
+    'open-create-block-modal'(el) {
+        const modal = document.querySelector('[data-modal="create-ai"]')
+        modal.dataset.modalOpen = true
+
+        const form = modal.querySelector('[data-form]')
+
+        async function submit() {
+            form.dataset.load = ''
+
+            await request('ai.createModule', {
+                name: form.querySelector('[name="name"]').value ?? '',
+                template: form.querySelector('[name="template"]').value ?? ''
+            }).then(async res => {
+                delete modal.dataset.modalOpen
+                delete form.dataset.load
+
+                let body = { 
+                    slug: window.location.pathname, 
+                    definitionId: res.id, 
+                    order: 1,
+                    moduleId: el.parentNode.dataset.slot
+                }
+
+                await request('module.create', body)
+                
+
+                form.querySelector('[name="name"]').value = ''
+                form.querySelector('[name="template"]').value = ''
+                reload(window.location.href)
+            })
+        }
+        async function onTextareaKeyDown(e) {
+            if (e.keyCode === 13 && e.ctrlKey) {
+                await submit()
+            }
+        }
+
+        async function onButtonClick(ev) {
+            ev.preventDefault()
+            await submit()
+        }
+
+        const textarea = form.querySelector('[name="template"]')
+        const submitButton = form.querySelector('button[type="submit"]')
+        
+        if(textarea.dataset.hydrated !== 'true') {
+            textarea.dataset.hydrated = true
+            textarea.addEventListener('keydown', onTextareaKeyDown)
+        }
+
+        if(submitButton.dataset.hydrated !== 'true') {
+            submitButton.dataset.hydrated = true
+            submitButton.addEventListener('click', onButtonClick)
+        }
+    },
     'change-dynamic-page-content'(el) {
         const view = new URL(window.location.href).searchParams.get('view') ?? ''
         reload(el.value + '?mode=edit' + (view ? 'view=' + view : ''))

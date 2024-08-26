@@ -1,4 +1,6 @@
 import Handlebars from 'handlebars';
+import moment from 'moment';
+
 Handlebars.registerHelper('eq', function (a, b, options) {
     return a === b ? options.fn(this) : options.inverse(this);
 });
@@ -31,8 +33,13 @@ Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
 });
 
 Handlebars.registerHelper('formatDate', function (date, format) {
-    const moment = require('moment');
-    return moment(date).format(format);
+    console.log("format", format)
+    if(typeof format === 'string') {
+        return moment(date).format(format);
+    }
+    else {
+        return moment(date).format('yyyy-MM-DD')
+    }
 });
 
 Handlebars.registerHelper('json', function (context) {
