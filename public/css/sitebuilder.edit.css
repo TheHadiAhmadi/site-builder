@@ -27,7 +27,12 @@
     --sidebar-item-icon-bg: #f1f1f1;
     --body-bg: #e8e8e8;
     --body-color: black;
+    --scrollbar-track-bg: #e0e0e0;
+    --scrollbar-thumb-bg: #999999;
+    --scrollbar-thumb-hover-bg: #777777;
 }
+
+
 
 [data-theme="dark"] {
     --iframe-border: #4b5563;
@@ -52,6 +57,9 @@
     --sidebar-item-icon-bg: #1f2937;
     --body-bg: #111827;
     --body-color: #e5e7eb;
+    --scrollbar-track-bg: #1e2635;
+    --scrollbar-thumb-bg: #4b5563;
+    --scrollbar-thumb-hover-bg: #6b7280;
 }
 
 [data-theme="dark"] body {
@@ -135,11 +143,44 @@ iframe {
     justify-content: space-between;
     padding: 1rem;
     height: 4rem;
+    padding-right: 2rem;
 }
 
 [data-sidebar-items] {
     height: calc(100vh - 4rem);
     overflow: auto;
+    margin-top: -4px;
+}
+
+[data-sidebar-items] {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-track-bg);
+    margin-right: 8px;
+}
+
+/* For WebKit browsers (e.g., Chrome, Safari) */
+[data-sidebar-items]::-webkit-scrollbar {
+    width: 12px;
+}
+
+[data-sidebar-items]::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-bg);
+    border-radius: 10px;
+    margin-right: 8px; 
+
+    /* margin: 8px; This adds space around the scrollbar */
+}
+
+[data-sidebar-items]::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-bg);
+    border-radius: 10px;
+    border: 3px solid transparent; /* Creates padding and makes the scrollbar thumb narrower */
+    background-clip: content-box;
+}
+
+/* Optional: For hover effect on the scrollbar thumb */
+[data-sidebar-items]::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover-bg);
 }
 
 [data-sidebar-toggler] {
@@ -171,7 +212,6 @@ iframe {
     height: calc(100vh - 4rem);
     overflow: auto;
     padding-top: 0;
-    margin-top: -4px;
 }
 
 [data-page-edit-sidebar][data-active] {
@@ -184,7 +224,7 @@ iframe {
 
 [data-sidebar-toggler-chevron] {
     margin-left: auto;
-    color: var(--color-muted-content);
+    color: var(--color-muted-alt);
 }
 
 [data-sidebar-toggler-icon-down] {

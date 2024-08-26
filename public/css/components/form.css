@@ -47,6 +47,9 @@
     background-color: var(--input-bg);
     transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
 }
+[data-input]:disabled, [data-textarea]:disabled, [data-select]:disabled {
+    opacity: 0.6;
+}
 
 [data-input]:focus, [data-textarea]:focus, [data-select]:focus {
     border-color: var(--input-focus-border);

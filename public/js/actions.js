@@ -97,7 +97,8 @@ const actions = {
 
     },
     'change-dynamic-page-content'(el) {
-        reload(el.value + '?mode=edit&view=' + new URL(window.location.href).searchParams.get('view'))
+        const view = new URL(window.location.href).searchParams.get('view') ?? ''
+        reload(el.value + '?mode=edit' + (view ? 'view=' + view : ''))
     },
     async 'module-add-field-choose-type'(el) {
         const value = el.dataset.value

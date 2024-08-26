@@ -1,6 +1,4 @@
-
 [data-delete-confirm] {
-    display: none;
     background-color: var(--modal-backdrop);
     top: 0;
     left: 0;
@@ -9,32 +7,53 @@
     position: absolute;
     align-items: center;
     justify-content: center;
+    padding: 1rem;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 0;
+    display: flex;
+    visibility: hidden;
 }
 
 [data-delete-confirm][data-open] {
-    display: flex;
+    opacity: 1;
+    visibility: visible;
 }
 
 [data-confirm-body] {
     padding: 1rem;
-    max-width: 80%;
-    
-    border-radius: 4px;
+    max-width: 90%;
     background-color: var(--modal-bg);
-    color: var(--modal-color);
+    color: var(--color-default-content);
+    border-radius: 8px; /* Slightly larger border-radius for emphasis */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    max-height: 90vh;
+    overflow: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: scale(0.95);
+    opacity: 0;
+}
+
+[data-delete-confirm][data-open] [data-confirm-body] {
+    transform: scale(1);
+    opacity: 1;
 }
 
 [data-confirm-title] {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 18px; /* Slightly larger font size for emphasis */
+    margin-bottom: 0.5rem;
 }
+
 [data-confirm-description] {
     opacity: 0.7;
-    font-size: 12px;
+    font-size: 14px; /* Increased font size for better readability */
+    margin-bottom: 1rem;
 }
+
 [data-confirm-actions] {
     padding-top: 1rem;
-    gap: 4px;
+    gap: 8px; /* Increased gap for better spacing */
     display: flex;
-    align-items: center;
+    justify-content: flex-end; /* Align actions to the end */
 }
