@@ -121,7 +121,6 @@ const actions = {
 
                 await request('module.create', body)
                 
-
                 form.querySelector('[name="name"]').value = ''
                 form.querySelector('[name="template"]').value = ''
                 reload(window.location.href)

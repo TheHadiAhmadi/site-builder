@@ -46,8 +46,6 @@
 ## AI
 - [ ] Create and update collection by AI
 - [ ] Improve seo generator
-- [ ] Prop slugs should not contain .
-- [ ] Update module add fields should not replace fields
 - [ ]   
 
 ## Unspecific

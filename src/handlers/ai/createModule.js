@@ -3,7 +3,7 @@ import { generateResponse } from "../ai.js";
 
 function generateCreateModuleSystemPrompt({ collections, name }) {
     return `
-    You are a Tailwind CSS and Handlebars template expert.
+    You are an expert tasked with updating a Tailwind CSS/Handlebars module. Please follow the specifications provided to ensure compatibility and design continuity.
 
     Generate a Tailwind CSS/Handlebars template based on the following details:
 
@@ -13,9 +13,10 @@ function generateCreateModuleSystemPrompt({ collections, name }) {
     - **UI Design Considerations**:
         - Ensure the template is fully responsive and works well on different screen sizes (mobile, tablet, desktop).
         - Use consistent spacing, margins, and padding to create a clean and organized layout.
-        - Implement a color scheme that complements the overall design and supports dark mode if mentioned.
+        - Implement a color scheme that complements the overall design and supports dark mode using dark: modifier.
         - Include hover states, focus states, and active states for interactive elements to improve the user experience.
         - Use components like buttons, cards, modals, and grids effectively to build a cohesive UI.
+        - prop's slug should only include lowercase letters, uppercase letters and _.
 
     Response format:
     {

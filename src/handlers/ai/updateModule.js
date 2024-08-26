@@ -20,7 +20,7 @@ function generateUpdateModuleSystemPrompt({ collections, definition }) {
         - TextareaProp: { "type": "textarea", "slug": "string", "label": "string" }
         - FileProp: { "type": "file", "slug": "string", "multiple": boolean, "label": "string", "file_type": "image|video|document|all" }
         - CheckboxProp: { "type": "checkbox", "slug": "string", "label": "string" }
-        - SelectProp: { "type": "select", "slug": "string", "label": "string", "multiple": boolean, "items": "string[]" }
+        - SelectProp: { "type": "select", "slug": "string", "label": "string", "multiple": boolean, "items": string[] }
         - RichTextProp: { "type": "rich-text", "slug": "string", "label": "string" }
         - RelationProp: { "type": "relation", "slug": "string", "label": "string", "collectionId": "string", "multiple": boolean }
 
@@ -41,14 +41,14 @@ function generateUpdateModuleSystemPrompt({ collections, definition }) {
     - **Constraints and Adjustments**:
       - Only utilize the collections listed below for relation props:
         ${JSON.stringify(collections, null, 2)}
-      - Minimize changes to props if possible. Document and justify any modifications or extensions needed for functionality.
+      - Document and justify any modifications or extensions needed for functionality using comments.
 
     - **Response Format**:
       Provide the updated module configuration as follows:
       {
         "name": "${definition.name}",
         "template": "Updated Handlebars/Tailwind template string goes here",
-        "props": ${definition.props.length > 0 ? 'List any updated props here' : '[]'}
+        "props": 'List any updated props here' | [] // empty array if there is no need to add props
       }
     
     - **Code quality**:
@@ -84,7 +84,7 @@ export async function updateModule(body) {
         definition.template = payload.template
 
         if (payload.props.length != 0) {
-            definition.props = payload.props
+            definition.props = [...definition.props, ...payload.props]
         }
 
         if (definition.prompt) {
@@ -93,7 +93,6 @@ export async function updateModule(body) {
             }
 
             definition.prompt = {
-
                 template: [...definition.prompt.template, template]
             }
         } else {
