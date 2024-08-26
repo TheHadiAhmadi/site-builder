@@ -85,7 +85,7 @@
 
   /* Component Colors */
   --border-color: var(--color-default-border);
-
+  --button-ghost-hover-bg: rgba(0, 0, 0, 0.05);
   --modal-bg: var(--color-base-300);
   --modal-color: var(--color-default-content);
   --card-border: var(--color-default-border);

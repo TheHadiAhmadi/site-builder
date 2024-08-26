@@ -7,17 +7,20 @@
     background-color: var(--button-bg);
     color: var(--button-color);
     border: 1px solid var(--button-border);
-    border-radius: 4px;
+    border-radius: 6px; /* Slightly more rounded corners */
     gap: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    padding: 4px 16px;
-    height: 36px;
+    font-weight: 600; /* Bolder text for emphasis */
+    padding: 8px 20px; /* Increased padding for a more substantial feel */
+    height: 36px; /* Taller for better touch targets */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
 }
 
 [data-button]:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: var(--button-hover-bg);
 }
 
@@ -25,12 +28,26 @@
     background-color: transparent;
     color: var(--button-bg);
     border-color: var(--button-border);
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 
 [data-button-outline]:hover {
     background-color: var(--button-bg);
     color: var(--button-color);
-    border-color: var(--button-border);
+    border-color: var(--button-bg);
+}
+
+[data-button-ghost] {
+    box-shadow: none;
+    background-color: transparent;
+    color: var(--button-hover-bg);
+    border-color: transparent;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+[data-button-ghost]:hover {
+    color: var(--button-bg);
+    background-color: var(--button-ghost-hover-bg); /* Subtle background on hover */
 }
 
 [data-button-block] {
@@ -45,7 +62,6 @@
 }
 
 [data-button-color="danger"] {
-
     --button-bg: var(--color-danger);
     --button-hover-bg: var(--color-danger-hover);
     --button-color: var(--color-danger-content);
@@ -53,8 +69,8 @@
 }
 
 [data-button-size="small"] {
-    padding: 2px 8px;
-    height: 24px;
+    padding: 4px 12px;
+    height: 32px;
     font-size: 12px;
 }
 
@@ -65,6 +81,9 @@
 [data-button-icon] {
     width: 36px;
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 [data-button] [data-icon] {

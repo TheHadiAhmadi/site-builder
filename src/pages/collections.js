@@ -123,7 +123,7 @@ export function createCollectionPage() {
         title: 'Create Collection',
         actions: [],
         body: CollectionForm({
-            handler: 'collection.create'
+            handler: 'collections.create'
         })
     })
 }

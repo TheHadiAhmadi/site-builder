@@ -115,7 +115,7 @@ iframe {
     gap: 8px;
     font-weight: bold;
     font-size: 22px;
-
+    align-items: center;
 }
 
 [data-sidebar] {

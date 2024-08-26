@@ -24,14 +24,17 @@
     padding: 14px 18px;
     white-space: nowrap;
 }
+[data-table-compact] tbody tr td {
+    padding: 4px 1rem;
+}
 
 [data-table] td {
     font-weight: normal;
     background-color: var(--table-body-bg);
 }
 
-[data-table] tbody tr {
-    border-bottom: 1px solid var(--table-border);
+[data-table] tbody tr td {
+    border-bottom: 1px solid var(--border-color);
     transition: background-color 0.1s ease; /* Smooth hover effect */
 }
 

@@ -253,6 +253,7 @@ const actions = {
         const form = modal.querySelector('[data-form]')
 
         async function submit() {
+            console.log('submit')
             form.dataset.load = ''
 
             await request('ai.updateModule', {
@@ -282,12 +283,12 @@ const actions = {
         
         if(textarea.dataset.hydrated !== 'true') {
             textarea.dataset.hydrated = true
-            textarea.onkeydown = onTextareaKeyDown
+            textarea.addEventListener('keydown', onTextareaKeyDown)
         }
 
         if(submitButton.dataset.hydrated !== 'true') {
             submitButton.dataset.hydrated = true
-            submitButton.onclick = onButtonClick
+            submitButton.addEventListener('click', onButtonClick)
         }
         
         setTimeout(() => {
@@ -445,13 +446,14 @@ const actions = {
 
         if(textarea.dataset.hydrated !== 'true') {
             textarea.dataset.hydrated = true
-            textarea.onkeydown = onTextareaKeyDown
+            textarea.addEventListener('keydown', onTextareaKeyDown)
         }
 
         if(submitButton.dataset.hydrated !== 'true') {
             submitButton.dataset.hydrated = true
-            submitButton.onclick = onButtonClick
+            submitButton.addEventListener('click', onButtonClick)
         }
+        
 
         async function submit() {
             form.dataset.load = ''

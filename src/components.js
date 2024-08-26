@@ -176,7 +176,7 @@ export function Form({name ='', handler, fields, cancelAction, cancelDataset = {
     return form;
 }
 
-export function Button({href, text, color, block, action, outline = false, size="medium", dataset = {} , type="button"}) {
+export function Button({href, ghost = false, icon = false, text, color, block, action, outline = false, size="medium", dataset = {} , type="button"}) {
     let attrs = ''
     for(let item in dataset) {
         if(dataset[item] != undefined) {
@@ -185,16 +185,15 @@ export function Button({href, text, color, block, action, outline = false, size=
     }
 
     if(href) {
-        return `<a data-enhance href="${href}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}">${text}</a>`
-
+        return `<a data-enhance href="${href}" ${attrs} ${outline ? 'data-button-outline' : ''} ${ghost ? 'data-button-ghost' : ''} ${icon ? 'data-button-icon' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}">${text}</a>`
     }
-    return `<button type="${type}" ${attrs} ${outline ? 'data-button-outline' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}" data-action="${action}">${text}</button>`
+    return `<button type="${type}" ${attrs} ${outline ? 'data-button-outline' : ''} ${ghost ? 'data-button-ghost' : ''} ${icon ? 'data-button-icon' : ''} data-button-size="${size}" data-button ${block ? 'data-button-block' : ''} data-button-color="${color}" ${action ? 'data-action="${action}"' : ''}>${text}</button>`
 }
 
-export function Table({items, head, row, body}) {
+export function Table({items, compact = false, head, row, body}) {
     return html`
         <div data-table-parent>
-            <table data-table>
+            <table data-table ${compact ? 'data-table-compact' : ''}>
                 <thead>
                     <tr>
                         ${head}

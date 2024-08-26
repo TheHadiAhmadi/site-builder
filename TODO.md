@@ -1,7 +1,7 @@
 ## Feedbacks
 - [ ] Block editor design. preview block, edit in modals. fields another tab or button
 - [ ] Some videos won't work
-- [ ] Submit should close forms (And close update module ai modal)
+- [ ] Admin panel should be responsive
 - [ ] AI should be more visible for users (ai button primary)
 - [ ] Use Ai for writing content
 - [ ] Improve seo and make it more advanced (USE Seo)
