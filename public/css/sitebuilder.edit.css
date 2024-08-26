@@ -230,7 +230,6 @@ iframe {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 8px;
 }
 [data-definition-module] {
     padding: 0.5rem 1rem;
