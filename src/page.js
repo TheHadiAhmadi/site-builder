@@ -21,17 +21,10 @@ async function getPage(slug) {
     const pages = await db('pages').query().all();
 
     for (let page of pages) {
-        const dynamicParts = page.slug.split('/').filter(part => part.startsWith('{{') && part.endsWith('}}'));
-
-        if (page.dynamic && dynamicParts.length === 0) {
-            if (slug.endsWith('/') || slug.length == 1) {
-                slug = slug + '{{slug}}'
-            } else {
-                slug = slug + '/{{slug}}'
-            }
-
-            dynamicParts.push('{{slug}}')
+        if(!page.slug.includes('{{')) {
+            page.slug = join(page.slug, '{{slug}}')
         }
+        const dynamicParts = page.slug.split('/').filter(part => part.startsWith('{{') && part.endsWith('}}'));
 
         let regexStr = page.slug;
         for (const dynamicPart of dynamicParts) {
