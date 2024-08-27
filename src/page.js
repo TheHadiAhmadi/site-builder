@@ -242,6 +242,7 @@ export async function renderBody(body, { props, mode, url, view, params, ...quer
     let settings = await db('settings').query().first() ?? {}
 
     let res = await getPage(url.split('?')[0])
+    console.log(res, url.split('?')[0])
     let currentPage = res.page
 
     if (!currentPage && view === 'iframe') view = 'pages.create'
