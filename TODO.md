@@ -1,13 +1,10 @@
 ## Feedbacks
 - [ ] Block editor design. preview block, edit in modals. fields another tab or button
-- [ ] Some videos won't work
 - [ ] Admin panel should be responsive
 - [ ] AI should be more visible for users (ai button primary)
 - [ ] Use Ai for writing content
 - [ ] Improve seo and make it more advanced (USE Seo)
-- [ ] More user friendly panel
-- [ ] Rahnama, computer, car, ...
-- [ ] 
+- [ ] more examples Rahnama, computer, car, ...
 
 ## General
 - [ ] edit user creates user instead of edit
