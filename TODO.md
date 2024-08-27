@@ -53,3 +53,23 @@
 - [ ] Landing page example
 
 
+## Plugin system
+- [ ] each function has an identifier and User friendly name + description
+- [ ] each function should have definition which shows available props
+- [ ] add new field type named Function which user can choose which function should bind to the prop
+- [ ] for example for carList I set 'cars.load' as function and in renderModule we have access to all functions
+- [ ] if module has onLoad prop, call that function. (body, query, params...) as parameter and props as result
+- [ ] load functions have enum type 'load'
+- [ ] other functions have enum type 'action'
+- [ ] actions should be used within forms and loads when rendering modules.
+- [ ] AI Should know about available functions 
+- [ ] Each js file can have one or more function. should be exported.
+- [ ] Function management (Upload zip/js file), then reload project.
+- [ ] Enable/Disable function feature
+- [ ] UnInstall function
+- [ ] <form method="POST" action="contact_us.send_message"></form> // action example
+- [ ] module: { id: string, definitionId: string, load: 'cars.load', props: {}, links: {}}  // load example
+
+## File Management
+
+## Authentication

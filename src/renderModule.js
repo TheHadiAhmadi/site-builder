@@ -3,6 +3,7 @@ import { db } from '#services';
 import { getDataTableItems } from './pages/dataTable.js';
 
 export async function normalizeCollectionContent(collection, item, depth = 1) {
+    console.log('normalize collection content: ', {collection, item, depth})
     for(let field of collection.fields) {
         if(field.type === 'relation' && depth < 3) {
             item[field.slug] = await loadRelationFieldType(item[field.slug], field, depth + 1)

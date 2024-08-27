@@ -10,7 +10,7 @@ export default {
             const theme = localStorage.getItem('THEME') ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
             document.documentElement.dataset.theme = theme
         </script>
-        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="/js/tailwind.cdn.js"></script>
         <script>
             tailwind.config = {{{ tailwind }}}
         </script>

@@ -1,5 +1,5 @@
 import { request } from "./form.js";
-
+import './sortable.min.js'
 
 export async function updateModules() {
     let sectionIndex = 1;
