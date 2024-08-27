@@ -1,6 +1,6 @@
 # **Site Builder**
 
-![Site Builder Logo](./pubilc/images/logo-light.png)
+![Site Builder Logo](./public/images/logo-light.png)
 
 ## **Overview**
 
