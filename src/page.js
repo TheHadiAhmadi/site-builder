@@ -21,8 +21,10 @@ async function getPage(slug) {
     const pages = await db('pages').query().all();
 
     for (let page of pages) {
-        if(!page.slug.includes('{{')) {
-            page.slug = join(page.slug, '{{slug}}')
+        if(page.dynamic) {
+            if(!page.slug.includes('{{')) {
+                page.slug = join(page.slug, '{{slug}}')
+            }
         }
         const dynamicParts = page.slug.split('/').filter(part => part.startsWith('{{') && part.endsWith('}}'));
 
