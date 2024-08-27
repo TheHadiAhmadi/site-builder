@@ -4,6 +4,9 @@ export default {
     async create(body) {
         // body.settings ??= []
         // body.contentType ??= []
+        if(!body.slug.startsWith('/')) {
+            body.slug = '/' + body.slug
+        }
         await db('pages').insert(body)
 
         return {
@@ -14,6 +17,10 @@ export default {
         return db('pages').query().filter('id', '=', body.id).first()
     },
     async update(body) {
+        if(!body.slug.startsWith('/')) {
+            body.slug = '/' + body.slug
+        }
+
         await db('pages').update(body)
         return {
             pageReload: true
