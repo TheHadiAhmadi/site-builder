@@ -8,7 +8,7 @@ export async function generateResponse(systemPrompt, prompt) {
     const oai = new OpenAI({})
     console.log('waiting for ai response...')
     const completion = await oai.chat.completions.create({
-        model: 'Openai/gpt-4o-mini',
+        model: process.env.OPENAI_MODEL ?? 'gpt-4o-mini',
         messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: prompt }
