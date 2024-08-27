@@ -3,7 +3,7 @@ import { html } from "svelite-html"
 import { Form } from "../components.js"
 import { FieldInput } from "../pages/collections.js"
 
-function DynamicFieldInput(field, fields, linked, module) {
+function DynamicFieldInput(field, fields, linked, module, collections) {
     function getLinkedText(key) {
         return fields.find(x => x.slug === key)?.label ?? key
     }
@@ -84,12 +84,10 @@ function DynamicFieldInput(field, fields, linked, module) {
         options.type = 'hidden'
     }
     
-    return FieldInput(options)
+    return FieldInput(options, collections)
 }
 
-function sidebarModuleSettings(definition, module, collection) {
-    console.log('sidebarModuleSettings', {definition, module, collection}, definition.props)
-    
+function sidebarModuleSettings(definition, module, collection, collections) {
     const fields = []
     fields.push({slug: 'settings.logo', label: 'Site\'s Logo', type: 'file', multiple: false, file_type: 'image'})
     fields.push({slug: 'settings.favicon', label: 'Site\'s Favicon', type: 'file', multiple: false, file_type: 'image'})
@@ -121,7 +119,7 @@ function sidebarModuleSettings(definition, module, collection) {
                     fields:  [
                         `<input type="hidden" name="slug" value="">`,
                         `<input type="hidden" name="id" value="${module.id}">`,
-                        (definition.props ?? []).map(prop => DynamicFieldInput(prop, fields, module.links?.[prop.slug], module)).join('')
+                        (definition.props ?? []).map(prop => DynamicFieldInput(prop, fields, module.links?.[prop.slug], module, collections)).join('')
                     ],
                     cancelAction: 'open-add-module'
                 }): `
@@ -189,6 +187,7 @@ export default {
         const module = await db('modules').query().filter('id', '=', moduleId).first();
         const page = await getPageFromModule(module);
         const definition = await db('definitions').query().filter('id', '=', module.definitionId).first();
+        const collections = await db('collections').query().all()
         
         if(page?.collectionId) {
             const collection = await db('collections').query().filter('id', '=', page.collectionId).first();
@@ -200,7 +199,7 @@ export default {
                     
                 }
                 
-                const res = sidebarModuleSettings(definition, module, collection, body.slug)
+                const res = sidebarModuleSettings(definition, module, collection, collections)
                 
                 return res;
             }
@@ -208,7 +207,7 @@ export default {
 
         } 
         
-        const res = sidebarModuleSettings(definition, module)
+        const res = sidebarModuleSettings(definition, module, null, collections)
         return res
     },
     async loadSettings(body) {

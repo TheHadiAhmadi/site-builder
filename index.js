@@ -2,7 +2,7 @@ import express from 'express'
 import multer from 'multer'
 import { db } from '#services'
 import handlers from './src/handlers.js'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import {mkdir, readdir, writeFile} from 'node:fs/promises'
 import { handleModuleAction, renderPage } from './src/page.js'
 import cookieParser from 'cookie-parser'
@@ -20,6 +20,12 @@ const compile = hbs.compile
 
 
 let context = {}
+const functions = {}
+
+for(let file of readdirSync('./functions')) {
+    const module = await import('./functions/' + file)
+    functions[module.default.slug] = module.default
+}
 
 const app = express()
 app.use(cookieParser())
@@ -142,10 +148,13 @@ app.post('/api/file/upload', async (req, res) => {
 })
 //#endregion
 
-app.post('/api/module/:id/:name', async(req, res) => {
-    const method = req.params.name
-    const module = await db('modules').query().filter('id', '=', req.params.id).first()
-    const resp = await handleModuleAction({module, method, body: req.body})
+app.post('/fn/:slug', async(req, res) => {
+    const method = req.params.slug
+    
+    const resp = await functions[method].run({
+        body: req.body,
+        query: req.query
+    })
 
     res.json(resp ?? {reload: true})
 })

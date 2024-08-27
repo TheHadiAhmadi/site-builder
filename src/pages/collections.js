@@ -60,7 +60,7 @@ function RichText(field) {
     })
 }
 
-export function FieldInput(field) {
+export function FieldInput(field, collections = []) {
     let options = {
         name: field.slug, 
         label: field.label,
@@ -87,6 +87,15 @@ export function FieldInput(field) {
         options.type = field.input_type
     }
 
+    function CollectionField({name, label, placeholder}) {
+        return Select({
+            name,
+            placeholder: 'Choose Collection',
+            label,
+            items: collections.map(x => ({text: x.name, value: x.id}))
+        })
+    }
+
     const inputs = {
         input: Input,
         select: Select,
@@ -95,6 +104,7 @@ export function FieldInput(field) {
         file: File,
         relation: Relation,
         'rich-text': RichText,
+        collection: CollectionField,
         hidden: (options) => Label({text: options.label})
     }
     
@@ -161,7 +171,7 @@ export async function collectionDataList(collection) {
     })
 }
 
-export function collectionDataCreate(collection, items) {
+export function collectionDataCreate(collection, collections) {
     return Page({
         title: 'Insert ' + collection.name,
         back: '?mode=edit&view=collections.data.list&id=' + collection.id,
@@ -172,14 +182,14 @@ export function collectionDataCreate(collection, items) {
                 cancelHref: '?mode=edit&view=collections.data.list&id=' + collection.id,
                 fields: [
                     `<input type="hidden" value="${collection.id}" name="_type">`, 
-                    collection.fields.filter(x => !x.hidden).map(field => FieldInput(field)).join('')
+                    collection.fields.filter(x => !x.hidden).map(field => FieldInput(field, collections)).join('')
                 ],
             }),
         ]
     })
 }
 
-export function collectionDataUpdate(collection, data) {
+export async function collectionDataUpdate(collection, data, collections) {
     const id = data.id.toString()
     return Page({
         title: 'Update ' + collection.name,
@@ -193,7 +203,7 @@ export function collectionDataUpdate(collection, data) {
                 fields: [
                     '<input type="hidden" value="' + id + '" name="id">',
                     '<input type="hidden" value="' + data._type + '" name="_type">',
-                    collection.fields.filter(x => !x.hidden).map(field => FieldInput(field)).join('')
+                    collection.fields.filter(x => !x.hidden).map(field => FieldInput(field, collections)).join('')
                 ],
             }),
         ]

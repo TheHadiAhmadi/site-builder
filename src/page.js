@@ -246,10 +246,6 @@ export async function renderBody(body, { props, mode, url, view, params, ...quer
 
     if (!currentPage && view === 'iframe') view = 'pages.create'
 
-    let viewType = view === 'iframe' ? 'iframe' : 'page'
-    // <h2 data-iframe-title>Edit (${currentPage.name})</h2>
-
-
     if (view === 'iframe' || !view) {
         sidebar = 'modules'
         sidebarContent = await BlockList()
@@ -305,13 +301,15 @@ export async function renderBody(body, { props, mode, url, view, params, ...quer
         content = await collectionDataList(collection)
     } else if (view === 'collections.data.create') {
         const collection = await db('collections').query().filter('id', '=', query.id).first()
+        const collections = await db('collections').query().all()
 
-        content = collectionDataCreate(collection)
+        content = collectionDataCreate(collection, collections)
     } else if (view === 'collections.data.update') {
         const data = await db('contents').query().filter('id', '=', query.id).first()
         const collection = await db('collections').query().filter('id', '=', data._type).first()
+        const collections = await db('collections').query().first()
 
-        content = collectionDataUpdate(collection, data)
+        content = await collectionDataUpdate(collection, data, collections)
     } else if (view === 'settings.general') {
         content = Page({
             title: 'General settings', body: [
@@ -413,7 +411,7 @@ export async function renderBody(body, { props, mode, url, view, params, ...quer
                     </div>
                 </div>
                 <div data-sidebar-items>
-                    <div data-nested-sidebar ${!view ? 'data-active' : ''}>
+                    <div data-nested-sidebar ${!view ? 'data-active' : ''} ${view.startsWith('pages.') ? 'data-active' : ''}>
                         <div data-sidebar-toggler>
                             <svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M16 0H8C6.9 0 6 .9 6 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6zm4 18H8V2h7v5h5zM4 4v18h16v2H4c-1.1 0-2-.9-2-2V4z"/></svg>
                             <span data-sidebar-toggler-text>Pages</span>
@@ -482,17 +480,18 @@ export async function renderBody(body, { props, mode, url, view, params, ...quer
         return `
             <div data-body>
                 ${await Sidebar()}
-                <div data-main data-active="${viewType}">
+                <div data-main>
                     ${content}
                 </div>
             </div>
-            <script src="/js/sortable.min.js"></script>
-            <script src="/js/quill.library.js"></script>
-            <script type="module" src="/js/sitebuilder.edit.js"></script>
+            
             ${DeleteConfirm()}
             ${RelationFieldModal()}
             ${UpdateModuleAiModal({ id: null })}
             ${CreateModuleAiModal({ id: null })}
+            <script src="/js/sortable.min.js"></script>
+            <script src="/js/quill.library.js"></script>
+            <script type="module" src="/js/sitebuilder.edit.js"></script>
         `
     }
 

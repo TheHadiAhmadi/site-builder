@@ -1,78 +1,87 @@
-# Site Builder
-this project is a Site builder which you can build simple websites without knowing programming.
+# **Site Builder**
 
-## Usage
-### Initial Setup:
-[Screencast from 2024-08-18 23-01-11.webm](https://github.com/user-attachments/assets/c75a926f-21d7-470f-a73b-fc100eb091c2)
+![Site Builder Logo](./pubilc/images/logo-light.png)
 
-### Using template:
-[Screencast from 2024-08-18 23-26-46.webm](https://github.com/user-attachments/assets/ccf4e344-b32b-48ba-ae01-4978ccc5c109)
+## **Overview**
 
-### Site settings:
-[Screencast from 2024-08-18 23-32-46.webm](https://github.com/user-attachments/assets/67c9057a-1741-48cf-8770-afa96bf4da31)
+**Site Builder** is a project that enables users to create simple websites without any programming knowledge. Whether you're a beginner or a seasoned web designer, Site Builder simplifies the process of building, managing, and customizing your website through an easy-to-use drag-and-drop interface.
 
-### Creating Page:
-[Screencast from 2024-08-18 23-24-31.webm](https://github.com/user-attachments/assets/b4f4062e-a17e-40ce-a0c3-b4adc240c36e)
+## **Features**
 
-### Update Page:
-[Screencast from 2024-08-18 23-34-05.webm](https://github.com/user-attachments/assets/80b37da3-8a78-43bd-ac78-39be539160cb)
+- **Drag-and-Drop Interface:** Create pages effortlessly using our intuitive drag-and-drop builder.
+- **Templates:** Choose from a variety of templates to kickstart your website.
+- **Page Management:** Create, update, and delete pages with ease.
+- **SEO Management:** Optimize your pages for search engines directly within the builder.
+- **Sections & Blocks:** Add, edit, and customize sections and blocks on your pages.
+- **AI-Assisted Module Creation:** Use AI to generate and update blocks.
+- **Dynamic Pages:** Create dynamic content-driven pages with ease.
+- **Collection Management:** Manage content collections and integrate them into your pages.
 
-### Page SEO:
-[Screencast from 2024-08-18 23-34-48.webm](https://github.com/user-attachments/assets/483d0daf-fbf9-4587-b351-f205cc766052)
+## **Getting Started**
 
-### Delete Page (TODO):
+### **1. Initial Setup**
 
-### Add / Edit Section to page:
-[Screencast from 2024-08-18 23-35-59.webm](https://github.com/user-attachments/assets/3592ffb6-7dac-4a92-8586-9d4899a937da)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/TheHadiAhmadi/site-builder.git
+   cd site-builder
+   ```
 
-### Adding Module to page:
-[Screencast from 2024-08-18 23-36-41.webm](https://github.com/user-attachments/assets/d76e6a79-2567-4c02-94e9-6782a8f10d26)
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-### Change Module props:
-[Screencast from 2024-08-18 23-37-23.webm](https://github.com/user-attachments/assets/6c6960bc-e372-4ae6-bf51-e2cb33a08277)
+3. Start the development server:
+   ```bash
+   npm start
+   ```
 
-### Remove Module from page:
-[Screencast from 2024-08-18 23-43-07.webm](https://github.com/user-attachments/assets/c712c1de-5b33-4758-b077-260a78cb2d62)
+4. Open your browser and navigate to `http://localhost:3000` to start building your site.
 
-### Remove Section from page:
-[Screencast from 2024-08-18 23-43-49.webm](https://github.com/user-attachments/assets/4e095610-fd3b-49db-9b97-e24f229a9a94)
+### **2. Using Templates**
 
-### Create Module definition:
-[Screencast from 2024-08-18 23-44-27.webm](https://github.com/user-attachments/assets/16e7b7b9-fd7c-4841-aac8-71a3f984c443)
+- You can select a template during the setup process and customize it based on your needs.
 
-### Use new module in page:
-[Screencast from 2024-08-18 23-45-50.webm](https://github.com/user-attachments/assets/906246bc-e54a-469c-8aff-0f4de6e91e34)
+### **3. Creating and Managing Pages**
+- Pages sidebar item is dedicated to page management, you can create new page, edit and preview pages.
+- Each page can have one or more Sections
+- Each section can contain one or more Blocks.
+- Block is the TailwindCSS based template which supports props.
+- You can add or update Blocks from page editor using AI.
 
-As you see this module doesn't work, we need to update it
+### **4. AI-Assisted Features**
 
-### Update Module definition:
-[Screencast from 2024-08-18 23-46-43.webm](https://github.com/user-attachments/assets/c0f0093d-4ec0-40fc-b6a3-caed2bacdeb0)
+- **Create Block:** Use AI to generate a new block.
+- **Update Block:** Update existing blocks using AI recommendations.
+- **Page SEO Helper:** You can generate SEO Tags for page using AI.
 
-### Delete Module definition (TODO):
+### **5. Dynamic Pages and Collections**
 
+- **Dynamic Pages:** Create pages that automatically update based on dynamic content.
+- **Collections:** Manage content collections and integrate them into your pages.
+- **Use Collection in Blocks:** Set collection properties within block settings for dynamic content.
 
-## Create sample Blogs app:
+## **Screenshots**
 
-### Collections:
-[Screencast from 2024-08-18 23-47-32.webm](https://github.com/user-attachments/assets/49f5e8df-87bd-4678-b5e4-71b47770c29d)
+![Initial Setup](path/to/screenshot1.png)
+![Using Templates](path/to/screenshot2.png)
+![Creating Page](path/to/screenshot3.png)
 
-### sort content (TODO):
+## **Upcoming Features**
+- **Authentication**
+- **File Management**
+- **Content Sort**
+- **Content Pagination**
 
-### content pagination (TODO):
+## **Contributing**
 
-### Use AI to create module definition:
-### Use Collection in module definition:
-### Set props of collection in page's module settings:
-[Screencast from 2024-08-18 23-49-47.webm](https://github.com/user-attachments/assets/ed15c7a4-1f33-495b-88e9-530ef26b1ba9)
+We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) to learn about how you can get involved.
 
-### Use AI to update Module definition (TODO):
+## **License**
 
-### Dynamic pages:
-[Screencast from 2024-08-18 23-52-03.webm](https://github.com/user-attachments/assets/01cd76ce-6f74-41d6-a7e3-a3ea65ac99f5)
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
 
-### Module settings Link / Unlink prop:
-[Screencast from 2024-08-18 23-52-59.webm](https://github.com/user-attachments/assets/3716f75d-3515-44ef-8a11-af9977cf6036)
+## **Contact**
 
-
-### Update content by module settings:
-[Screencast from 2024-08-18 23-54-38.webm](https://github.com/user-attachments/assets/eeba71c3-ba62-4aba-8242-1f08ba1114dd)
+For questions, suggestions, or support, please open an issue on GitHub or contact me at thehadiahmadi@gmail.com.

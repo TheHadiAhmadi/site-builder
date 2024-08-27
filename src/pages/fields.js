@@ -6,9 +6,10 @@ const fieldTypes = [
     { text: 'Checkbox', value: 'checkbox' },
     { text: 'File', value: 'file' },
     { text: 'Select', value: 'select' },
-    { text: 'Slot', value: 'slot' },
+    { text: 'Slot', value: 'slot', hidden: true },
     { text: 'Rich Text', value: 'rich-text' },
-    { text: 'Relation', value: 'relation' }
+    { text: 'Relation', value: 'relation' },
+    { text: 'Collection', value: 'collection', hidden: true },
 ]
 
 function fieldTypeText(key) {
@@ -27,7 +28,7 @@ export function FieldModal({id}) {
 export function FieldTypeSelector({action = 'add-field-choose-type'} = {}) {
     return [
         `<div data-field-type-buttons>
-            ${fieldTypes.map(x => `
+            ${fieldTypes.filter(x => !x.hidden).map(x => `
                 <button type="button" style="width: calc(50% - 8px);" data-button data-button-block data-action="${action}" data-value="${x.value}">
                     ${x.text}
                 </button>
