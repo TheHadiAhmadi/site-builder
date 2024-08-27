@@ -64,9 +64,11 @@
 
 ## **Screenshots**
 
-![Initial Setup](path/to/screenshot1.png)
-![Using Templates](path/to/screenshot2.png)
-![Creating Page](path/to/screenshot3.png)
+![Page editing](/docs/screenshots/page-editing.png)
+![Page Settings](/docs/screenshots/page-settings.png)
+![Update Module with AI](/docs/screenshots/update-module-ai.png)
+![Data Table](/docs/screenshots/data-table.png)
+![Dark Mode](/docs/screenshots/dark-mode.png)
 
 ## **Upcoming Features**
 - **Authentication**
