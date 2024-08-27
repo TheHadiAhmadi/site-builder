@@ -312,11 +312,17 @@ export default {
             
 
                 for(let key in original.links) {
-                    const [first, second] = original.links[key].split('.')
+                    const [first, second, third, fourth] = original.links[key].split('.')
                     
                     if(second) {
                         if(first === 'content') {
-                            content[second] = props[key]
+                            if(fourth) {
+                                content[second][third][fourth] = props[second][third][fourth]
+                            } else if(third) {
+                                content[second][third] = props[second][third]
+                            } else {
+                                content[second] = props[key]
+                            }
                         }
                     }
                 }
@@ -329,9 +335,17 @@ export default {
         let settings = await db('settings').query().first() ?? {}
 
         for(let key in original.links) {
-            const [first, second] = original.links[key].split('.')
-            if(first === 'settings') {
-                settings[second] = props[key]
+            const [first, second, third, fourth] = original.links[key].split('.')
+            if(second) {
+                if(first === 'settings') {
+                    if(fourth) {
+                        settings[second][third][fourth] = props[second][third][fourth]
+                    } else if(third) {
+                        settings[second][third] = props[second][third]
+                    } else {
+                        settings[second] = props[key]
+                    }
+                }
             }
         }
         if(settings.id) {
