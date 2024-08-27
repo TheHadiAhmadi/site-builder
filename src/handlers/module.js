@@ -320,7 +320,9 @@ export default {
                         }
                     }
                 }
-                await db('contents').update(content)
+                if(content) {
+                    await db('contents').update(content)
+                }
             }
         }
 
