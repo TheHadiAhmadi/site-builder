@@ -219,8 +219,10 @@ export default {
 
         if(page.dynamic) {
             const collection = await db('collections').query().filter('id', '=', page.collectionId).first()
+            if(!page.slug.includes('{{')) {
+                page.slug = join(page.slug, '{{slug}}')
+            }
             const dynamicParts = page.slug.split('/').filter(part => part.startsWith('{{') && part.endsWith('}}'));
-            const params = {};
 
             let regexStr = page.slug;
             for (const dynamicPart of dynamicParts) {
@@ -282,9 +284,11 @@ export default {
 
         if(page.dynamic) {
             const collection = await db('collections').query().filter('id', '=', page.collectionId).first()
+            if(!page.slug.includes('{{')) {
+                page.slug = join(page.slug, '{{slug}}')
+            }
             const dynamicParts = page.slug.split('/').filter(part => part.startsWith('{{') && part.endsWith('}}'));
-            const params = {};
-
+            
             let regexStr = page.slug;
             for (const dynamicPart of dynamicParts) {
                 regexStr = regexStr.replace(dynamicPart, '([^/]+)');

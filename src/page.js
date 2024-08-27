@@ -145,6 +145,9 @@ async function getPageSlug(page) {
         let query = db('contents').query().filter('_type', '=', page.collectionId);
 
         const content = await query.first()
+        if(!page.slug.includes('{{')) {
+            page.slug = join(page.slug, '{{slug}}')
+        }
         return getSlug(page.slug, content)
     }
     return page.slug
