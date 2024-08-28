@@ -93,7 +93,7 @@ export async function renderModule(module, {props, mode, definitions, permission
                         module.props[item.slug] = `<div data-slot="${module.id}">${result}</div>`
                     }
                 } else {               
-                    module.props[item.slug] = `<div data-slot="${module.id}" data-action="open-add-module" data-slot-empty>
+                    module.props[item.slug] = `<div data-slot="${module.id}" data-action="open-add-block" data-slot-empty>
                         <span>Drag a Block here or</span>
                         <span data-create-block-text data-action="open-create-block-modal">Create new Block</span>
                     </div>`
@@ -239,7 +239,7 @@ export async function renderModule(module, {props, mode, definitions, permission
     }
 
     return `
-        <div ${definition.name === 'Section' ? 'data-action="open-add-module"' : 'data-action="open-module-settings"'} data-module-id="${module.id}">
+        <div ${definition.name === 'Section' ? 'data-action="close-module-settings"' : 'data-action="open-module-settings"'} data-module-id="${module.id}">
             <div data-module-content>
                 ${sectionResizer}
                 ${rendered}

@@ -529,6 +529,14 @@ iframe {
     display: none;
 }
 
+[data-page-edit-sidebar][data-mode="settings"] [data-name="sidebar-add-block"] {
+    display: none;
+}
+
+[data-page-edit-sidebar][data-mode="block"] [data-name="sidebar-module-settings"] {
+    display: none;
+}
+
 
 @media (max-width: 768px) {
     [data-sidebar-mobile] {
@@ -552,10 +560,14 @@ iframe {
         width: 40px;
     }
 
-    /* [data-body]:has() [data-page-edit-sidebar] {
-        left: calc(-150px);
-        opacity: 0.5;
-    } */
+    [data-page-edit-sidebar][data-mode="settings"] [data-sidebar-title-name-blocks] {
+        display: none;
+    }
+
+    [data-page-edit-sidebar][data-mode="block"] [data-sidebar-title-name-settings] {
+        display: none;
+    }
+    
     [data-hide-mobile] {
         display: none;
     }

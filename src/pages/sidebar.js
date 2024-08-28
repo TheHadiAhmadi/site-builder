@@ -174,10 +174,26 @@ export async function Sidebar({query, url, view, permissions}) {
         if(view === 'iframe') {
             return `
                 <div data-page-edit-sidebar>
+                    <div data-hide-desktop style="color: var(--sidebar-color); margin-bottom: 0.5rem; align-items: center; justify-content: space-between">
+                    <div style="font-weight: bold; font-size: 18px; margin-left: 8px;">
+                        <span data-sidebar-title-name-blocks>Blocks</span>
+                        <span data-sidebar-title-name-settings>Block Settings</span>
+                    </div>
+                    ${Button({
+                        icon: true,
+                        ghost: true,
+                        text: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29l-4.3 4.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l4.29-4.3l4.29 4.3a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.42Z"/></svg>',
+                        action: 'hide-block-list',
+                        dataset: {
+                            'hide-desktop': true,
+                            
+                        }
+                    })}
+                </div>
                     <div data-name="sidebar-add-block">
                         ${await BlockList()}
                     </div>
-                    <div data-name="sidebar-module-settings" style="display: none">
+                    <div data-name="sidebar-module-settings">
                     </div>
                 </div>
             `
@@ -214,19 +230,6 @@ async function BlockList() {
 
     return `
         <div data-definitions>
-            <div data-hide-desktop style="color: var(--sidebar-color); margin-bottom: 0.5rem; align-items: center; justify-content: space-between">
-                <div style="font-weight: bold; font-size: 18px; margin-left: 8px;">Blocks</div>
-                ${Button({
-                    icon: true,
-                    ghost: true,
-                    text: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m13.41 12l4.3-4.29a1 1 0 1 0-1.42-1.42L12 10.59l-4.29-4.3a1 1 0 0 0-1.42 1.42l4.3 4.29l-4.3 4.29a1 1 0 0 0 0 1.42a1 1 0 0 0 1.42 0l4.29-4.3l4.29 4.3a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.42Z"/></svg>',
-                    action: 'hide-block-list',
-                    dataset: {
-                        'hide-desktop': true,
-                        
-                    }
-                })}
-            </div>
             <span data-alert>
                 <svg class="margin-right: 0.5rem" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M11 17h2v-6h-2zm1-8q.425 0 .713-.288T13 8t-.288-.712T12 7t-.712.288T11 8t.288.713T12 9m0 13q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"/></svg>
                 <span>Drag and drop blocks to page!</span>

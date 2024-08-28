@@ -96,7 +96,8 @@ const actions = {
         document.querySelector('iframe').contentDocument.querySelector(`[data-module-id="${moduleId}"]`).click()
 
     },
-    'open-create-block-modal'(el) {
+    'open-create-block-modal'(el, ev) {
+        ev.stopPropagation()
         const modal = document.querySelector('[data-modal="create-ai"]')
         modal.dataset.modalOpen = true
 
@@ -457,11 +458,6 @@ const actions = {
             id: mod.dataset.moduleId
         })
     },
-    'open-add-module'(el, ev) {
-        ev.stopPropagation()
-        document.querySelector('[data-name="sidebar-add-block"]').style.display = 'block'
-        document.querySelector('[data-name="sidebar-module-settings"]').style.display = 'none'
-    },
     async 'toggle-full-width'(el, ev) {
         ev.stopPropagation()
         const mod = getParentModule(el)
@@ -531,18 +527,36 @@ const actions = {
 
         const mod = getParentModule(el)
         const moduleId = mod.dataset.moduleId
-        document.querySelector('iframe').contentDocument.querySelectorAll('[data-module-id][data-active]').forEach(el => {
-            delete el.dataset.active
-        })
 
-        mod.dataset.active = true
+        if(document.querySelector('[data-page-edit-sidebar]').dataset.active && window.innerWidth < 768) {
+            delete document.querySelector('[data-page-edit-sidebar]').dataset.active
+            return;
+        }
+        if(!mod.dataset.active) {
+            document.querySelector('iframe').contentDocument.querySelectorAll('[data-module-id][data-active]').forEach(el => {
+                delete el.dataset.active
+            })
+    
+            mod.dataset.active = true
+            if(window.innerWidth < 768) {
+                return;
+            }
 
-        document.querySelector('[data-name="sidebar-add-block"]').style.display = 'none'
-        document.querySelector('[data-name="sidebar-module-settings"]').style.display = 'block'
+        }
 
+
+        
         // reload(`?mode=edit&moduleId=` + moduleId)
         const settings = await request('module.loadSettings', {id: moduleId, slug: decodeURIComponent(location.pathname)})
         const template = await request('module.getSettingsTemplate', {id: moduleId})
+
+        if(template.includes('This block doesn\'t have')) {
+            return;
+        }
+        
+        document.querySelector('[data-page-edit-sidebar]').dataset.active = true
+        document.querySelector('[data-page-edit-sidebar]').dataset.mode = 'settings'
+
         const moduleSettingsSidebar = document.querySelector('[data-name="sidebar-module-settings"]')
         moduleSettingsSidebar.innerHTML = template
 
@@ -624,8 +638,18 @@ const actions = {
         delete mod.dataset.contentId
         mod.querySelector('[data-content-delete]').classList.remove('open')
     },
-    'open-block-list'() {
-        document.querySelector('[data-page-edit-sidebar]').dataset.active = true
+    'open-add-block'(el, ev) {
+        if(el.hasAttribute('data-slot-empty')) {
+            el.dataset.active = true
+        }
+        ev.stopPropagation()
+        document.querySelector('[data-page-edit-sidebar]').dataset.active = true       
+        document.querySelector('[data-page-edit-sidebar]').dataset.mode = 'block'
+    },
+    'close-module-settings'(el, ev) {
+        delete document.querySelector('[data-page-edit-sidebar]').dataset.active        
+        document.querySelector('[data-page-edit-sidebar]').dataset.mode = 'block'
+
     },
     'hide-block-list'() {
         delete document.querySelector('[data-page-edit-sidebar]').dataset.active
