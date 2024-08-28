@@ -1,64 +1,46 @@
-import { Button, Form, Input, Modal, Page, Stack, Textarea } from "../components.js"
+import { Button, Form, Input, Modal, Page, Stack, Textarea } from "#components"
+import { db } from "#services"
 import { FieldModal, FieldsList } from "./fields.js"
 
-export function CreateModuleAiModal() {
-    return Modal({
-        name: 'create-ai',
-        title: `Create Module with AI`,
-        body: Form({
-            card: false,
-            cancelAction: 'modal.close',
-            handler: 'ai.createModule',
-            fields: [
-                Input({label: 'Name', placeholder: 'Enter Module name', name: 'name'}),
-                Textarea({
-                    label: 'Describe ui design of module', 
-                    rows: 5, 
-                    placeholder: `Create Card with red background and white text...`, 
-                    name: 'template'
-                })
-            ]
-        })
-    })
-}
-
-export function pageCreateModule() {
+export async function BlockCreatePage() {
     return [
         Page({
             actions: [
                 Button({text: 'Create With AI', color: 'primary', action: "open-create-module-ai-modal"}),
                 Button({text: 'Cancel', action: "navigation.navigate-to-default-view"})
             ].join(''),
-            title: `Create New Module`,
+            title: `Create New Block`,
             body: [
                 Form({
                     handler: 'definition.create',
                     fields: [
-                        Input({label: 'Name', placeholder: 'Enter Module name', name: 'name'}),
-                        Textarea({label: 'Template', rows: 15, placeholder: 'Enter Module template (Handlebars)', name: 'template'}),
+                        Input({label: 'Name', placeholder: 'Enter Block name', name: 'name'}),
+                        Textarea({label: 'Template', rows: 15, placeholder: 'Enter Block template (Handlebars)', name: 'template'}),
                     ],
                     cancelAction: 'navigation.navigate-to-default-view'
                 })
             ]
         }),
-        CreateModuleAiModal()
+        CreateBlockAiModal()
     ].join('')
 }
 
-export function pageUpdateModule(data) {
+export async function BlockUpdatePage({query}) {
+    const block = await db('definitions').query().filter('id', '=', query.id).first()
+
     return [
         Page({
             actions: [
                 Button({text: 'Update With AI', color: 'primary', action: "open-update-module-ai-modal"}),
-                Button({text: 'Delete', color: 'danger', action: "delete-module", dataset: {id: data.id}}),
+                Button({text: 'Delete', color: 'danger', action: "delete-module", dataset: {id: block.id}}),
                 Button({text: 'Cancel', action: "navigation.navigate-to-default-view"}),
                 
             ].join(''),
-            title: `Update Module (${data.name})`,
+            title: `Update Block (${block.name})`,
             body: Stack({vertical: true, gap: 'lg'}, [
                 Form({
                     load: 'definition.load',
-                    id: data.id,
+                    id: block.id,
                     handler: 'definition.update',
                     fields: [
                         `<input type="hidden" name="id" value="" />`,
@@ -70,24 +52,45 @@ export function pageUpdateModule(data) {
                 }),
             ])
         }),
-        FieldsList({id: data.id, fields: data.props, updateAction: 'module-open-edit-field-modal', action: 'open-module-add-prop-modal', deleteAction: 'delete-settings-field'}),             
-        FieldModal({ id: data.id }),
-        UpdateModuleAiModal({id: data.id}),
+        FieldsList({id: block.id, fields: block.props, updateAction: 'module-open-edit-field-modal', action: 'open-module-add-prop-modal', deleteAction: 'delete-settings-field'}),             
+        FieldModal({ id: block.id }),
+        UpdateBlockAiModal({id: block.id}),
         Page({
             title: 'Previous Prompts',
             body:[
-            data.prompt ? Stack({vertical: true, gap: 'sm'}, [
-                (typeof data.prompt.template === 'string' ? [data.prompt.template] : data.prompt.template).map(x => `
+            block.prompt ? Stack({vertical: true, gap: 'sm'}, [
+                (typeof block.prompt.template === 'string' ? [block.prompt.template] : block.prompt.template).map(x => `
                     <div style="border-radius: 4px; border: 1px solid var(--border-color); background-color: var(--card-bg); padding: 1rem">
                         ${(x).replace(/</g, '&lt;').replace(/>/g, '&gt;')}
                     </div>
                 `).join('')
             ]) : '', 
         ]})
-    ].join('')
+    ].join('')      
 }
 
-export function UpdateModuleAiModal({id}) {
+export function CreateBlockAiModal() {
+    return Modal({
+        name: 'create-ai',
+        title: `Create Block with AI`,
+        body: Form({
+            card: false,
+            cancelAction: 'modal.close',
+            handler: 'ai.createModule',
+            fields: [
+                Input({label: 'Name', placeholder: 'Enter Block name', name: 'name'}),
+                Textarea({
+                    label: 'Describe ui design of module', 
+                    rows: 5, 
+                    placeholder: `Create Card with red background and white text...`, 
+                    name: 'template'
+                })
+            ]
+        })
+    })
+}
+
+export function UpdateBlockAiModal({id}) {
     return Modal({
         name: 'update-ai',
         title: 'Update Module with AI',
@@ -103,3 +106,4 @@ export function UpdateModuleAiModal({id}) {
         })
     })
 }
+

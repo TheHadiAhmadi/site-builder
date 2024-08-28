@@ -49,6 +49,13 @@
     color: var(--button-bg);
     background-color: var(--button-ghost-hover-bg); /* Subtle background on hover */
 }
+[data-button-color="default"][data-button-ghost] {
+    color: var(--button-default-content);
+}
+[data-button-color="default"][data-button-ghost]:hover {
+    color: var(--button-default-content);
+    box-shadow: none;
+}
 
 [data-button-block] {
     width: 100%;

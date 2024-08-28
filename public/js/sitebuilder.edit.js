@@ -21,7 +21,7 @@ function onInit() {
         }
     });
 
-    if(iframeElement) {
+    if(iframeElement && iframeElement.src.includes('mode=preview')) {
         initSortable()
         
         setTimeout(() => {

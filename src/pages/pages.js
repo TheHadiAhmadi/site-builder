@@ -1,3 +1,4 @@
+import { db } from "#services"
 import { Button, Checkbox, File, Form, Input, Label, Modal, Page, Select, Stack, TabItem, Tabs, Textarea } from "../components.js"
 
 function PageSeoFields() {
@@ -92,7 +93,9 @@ function PageEditFields({ collections }) {
     ])
 }
 
-export function pageCreatePage({ collections }) {
+export async function PageCreatePage() {
+    let collections = await db('collections').query().all()
+
     return Page({
         title: 'Create Page',
         actions: '',
@@ -104,7 +107,11 @@ export function pageCreatePage({ collections }) {
     })
 }
 
-export function pageUpdatePage(page, { back = '?mode=edit', collections }) {
+export async function PageUpdatePage({query}) {
+    let back = decodeURIComponent(query.back ?? '?mode=edit')
+    let collections = await db('collections').query().all()
+    const page = await db('pages').query().filter('id', '=', query.id).first()
+
     return [
         Page({
             title: 'Update Page',

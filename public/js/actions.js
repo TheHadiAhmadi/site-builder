@@ -555,6 +555,16 @@ const actions = {
             hydrate(moduleSettingsSidebar)
         })
     },
+    'toggle-sidebar'() {
+        console.log('toggle offcanvas')
+        const offcanvas = document.querySelector('[data-sidebar-offcanvas]')
+
+        if(offcanvas.dataset.open) {
+            delete offcanvas.dataset.open
+        } else {
+            offcanvas.dataset.open = true
+        }
+    },
     async 'add-section'(el, ev) {
         ev.stopPropagation()
         // const order = el.dataset.order
@@ -614,16 +624,11 @@ const actions = {
         delete mod.dataset.contentId
         mod.querySelector('[data-content-delete]').classList.remove('open')
     },
-    'open-module-insert'(el) {
-        const mod = getParentModule(el)
-
-        mod.dataset.dataMode = 'add'
-
+    'open-block-list'() {
+        document.querySelector('[data-page-edit-sidebar]').dataset.active = true
     },
-    'open-module-list'(el) {
-        const mod = getParentModule(el)
-
-        mod.dataset.dataMode = 'list'
+    'hide-block-list'() {
+        delete document.querySelector('[data-page-edit-sidebar]').dataset.active
     },
     'open-delete-content-confirm'(el) {
         const mod = getParentModule(el)

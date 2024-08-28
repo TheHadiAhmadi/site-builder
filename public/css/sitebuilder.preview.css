@@ -111,7 +111,7 @@ body {
 }
 
 [data-module-id]:hover > [data-module-actions] {
-    opacity: 1;
+    /* opacity: 0.5; */
 }
 
 [data-module-id][data-active] > [data-module-actions] {

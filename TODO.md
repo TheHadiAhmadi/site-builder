@@ -6,6 +6,14 @@
 - [ ] Improve seo and make it more advanced (USE Seo)
 - [ ] more examples Rahnama, computer, car, ...
 
+- [ ] Shortcuts
+- [ ] Copy / Paste
+- [ ] Undo / Redo
+- [ ] AI Theme Generation
+- [ ] Component generation should be based on theme
+- [ ] Show plugin actions only if selected. 
+- [ ] Dark mode for rich text
+
 ## General
 - [ ] edit user creates user instead of edit
 - [ ] profile avatar in toolbar

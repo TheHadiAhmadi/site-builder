@@ -176,7 +176,7 @@ export function Form({name ='', handler, fields, cancelAction, cancelDataset = {
     return form;
 }
 
-export function Button({href, ghost = false, icon = false, text, color, block, action, outline = false, size="medium", dataset = {} , type="button"}) {
+export function Button({href, ghost = false, icon = false, text, color = 'default', block, action, outline = false, size="medium", dataset = {} , type="button"}) {
     let attrs = ''
     for(let item in dataset) {
         if(dataset[item] != undefined) {

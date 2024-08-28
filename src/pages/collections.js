@@ -128,7 +128,7 @@ export function RelationFieldModal() {
     })
 }
 
-export function createCollectionPage() {
+export async function CollectionCreatePage() {
     return Page({
         title: 'Create Collection',
         actions: [],
@@ -138,7 +138,9 @@ export function createCollectionPage() {
     })
 }
 
-export function updateCollectionPage(collection) {
+export async function CollectionUpdatePage({query}) {
+    const collection = await db('collections').query().filter('id', '=', query.id).first()
+
     return [
         Page({
         title: 'Update Collection',
@@ -159,7 +161,9 @@ export function updateCollectionPage(collection) {
 }
 
 
-export async function collectionDataList(collection) {
+export async function CollectionDataListPage({query}) {
+    const collection = await db('collections').query().filter('id', '=', query.id).first()
+
     let content = await CollectionDataTable({filters: [], page: 1, perPage: 10, collectionId: collection.id, fields: collection.fields, relationFilters: true})
     
     return Page({
@@ -171,7 +175,10 @@ export async function collectionDataList(collection) {
     })
 }
 
-export function collectionDataCreate(collection, collections) {
+export async function CollectionDataCreatePage({query}) {
+    const collection = await db('collections').query().filter('id', '=', query.id).first()
+    const collections = await db('collections').query().all()
+
     return Page({
         title: 'Insert ' + collection.name,
         back: '?mode=edit&view=collections.data.list&id=' + collection.id,
@@ -189,7 +196,11 @@ export function collectionDataCreate(collection, collections) {
     })
 }
 
-export async function collectionDataUpdate(collection, data, collections) {
+export async function CollectionDataUpdatePage({query}) {
+    const data = await db('contents').query().filter('id', '=', query.id).first()
+    const collection = await db('collections').query().filter('id', '=', data._type).first()
+    const collections = await db('collections').query().first()
+
     const id = data.id.toString()
     return Page({
         title: 'Update ' + collection.name,

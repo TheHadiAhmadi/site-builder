@@ -37,6 +37,7 @@
   --label-color: var(--color-default-content);
 
   /* Component Colors */
+  --button-ghost-hover-bg: rgba(0, 0, 0, 0.05);
   --modal-bg: var(--color-base-100);
   --modal-color: var(--color-default-content);
   --card-border: var(--color-default-border);
@@ -88,7 +89,7 @@
 
   /* Component Colors */
   --border-color: var(--color-default-border);
-  --button-ghost-hover-bg: rgba(255, 255, 255, 0.05);
+  --button-ghost-hover-bg: rgba(255, 255, 255, 0.1);
   --modal-bg: var(--color-base-100);
   --modal-color: var(--color-default-content);
   --card-border: var(--color-default-border);
