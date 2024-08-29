@@ -162,12 +162,17 @@ export async function renderPage(req, res) {
 
     let props = {}
     props.settings = await db('settings').query().first() ?? {}
+    const tailwind = JSON.stringify({ darkMode: 'class' })
 
     if (!page) {
         if (mode == 'edit') {
 
             const html = layouts.default({
-                head: stylesheet,
+                mode,
+                theme: mode === 'edit' ? 'dark' : 'light',
+                tailwind,
+                settings: await db('settings').query().first() ?? {},
+                head: '',
                 body: await renderBody([], { ...req.query, mode, url: req.url, view }),
                 title: 'Untitled',
                 theme: 'dark'
@@ -205,8 +210,6 @@ export async function renderPage(req, res) {
     for (let key in page.seo) {
         seo[key] = hbs.compile(page.seo[key])({ ...props, content: props.pageContent, pageContent: undefined })
     }
-
-    const tailwind = JSON.stringify({ darkMode: 'class' })
 
     const html = layouts.default({
         mode,

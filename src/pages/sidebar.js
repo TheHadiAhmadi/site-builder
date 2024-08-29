@@ -81,7 +81,7 @@ async function sidebarPages({ url, permissions }) {
 }
 
 export async function Sidebar({query, url, view, permissions}) {
-    const settings = await db('settings').query().first()
+    const settings = await db('settings').query().first() ?? {}
     const mode = (view === 'iframe' || !view) ? 'modules' : ''
 
     function logo() {

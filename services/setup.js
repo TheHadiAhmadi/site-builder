@@ -114,6 +114,7 @@ export async function setupCms(req, res) {
                 let index = 0
                 let afterInsertActions = []
                 for(let module of modules) {
+                    console.log(module)
                     for(let prop of _definitions[module.definition].props ?? []) {
                         if(!module.props) continue;
                         const value = module.props[prop.slug]
@@ -356,6 +357,15 @@ export async function setupCms(req, res) {
         const content = await zip.loadAsync(readFileSync(zipFile) , {createFolders: true})
 
         const promises = []
+
+        for(let key in defaultModules) {
+            const res = await db('definitions').insert({
+                name: key,
+                props: defaultModules[key].props,
+                template: defaultModules[key].template,
+            })
+            _definitions[res.name] = res
+        }
 
         content.forEach((path, file) => {
             promises.push(

@@ -290,7 +290,7 @@ app.post('/api/export', async(req, res) => {
             for(let field of collection.fields) {
                 if(field.type === 'file') {
                     if(field.multiple) {
-                        for(let file of files[content[field.slug]] ?? []) {
+                        for(let file of content[field.slug] ?? []) {
                             files[file] = true
                         }
                     } else {
