@@ -50,6 +50,18 @@ Handlebars.registerHelper('uppercase', function (str) {
     return str.toUpperCase();
 });
 
+Handlebars.registerHelper('truncateText', function(text, length) {
+    if (typeof text !== 'string') return '';
+    
+    // Check if the text length exceeds the specified length
+    if (text.length <= length) {
+        return text; // Return the original text if it's within the length
+    }
+    
+    // Truncate the text and append ellipsis
+    return text.substring(0, length) + '...';
+});
+
 Handlebars.registerHelper('lowercase', function (str) {
     return str.toLowerCase();
 });

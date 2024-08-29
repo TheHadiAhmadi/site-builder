@@ -108,6 +108,7 @@ const actions = {
 
             await request('ai.createModule', {
                 name: form.querySelector('[name="name"]').value ?? '',
+                image: form.querySelector('[name="image"]').value ?? '',
                 template: form.querySelector('[name="template"]').value ?? ''
             }).then(async res => {
                 delete modal.dataset.modalOpen
@@ -314,6 +315,7 @@ const actions = {
 
             await request('ai.updateModule', {
                 id: form.querySelector('[name="id"]').value,
+                image: form.querySelector('[name="image"]').value,
                 template: form.querySelector('[name="template"]').value ?? ''
             }).then(res => {
                 modal.dataset.modalOpen

@@ -91,7 +91,7 @@ export function CreateBlockAiModal() {
             fields: [
                 Input({label: 'Name', placeholder: 'Enter Block name', name: 'name'}),
                 Textarea({
-                    label: 'Describe ui design of module', 
+                    label: 'Prompt', 
                     rows: 5, 
                     placeholder: `Create Card with red background and white text...`, 
                     name: 'template'
@@ -124,7 +124,7 @@ export function UpdateBlockAiModal({id}) {
             ],
             fields: [
                 `<input type="hidden" name="id" value="${id}">`,
-                Textarea({name: 'template', label: 'Template', rows: 5, placeholder: 'Which changes do you want to apply for this module?'}),
+                Textarea({name: 'template', label: 'Prompt', rows: 5, placeholder: 'Which changes do you want to apply for this module?'}),
                 File({name: 'image', label: "Image", type: 'image', multiple: false, hidden: true}),
             ]
         })

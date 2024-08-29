@@ -25,7 +25,7 @@ function generateUpdateModuleSystemPrompt({ collections, definition }) {
         - RelationProp: { "type": "relation", "slug": "string", "label": "string", "collectionId": "string", "multiple": boolean }
 
       - **Available Handlebars helpers**: 
-        eq, ifCond, formatDate, json, uppercase, lowercase, times, join, safeString, default
+        eq, ifCond, truncateText, formatDate, json, uppercase, lowercase, times, join, safeString, default
 
     - **Design Requirements**:
       - Ensure the template is fully responsive across mobile, tablet, and desktop devices.
