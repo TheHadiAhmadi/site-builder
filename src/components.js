@@ -38,10 +38,11 @@ export function Page({id, title, back, actions, body}) {
     `
 }
 
-export function Label({text, body, inline = false, symbolic = false}) {
+export function Label({text, hidden, body, inline = false, symbolic = false}) {
     const attrs = attributes({
         'data-label-inline': inline,
         'data-label': inline === false,
+        'data-hidden': hidden
     })
     
     let tag = symbolic ? 'div' : 'label'
@@ -107,7 +108,7 @@ export function Checkbox({name, checked, label, multiple, value = "true"}) {
     })
 }
 
-export function File({name, label, type, multiple, size = 'medium'}) {
+export function File({name, label, type, multiple, size = 'medium', hidden = false}) {
     let body;
 
     if(type === 'image') {
@@ -148,18 +149,21 @@ export function File({name, label, type, multiple, size = 'medium'}) {
 
     return Label({
         symbolic: true,
+        hidden,
         text: label,
         body
     })
 }
 
-export function Form({name ='', handler, fields, cancelAction, cancelDataset = {}, cancelHref = undefined, load, id, onSubmit, card = true}) {
+export function Form({name ='', handler, fields, cancelAction, startActions = [], cancelDataset = {}, cancelHref = undefined, load, id, onSubmit, card = true}) {
 
     const form = html`
         <form${onSubmit ? ` data-action="${onSubmit}" data-trigger="submit"` : ''} data-form="${name}" ${load ? `data-load="${load}" data-id=${id}` : ''}>
             <input type="hidden" name="_handler" value="${handler}"/>
             ${fields}
             ${Stack({justify: 'end'}, [
+                startActions.join(''),
+                `<div style="margin-inline-start: auto;"></div>`,
                 Button({text: 'Cancel', type: 'button', color: 'default', href: cancelHref, action: cancelAction, dataset: cancelDataset}),
                 Button({text: 'Submit', type: 'submit', color: 'primary'})
             ])}

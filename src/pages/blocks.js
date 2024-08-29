@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Page, Stack, Textarea } from "#components"
+import { Button, File, Form, Input, Modal, Page, Stack, Textarea } from "#components"
 import { db } from "#services"
 import { FieldModal, FieldsList } from "./fields.js"
 
@@ -77,6 +77,17 @@ export function CreateBlockAiModal() {
             card: false,
             cancelAction: 'modal.close',
             handler: 'ai.createModule',
+            startActions: [
+                Button({ 
+                    action: 'create-block-ai-modal-image-add',
+                    text: `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h8v2H5v14h14v-8h2v8q0 .825-.587 1.413T19 21zm1-4h12l-3.75-5l-3 4L9 13zm11-8V7h-2V5h2V3h2v2h2v2h-2v2z"/></svg>
+                        Add Image    
+                    `, 
+                    color: 'primary', 
+                    outline: true 
+                })
+            ],
             fields: [
                 Input({label: 'Name', placeholder: 'Enter Block name', name: 'name'}),
                 Textarea({
@@ -84,7 +95,8 @@ export function CreateBlockAiModal() {
                     rows: 5, 
                     placeholder: `Create Card with red background and white text...`, 
                     name: 'template'
-                })
+                }),
+                File({name: 'image', label: "Image", type: 'image', multiple: false, hidden: true}),
             ]
         })
     })
@@ -99,9 +111,21 @@ export function UpdateBlockAiModal({id}) {
             card: false,
             cancelAction: 'modal.close',
             handler: 'ai.updateModule',
+            startActions: [
+                Button({ 
+                    action: 'update-block-ai-modal-image-add',
+                    text: `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h8v2H5v14h14v-8h2v8q0 .825-.587 1.413T19 21zm1-4h12l-3.75-5l-3 4L9 13zm11-8V7h-2V5h2V3h2v2h2v2h-2v2z"/></svg>
+                        Add Image    
+                    `, 
+                    color: 'primary', 
+                    outline: true 
+                })
+            ],
             fields: [
                 `<input type="hidden" name="id" value="${id}">`,
-                Textarea({name: 'template', label: 'Template', rows: 5, placeholder: 'Which changes do you want to apply for this module?'})
+                Textarea({name: 'template', label: 'Template', rows: 5, placeholder: 'Which changes do you want to apply for this module?'}),
+                File({name: 'image', label: "Image", type: 'image', multiple: false, hidden: true}),
             ]
         })
     })

@@ -59,14 +59,14 @@ function generateCreateModulePrompt({template}) {
 }
 
 export async function createModule(body) {
-    const {template, name} = body
+    const {template, name, image} = body
 
     const collections = await db('collections').query().all()
 
     const prompt = generateCreateModulePrompt({template})
     const systemPrompt = generateCreateModuleSystemPrompt({collections, name})
 
-    const payload = await generateResponse(systemPrompt, prompt)
+    const payload = await generateResponse(systemPrompt, prompt, image)
     let res;
 
     if(payload.template) {

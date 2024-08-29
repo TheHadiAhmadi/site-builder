@@ -69,7 +69,7 @@ function generateUpdateModulePrompt({ template }) {
 }
 
 export async function updateModule(body) {
-    const { template, id } = body
+    const { template, image, id } = body
 
     const collections = await db('collections').query().all()
 
@@ -77,7 +77,7 @@ export async function updateModule(body) {
     const systemPrompt = generateUpdateModuleSystemPrompt({ collections, definition })
     const prompt = generateUpdateModulePrompt({ template })
 
-    const payload = await generateResponse(systemPrompt, prompt)
+    const payload = await generateResponse(systemPrompt, prompt, image)
 
     if (payload.template) {
 

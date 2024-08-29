@@ -448,7 +448,8 @@ const actions = {
 
         delete sidebarElement.dataset.active        
     },
-    'open-delete-module-confirm'(el) {
+    'open-delete-module-confirm'(el, ev) {
+        ev.stopPropagation()
         const mod = getParentModule(el)
         // mod.querySelector(`[data-module-delete]`).classList.add('open')
         openConfirm({
@@ -457,6 +458,14 @@ const actions = {
             action: 'module.delete',
             id: mod.dataset.moduleId
         })
+    },
+    'create-block-ai-modal-image-add'() {
+        const form = document.querySelector('[data-modal="create-ai"] [data-form]')
+        delete form.querySelector('[name="image"]').parentElement.parentElement.dataset.hidden
+    },
+    'update-block-ai-modal-image-add'() {
+        const form = document.querySelector('[data-modal="update-ai"] [data-form]')
+        delete form.querySelector('[name="image"]').parentElement.parentElement.dataset.hidden
     },
     async 'toggle-full-width'(el, ev) {
         ev.stopPropagation()
@@ -731,7 +740,8 @@ const actions = {
             })
         }
     },
-    'delete-module'(el) {
+    'delete-module'(el, ev) {
+        ev.stopPropagation()
         openConfirm({
             title: 'Are you sure?',
             description: 'Are you sure to remove this module definition?',

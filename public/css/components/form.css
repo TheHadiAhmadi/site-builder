@@ -206,3 +206,7 @@
     background-color: var(--input-bg);
     transition: background-color 0.3s ease;
 }
+
+[data-hidden] {
+    display: none;
+}
