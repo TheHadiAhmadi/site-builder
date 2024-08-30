@@ -59,6 +59,9 @@ const defaultModules = {
 export async function setupCms(req, res) {
     const {template, password, file} = req.body
 
+    if(!existsSync('./uploads')) {
+        mkdirSync('./uploads')
+    }
     async function importUsers(users) {
         console.log("importUsers", users)
         const adminUser = users.find(user => user.username === 'admin');

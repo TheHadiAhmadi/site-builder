@@ -133,7 +133,7 @@ export async function CollectionCreatePage() {
         title: 'Create Collection',
         actions: [],
         body: CollectionForm({
-            handler: 'collections.create'
+            handler: 'collection.create'
         })
     })
 }

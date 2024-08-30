@@ -1,4 +1,6 @@
 ## Feedbacks
+- [ ] Error uploads folder doesn't exists
+- [ ] Redirect after form submits..
 - [ ] Block editor design. preview block, edit in modals. fields another tab or button
 - [ ] Admin panel should be responsive
 - [ ] AI should be more visible for users (ai button primary)
@@ -11,7 +13,7 @@
 - [ ] Undo / Redo
 - [ ] AI Theme Generation
 - [ ] Component generation should be based on theme
-- [ ] Show plugin actions only if selected. 
+- [x] Show plugin actions only if selected. 
 - [ ] Dark mode for rich text
 
 ## General
@@ -20,11 +22,11 @@
 - [ ] review robots.txt file
 - [ ] Show spinner or progress for file uploader
 - [ ] show loading spinner when form submitted
-- [ ] Rahnama detail page doesn't work with dynamic content
+- [x] Rahnama detail page doesn't work with dynamic content
 - [ ] For backup site use site name (settings) and current date
 - [ ] structure of zip file should not be specific and any folder name should be allowed (instead of site/)
-- [ ] update videos of readme file
-- [ ] page structure should be like user.list user.edit,,, instead of add-user...
+- [x] update videos of readme file
+- [x] page structure should be like user.list user.edit,,, instead of add-user...
 - [ ] Implement login process and permissions
     - [ ] Forgot password
     - [ ] Reset password

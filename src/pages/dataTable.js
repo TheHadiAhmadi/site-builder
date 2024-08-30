@@ -176,9 +176,9 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                 return Stack({}, filters.map(x => `<span data-badge>${x.field} ${x.operator} ${x.value}</span>`))
             } else {
                 if(field.multiple) {
-                    return Stack({}, item[field.slug].map(x => `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${x.id}" data-badge>${x.name}</a>`))
+                    return Stack({}, item[field.slug].map(x => `<a href="?mode=edit&view=collections.data.update&id=${x.id}" data-badge>${x.name}</a>`))
                 } else {
-                    return `<a href="?mode=edit&view=collection-data-update&collectionId=${field.collectionId}&id=${item[field.slug].id}" data-badge>${item[field.slug].name}</a>`
+                    return `<a href="?mode=edit&view=collections.data.update&id=${item[field.slug].id}" data-badge>${item[field.slug].name}</a>`
                 }
             }
         }
