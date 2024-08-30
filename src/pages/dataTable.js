@@ -42,7 +42,7 @@ export async function getDataTableItems({page = 1, perPage = 10, query, fields, 
                     }
                 }
                 if(field.type == 'relation') {
-                    if(item[field.slug].filters) {
+                    if(item[field.slug]?.filters) {
 
                     } else {
                         if(field.multiple) {
@@ -164,7 +164,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
         if(field.type === 'relation') {
             if(!item[field.slug]) return ''
 
-            if(item[field.slug].filters) {
+            if(item[field.slug]?.filters) {
                 function hasValue(item) {
                     if(Array.isArray(item.value) && item.value.length === 0) return false;
                     return item.value !== ''
