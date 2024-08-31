@@ -50,7 +50,7 @@ body {
 }
 
 [data-module-id] {
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     border: 1px solid #00000020;
     position: relative;
 }

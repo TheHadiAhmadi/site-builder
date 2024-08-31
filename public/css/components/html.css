@@ -42,7 +42,7 @@
     line-height: 1.75;
     color: #3182ce; /* Link color */
     text-decoration: underline;
-    transition: color 0.2s ease-in-out;
+    transition: all 0.2s ease;
 }
 
 [data-html] a:hover {

@@ -2,11 +2,13 @@
     overflow-x: auto;
     border-radius: 8px;
     border: 1px solid var(--table-border);
+    transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 [data-table] {
     background-color: var(--table-bg);
+    transition: all 0.2s ease;
     width: 100%;
     border-collapse: separate; /* Keep borders separate for rounded corners */
     border-spacing: 0; /* Remove gaps between cells */
@@ -14,13 +16,20 @@
 
 [data-table] thead tr {
     background-color: var(--table-head-bg);
-    color: var(--table-head-color);
+    transition: all 0.2s ease;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
 
+[data-table] thead tr th {
+    color: var(--table-head-color);
+}
+
 [data-table] td, [data-table] th {
+    color: var(--body-color);
     text-align: start;
+    transition: all 0.2s ease;
+
     padding: 14px 18px;
     white-space: nowrap;
 }
@@ -31,11 +40,7 @@
 [data-table] td {
     font-weight: normal;
     background-color: var(--table-body-bg);
-}
-
-[data-table] tbody tr td {
     border-bottom: 1px solid var(--border-color);
-    transition: background-color 0.1s ease; /* Smooth hover effect */
 }
 
 [data-table] tbody tr:hover td {
@@ -52,6 +57,7 @@
     border: 1px dashed var(--table-border); /* Dashed border for empty state */
     border-radius: 8px;
     background-color: var(--table-body-bg);
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -30,7 +30,9 @@ export async function PageEditorPage({url, query, view}) {
                     ${view === 'iframe' ? Button({ action: 'open-add-block', outline: true, color: 'primary', text: `
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z"/></svg>
                         <span data-add-block-button>Add Block</span>
-                    `}) : ''}
+                    `, dataset: {
+                        'hide-desktop': true
+                    }}) : ''}
                     ${page?.name ?? 'Untitled'}
                 </div>
                 <div data-header-actions>

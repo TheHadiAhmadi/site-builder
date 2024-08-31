@@ -7,6 +7,7 @@
     border-radius: 16px;
     background-color: var(--badge-bg);
     color: var(--badge-color);
+    transition: all 0.2s ease;
 }
 
 [data-badge-color="success"] {

@@ -8,7 +8,7 @@
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: all 0.2s ease;
     opacity: 0;
     display: flex;
     visibility: hidden;
@@ -29,7 +29,7 @@
     border: 1px solid var(--border-color);
     max-height: 90vh;
     overflow: auto;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition: all 0.2s ease;
     transform: scale(0.95);
     opacity: 0;
 }

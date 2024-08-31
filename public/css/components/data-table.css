@@ -18,6 +18,8 @@
 [data-data-table-filter-button] {
     border-radius: 16px;
     background-color: var(--table-filter-bg);
+    color: var(--color-default-content);
+    transition: all 0.2s ease;
     border: 1px solid var(--table-filter-border);
     display: flex;
     align-items: center;

@@ -126,6 +126,7 @@ iframe {
     flex-direction: column;
     width: var(--sidebar-width);
     background-color: var(--body-bg);
+    transition: all 0.2s ease;
     color: var(--sidebar-color);
 }    
 [data-sidebar-header] {
@@ -181,6 +182,8 @@ iframe {
     display: flex;
     align-items: center;
     justify-content: start;
+    background: transparent;
+    transition: all 0.2s ease;
     gap: 0.5rem;
     cursor: pointer;
     border-radius: 4px;
@@ -201,7 +204,7 @@ iframe {
     background-color: var(--body-bg);
     left: calc(-1 * var(--sidebar-width));
     width: var(--sidebar-width);
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     height: calc(100vh - 4rem);
     overflow: auto;
     padding-top: 4px;
@@ -214,6 +217,7 @@ iframe {
 
 [data-sidebar-toggler-chevron] {
     margin-left: auto;
+    transition: all 0.2s ease;
     color: var(--color-muted-alt);
 }
 
@@ -252,6 +256,7 @@ iframe {
 
 [data-sidebar-toggler]:hover {
     background: var(--sidebar-item-hover-background);
+    transition: all 0.2s ease;
 
     /* background-color: var(--sidebar-bg); */
 }
@@ -264,6 +269,7 @@ iframe {
 [data-definition-module] {
     padding: 0.5rem 1rem;
     width: 100%;
+    transition: all 0.2s ease;
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     color: var(--color-default-content);
@@ -284,6 +290,7 @@ iframe {
     display: flex;
     background-color: var(--sidebar-primary-bg);
     display: none;
+    transition: all 0.2s ease;
 
     color: var(--sidebar-color);
     border-bottom: 1px solid var(--sidebar-primary-border);
@@ -311,7 +318,7 @@ iframe {
 [data-sidebar-secondary] {
     width: var(--sidebar-width);
     height: 100%;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     /* background-color: var(--sidebar-secondary-bg); */
     /* border-right: 1px solid var(--sidebar-secondary-border); */
     overflow: auto;
@@ -347,6 +354,8 @@ iframe {
     /* background-color: var(--sidebar-item-bg); */
     padding: 6px 0.5rem;
     /* #404040f0 */
+    background-color: transparent;
+    transition: all 0.2s ease;
     color: var(--sidebar-color);
     user-select: none;
     /* font-weight: bold; */
@@ -368,11 +377,16 @@ iframe {
     border: 1px solid var(--sidebar-item-icon-border);
     border-radius: 4px;
     opacity: 0;
-    pointer-events: none;
+    pointer-events: none;    
+    transition: all 0.2s ease;
+    background-color: transparent;
+
 }
 
 [data-secondary-sidebar-item-icon]:hover {
     box-shadow: 0 1px 4px -2px var(--sidebar-item-icon-shadow-color);
+
+
     background-color:var(--sidebar-item-icon-bg);
     border-radius: 4px;
     opacity: 0;
@@ -394,8 +408,9 @@ iframe {
 [data-sidebar-item-button] {
     justify-content: start;
     height: 36px;
+    transition: all 0.2s ease;
     background-color: var(--sidebar-item-hover-bg);
-    color: var(--sidebar-item-color);
+    color: var(--body-color);
     display: flex;
     gap: 8px;
     align-items: center;
@@ -428,6 +443,7 @@ iframe {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     color: var(--color-default-content);
+    transition: all 0.2s ease;
 
     height: 100%;
     overflow: auto;
@@ -451,6 +467,8 @@ iframe {
     height: 100vh;
     overflow: auto;
     background-color: var(--body-bg);
+    transition: all 0.2s ease;
+
     color: var(--body-color);
 }
 
@@ -509,16 +527,20 @@ iframe {
     padding: 0.5rem;
     position: fixed;
     top: 4rem;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     left: -100%;
     z-index: 1;
     background-color: var(--sidebar-bg);
+    transition: all 0.2s ease;
+
     color: var(--sidebar-color);
     border-right: 1px solid var(--border-color);
 }
 
 [data-sidebar-offcanvas][data-open] + [data-sidebar-offcanvas-backdrop] {
     background-color: var(--backdrop-bg);
+    transition: all 0.2s ease;
+
 }
 
 [data-sidebar-offcanvas][data-open] {
@@ -578,7 +600,7 @@ iframe {
 
     [data-page-edit-sidebar] {
         left: -100%;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         z-index: 5;
         padding-top: 1rem;
         border-right: 1px solid var(--border-color);
