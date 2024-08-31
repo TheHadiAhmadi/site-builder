@@ -17,7 +17,7 @@ export async function getDataTableItems({page = 1, perPage = 10, query, fields, 
             if(filter.value?.filters) {
                 let items = db('contents').query().filter('_type', '=', field.collectionId)
                 for(let filter2 of filter.value?.filters) {
-                    items = items.filter(filter2.field, filter2.operator, filter2.value)
+                    items = items.filter(filter2.field, 'in', filter2.value)
                 }
                 items = await items.all()
                 filter.value = items.map(x => x.id);

@@ -16,7 +16,7 @@ export default {
         const res = await db('collections').insert(body)
 
         return {
-            redirect: '?mode=edit&view=update-collection&id=' + res.id
+            redirect: '?mode=edit&view=collections.update&id=' + res.id
         }
     },
     async createForModule(body) {
@@ -26,7 +26,7 @@ export default {
     async update(body) {
         const res = await db('collections').update(body)
         return {
-            redirect: '?mode=edit&view=update-collection&id=' + res.id
+            redirect: '?mode=edit&view=collections.update&id=' + res.id
         }
     },
     async addField(body) {
