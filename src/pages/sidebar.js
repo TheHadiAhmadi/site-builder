@@ -148,7 +148,7 @@ export async function Sidebar({query, url, view, permissions, config, context}) 
 
         return `
             <a href="${getUrl({view: 'settings.profile'})}" data-sidebar-footer>
-                <img data-avatar src="/files/${profile.profile}" alt="Avatar">
+                <img data-avatar src="/files/${profile.profile.id}" alt="Avatar">
                 <div data-sidebar-footer-center>
                     <div style="font-weight: bold;">${profile.name}</div>
                     <div style="opacity: 0.7;">@${profile.username}</div>

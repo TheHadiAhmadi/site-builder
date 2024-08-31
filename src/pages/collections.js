@@ -28,7 +28,8 @@ export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
                     name: 'sidebar',
                     label: 'Show in sidebar',
                 }),
-                `<div data-alert>If <b><code>Show in sidebar</code></b> is checked, the Collection item will appear in the sidebar when user doesn't have <b><code>collections</code></b> permission.</div>`            ]
+                `<div data-alert>
+                <div>If <b><code>Show in sidebar</code></b> is checked, the Collection item will appear in the sidebar when user doesn't have <b><code>collections</code></b> permission.</div></div>`            ]
         }),
     ])
 }

@@ -12,6 +12,12 @@ export function LoginPage() {
             ${Form({
                 handler: 'auth.login',
                 fields: [
+                    `
+                        <div data-alert>
+                            default username: admin<br>
+                            default password: Passw0rd!
+                        </div>
+                    `,
                     Input({ 
                         name: 'username', 
                         placeholder: 'Enter your Username', 
