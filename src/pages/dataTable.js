@@ -21,6 +21,8 @@ export async function getDataTableItems({page = 1, perPage = 10, query, fields, 
                 }
                 items = await items.all()
                 filter.value = items.map(x => x.id);
+            } else {
+                filter.operator = 'in'
             }
         }
 
