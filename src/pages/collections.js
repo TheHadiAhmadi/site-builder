@@ -1,5 +1,5 @@
 import { db } from "#services";
-import { Button, Card, CardBody, Checkbox, EmptyTable, File, Form, Input, Label, Modal, Page, Select, Stack, Table, Textarea } from "../components.js"
+import { Button, Card, CardBody, Checkbox, EmptyTable, File, Form, getText, getValue, Input, isSelected, Label, Modal, Page, Select, Stack, Table, Textarea } from "../components.js"
 import { CollectionDataTable, DataTable } from "./dataTable.js";
 import { FieldModal, FieldsList } from "./fields.js";
 
@@ -24,8 +24,11 @@ export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
                     label: 'Name', 
                     placeholder: 'Enter Name'
                 }),
-                
-            ]
+                Checkbox({
+                    name: 'sidebar',
+                    label: 'Show in sidebar',
+                }),
+                `<div data-alert>If <b><code>Show in sidebar</code></b> is checked, the Collection item will appear in the sidebar when user doesn't have <b><code>collections</code></b> permission.</div>`            ]
         }),
     ])
 }
@@ -96,9 +99,20 @@ export function FieldInput(field, collections = []) {
         })
     }
 
+    function SelectFieldType({name, label, placeholder, items, multiple}) {
+        if(multiple) {
+            return Label({
+                text: label, 
+                body: items.map(item => Checkbox({multiple: true, name, checked: isSelected(item), multiple: true, label: getText(item), value: getValue(item)}))
+            })
+        }
+
+        return Select({name, placeholder, label, items})
+    }
+    
     const inputs = {
         input: Input,
-        select: Select,
+        select: SelectFieldType,
         textarea: Textarea,
         checkbox: Checkbox,
         file: File,

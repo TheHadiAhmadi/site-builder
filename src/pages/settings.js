@@ -1,4 +1,6 @@
 import { Button, Card, CardBody, File, Form, Input, Label, Page, Textarea } from "#components";
+import { db } from "#services";
+import { FieldInput } from "./collections.js";
 
 export async function SettingsGeneralPage() {
     return Page({
@@ -40,6 +42,41 @@ export async function SettingsAppearancePage() {
     return Page({ title: 'Appearance settings', body: 'Content' })
 }
 
-export async function SettingsProfilePage() {
-    return Page({ title: 'Profile settings', body: 'Content' })
+const profileFields = [
+    {
+        slug: 'name',
+        label: 'Name',
+        type: 'input',
+        default: true,
+    },
+    {
+        slug: 'email',
+        label: 'Email',
+        type: 'input',
+    },   
+    {
+        slug: 'profile',
+        label: 'Profile image',
+        type: 'file',
+        file_type: 'image',
+        multiple: false
+    }  
+]
+
+export async function SettingsProfilePage({context}) {
+    const roles = await db('roles').query().all()
+    for(let field of profileFields) {
+        if(field.slug === 'role') {
+            field.items = roles.map(x => ({value: x.id, text: x.name}))
+        }
+    }
+    return Page({ 
+        title: 'Profile settings', 
+        body: Form({
+            load: 'settings.loadProfile',
+            id: context.id,
+            handler: 'settings.updateProfile',
+            fields: profileFields.map(x => FieldInput(x))
+        }) 
+    })
 }

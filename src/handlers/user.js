@@ -36,6 +36,12 @@ export const userFields = [
         type: 'input',
     },   
     {
+        slug: 'role',
+        label: 'Role',
+        type: 'select',
+        items: []
+    },   
+    {
         slug: 'password',
         label: 'Password',
         type: 'input',
@@ -45,6 +51,13 @@ export const userFields = [
 ]
 
 export async function UsersDataTable({filters = [], perPage = 10, page = 1, selectable = false} = {}) {
+    const roles = await db('roles').query().all()
+
+    for(let field of userFields) {
+        if(field.slug === 'role') {
+            field.items = roles.map(x => ({text: x.name, value: x.id}))
+        }
+    }
     const query = db('users').query()
 
     const items = await getDataTableItems({
@@ -82,13 +95,14 @@ export default {
         await db('users').insert(body)
 
         return {
-            redirect: '?mode=edit&view=settings&category=users'
+            redirect: '?mode=edit&view=settings.users.list'
         }
     },
     async update(body) {
         delete body.password
 
-        await db('users').insert(body)
+        console.log(body)
+        await db('users').update(body)
     },
     async setPassword(body) {
         body.password = hashPassword(body.password)

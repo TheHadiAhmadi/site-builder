@@ -4,6 +4,7 @@ import JSZip from 'jszip'
 import { copyFile, mkdir, writeFile } from 'node:fs/promises'
 import { slugify } from '../src/handlers/content.js'
 import { join, basename } from 'node:path'
+import { roleFields } from '../src/handlers/role.js'
 
 const defaultModules = {
     Section: {
@@ -59,20 +60,27 @@ const defaultModules = {
 export async function setupCms(req, res) {
     const {template, password, file} = req.body
 
+    let adminRoleId;
+
     if(!existsSync('./uploads')) {
         mkdirSync('./uploads')
     }
     async function importUsers(users) {
         console.log("importUsers", users)
         const adminUser = users.find(user => user.username === 'admin');
-        await db('users').insert({
+        const admin = await db('users').insert({
             name: adminUser ? adminUser.name : 'Admin',
             username: 'admin',
             password: `_%${password}%_`,
             slug: adminUser?.slug ?? 'admin',
             profile: adminUser?.profile ?? '',
+            role: adminRoleId,
             email: adminUser?.email ?? 'admin@example.com'    
         });
+
+        res.cookie('userId', admin.id, {
+            httpOnly: true
+        })
 
         for (let user of users) {
             if (user.username !== 'admin') {
@@ -86,8 +94,28 @@ export async function setupCms(req, res) {
                 });
             }
         }
+
+
     }
 
+    async function importRoles(roles) {
+        console.log("importRoles", roles)
+        const adminRole = await db('roles').insert({
+            name: 'Admin',
+            permissions: (roleFields.find(x => x.slug === 'permissions')?.items ?? []).map( x => x.value)
+        });
+
+        adminRoleId = adminRole.id
+
+        for (let role of roles) {
+            if (role.name !== 'admin') {
+                await db('roles').insert({
+                    name: role.name,
+                    permissions: user.permissions,
+                });
+            }
+        }
+    }
 
     let _definitions = {}
     let _collections = {}
@@ -118,7 +146,7 @@ export async function setupCms(req, res) {
                 let afterInsertActions = []
                 for(let module of modules) {
                     console.log(module)
-                    for(let prop of _definitions[module.definition].props ?? []) {
+                    for(let prop of _definitions[module.definition]?.props ?? []) {
                         if(!module.props) continue;
                         const value = module.props[prop.slug]
 
@@ -206,6 +234,7 @@ export async function setupCms(req, res) {
                             order: 0,
                         })
                     } else {
+                        console.log(_definitions, module)
                         res2 = await db('modules').insert({
                             definitionId: _definitions[module.definition].id,
                             moduleId,
@@ -393,14 +422,17 @@ export async function setupCms(req, res) {
         const collectionsFile = './temp/site/collections.json'
         const definitionsFile = './temp/site/definitions.json'
         const usersFile = './temp/site/users.json'
+        const rolesFile = './temp/site/roles.json'
 
         const pages = JSON.parse(readFileSync(pagesFile))
         const collections = JSON.parse(readFileSync(collectionsFile))
         const definitions = JSON.parse(readFileSync(definitionsFile))
         const users = JSON.parse(readFileSync(usersFile))
+        const roles = JSON.parse(readFileSync(rolesFile))
 
         await importCollections(collections)
 
+        await importRoles(roles)
         await importUsers(users)
 
         for (let definition of definitions) {
@@ -468,6 +500,7 @@ export async function setupCms(req, res) {
                 _definitions[res.name] = res
             }
 
+            await importRoles(mod.default.roles ?? []);
             await importUsers(mod.default.users ?? []);
     
             await importCollections(mod.default.collections)

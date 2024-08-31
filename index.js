@@ -43,7 +43,16 @@ app.use('/', async (req, res, next) => {
     const definitions = await db('definitions').query().all()
 
     if(definitions.length) {
-        next()
+        if(req.query.mode === 'edit' || req.query.mode === 'preview') {
+
+            if(req.cookies.userId) {
+                next()
+            } else {
+                return res.redirect('/login')
+            }
+        } else {
+            next()
+        }
     } else {
         const templates = await readdir('./templates');
         res.end(SetupPage({templates}))
@@ -61,6 +70,24 @@ app.get('/admin', (req, res) => {
     res.json('Admin Panel')
 })
 
+app.post('/api/login', async (req, res) => {
+
+    // res.send(LoginPage())
+    const user = await db('users').query().filter('username', '=', req.body.username).first();
+
+    if(!user) {
+        return res.json({success: false, message: 'user not found!'})
+    }
+
+    if(user.password !== `_%${req.body.password}%_`) {
+        return res.json({success: false, message: 'password is invalid!'})
+    }
+    
+    res.cookie('userId', user.id, {
+        httpOnly: true
+    })
+    return res.redirect('/?mode=edit')
+})
 app.get('/login', (req, res) => {
 
     res.send(LoginPage())
@@ -164,8 +191,19 @@ app.post('/api/query', async (req, res) => {
     const {handler, body, pageId} = req.body
     
     context = {
-        handler
+        handler,
+        user: await db('users').query().filter('id', '=', req.cookies.userId).first().then(res => ({
+            id: res.id, 
+            username: res.username, 
+            name: res.name, 
+            email: res.email, 
+            role: res.role,
+            profile: res.profile
+        }))
     }
+    const role = await db('roles').query().filter('id', '=', context.user.role).first()
+
+    context.permissions = role.permissions.reduce((prev, curr) => ({...prev, [curr]: true}), {})
 
     const [controller, action] = handler.split('.')
     if(handlers[controller]?.[action]) {

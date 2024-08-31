@@ -74,16 +74,19 @@ export function Input({name, type = 'text', placeholder, label, disabled}) {
     })
 }
 
+export function getText(option) {
+    return typeof option === 'object' ? option.text : option
+}
+
+export function getValue(option) {
+    return typeof option === 'object' ? option.value : option
+}
+
+export function isSelected(option) {
+    return typeof option === 'object' && option.selected
+}
+
 export function Select({name, placeholder, label, items = []}) {
-    function getText(option) {
-        return typeof option === 'object' ? option.text : option
-    }
-    function getValue(option) {
-        return typeof option === 'object' ? option.value : option
-    }
-    function isSelected(option) {
-        return typeof option === 'object' && option.selected
-    }
     return Label({
         text: label,
         body: `<select data-select name="${name}">

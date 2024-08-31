@@ -1,5 +1,6 @@
 import { Button } from "#components"
 import { db } from "#services"
+import { html } from "svelite-html"
 import { getPage, getPageSlug, getUrl } from "../helpers.js"
 
 async function sidebarBlocks({ query, permissions }) {
@@ -28,12 +29,10 @@ async function sidebarCollections({ query, permissions }) {
             ${collections.map(x => `
                 <div data-sidebar-item ${query.id === x.id ? 'data-active' : ''} data-action="navigation.link" data-href="${getUrl({ view: 'collections.data.list', id: x.id })}">
                     <span>${x.name}</span>
-            ${permissions.collection_update ? `<a data-enhance data-sidebar-icon href="${getUrl({ view: 'collections.update', id: x.id })}">
+                        ${permissions.collection_update ? `<a data-enhance data-sidebar-icon href="${getUrl({ view: 'collections.update', id: x.id })}">
                         <svg data-secondary-sidebar-item-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zm2.8-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5"/></svg>
                     </a>` : ''}
                 </div>`).join('')}
-        </div>
-        <div data-sidebar-body>
 
             ${permissions.collection_create ? `<a data-enhance href="${getUrl({ view: 'collections.create' })}" data-sidebar-item-button>
                 <svg data-sidebar-item-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H6q-.425 0-.712-.288T5 12t.288-.712T6 11h5V6q0-.425.288-.712T12 5t.713.288T13 6v5h5q.425 0 .713.288T19 12t-.288.713T18 13h-5v5q0 .425-.288.713T12 19t-.712-.288T11 18z"/></svg>
@@ -44,15 +43,16 @@ async function sidebarCollections({ query, permissions }) {
     `
 }
 
-async function sidebarSettings({view}) {
-    return `
+async function sidebarSettings({view, permissions}) {
+    return permissions.settings_general || permissions.users || permissions.roles ? `
         <div data-sidebar-body>
-            <a data-enhance data-sidebar-item ${view.startsWith('settings.general') ? 'data-active' : ''} href="${getUrl({ view: 'settings.general' })}">General</a>
-            <a data-enhance data-sidebar-item ${view.startsWith('settings.users') ? 'data-active' : ''} href="${getUrl({ view: 'settings.users.list' })}">Users</a>
-            <a data-enhance data-sidebar-item ${view.startsWith('settings.appearance') ? 'data-active' : ''} href="${getUrl({ view: 'settings.appearance' })}">Appearance (Soon)</a>
-            <a data-enhance data-sidebar-item ${view.startsWith('settings.profile') ? 'data-active' : ''} href="${getUrl({ view: 'settings.profile' })}">Profile (Soon)</a>
+            ${permissions.settings_general ? `<a data-enhance data-sidebar-item ${view.startsWith('settings.general') ? 'data-active' : ''} href="${getUrl({ view: 'settings.general' })}">General</a>` : ''}
+            ${permissions.users ? `<a data-enhance data-sidebar-item ${view.startsWith('settings.users') ? 'data-active' : ''} href="${getUrl({ view: 'settings.users.list' })}">Users</a>` : ''}
+            ${permissions.roles ? `<a data-enhance data-sidebar-item ${view.startsWith('settings.roles') ? 'data-active' : ''} href="${getUrl({ view: 'settings.roles.list' })}">Roles</a>` : ''}
+            ${permissions.settings_appearance ? `<a data-enhance data-sidebar-item ${view.startsWith('settings.appearance') ? 'data-active' : ''} href="${getUrl({ view: 'settings.appearance' })}">Appearance (Soon)</a>` : ''}
+            ${permissions.settings ? `<a data-enhance data-sidebar-item ${view.startsWith('settings.profile') ? 'data-active' : ''} href="${getUrl({ view: 'settings.profile' })}">Profile (Soon)</a>` : ''}
         </div>
-    `
+    ` : ''
 }
 
 async function sidebarPages({ url, permissions }) {
@@ -60,9 +60,8 @@ async function sidebarPages({ url, permissions }) {
     const {page: currentPage} = await getPage(url.split('?')[0])
     return `
         <div data-sidebar-body>
-            
             ${await Promise.all(pages.map(async x => `
-                <div data-sidebar-item ${currentPage?.id === x.id ? 'data-active' : ''} data-sidebar-page-item data-action="navigation.link" data-href="${await getPageSlug(x)}?mode=edit">
+                <div data-sidebar-item ${currentPage?.id === x.id ? 'data-active' : ''} data-sidebar-page-item data-action="navigation.link" data-href="${await getPageSlug(x)}?mode=edit&view=pages.edit">
                     <div data-page-item-start>
                         <span  style="white-space: nowrap;">${x.name}</span>
                         <span data-page-item-slug>${x.slug}</span>
@@ -80,7 +79,40 @@ async function sidebarPages({ url, permissions }) {
     `
 }
 
-export async function Sidebar({query, url, view, permissions}) {
+function SidebarItem({title, active, href, items, icon}) {
+    if(href) {
+        return `
+            <div data-sidebar-item-wrapper>
+                <a data-enhance href="${href}" data-sidebar-item  ${active ? 'data-active' : ''}>
+                    ${icon}
+                    <span data-sidebar-toggler-text>${title}</span>
+                </a>
+            </div>
+        `
+    }
+
+    return `
+        <div data-nested-sidebar ${active ? 'data-active' : ''}>
+            <div data-sidebar-toggler>
+                ${icon}
+                <span data-sidebar-toggler-text>${title}</span>
+                <span data-sidebar-toggler-chevron>
+                    <svg data-sidebar-toggler-icon-down xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z"/></svg>
+                    <svg data-sidebar-toggler-icon-up xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
+                </span>
+            </div>
+            <div data-sidebar-menu>
+                ${items}
+            </div>
+        </div>
+    `
+}
+
+function SidebarItems(body) {
+    return html`<div data-sidebar-items>${body}</div>`
+}
+
+export async function Sidebar({query, url, view, permissions, config, context}) {
     const settings = await db('settings').query().first() ?? {}
     const mode = (view === 'iframe' || !view) ? 'modules' : ''
 
@@ -111,63 +143,50 @@ export async function Sidebar({query, url, view, permissions}) {
         `
     }
 
-    async function sidebarItems() {
+    async function sidebarFooter() {
+        const profile = context.user
+
         return `
-            <div data-sidebar-items>
-                <div data-nested-sidebar ${!view ? 'data-active' : ''} ${view.startsWith('pages.') ? 'data-active' : ''}>
-                    <div data-sidebar-toggler>
-                        <svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M16 0H8C6.9 0 6 .9 6 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6zm4 18H8V2h7v5h5zM4 4v18h16v2H4c-1.1 0-2-.9-2-2V4z"/></svg>
-                        <span data-sidebar-toggler-text>Pages</span>
-                        <span data-sidebar-toggler-chevron>
-                            <svg data-sidebar-toggler-icon-down xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z"/></svg>
-                            <svg data-sidebar-toggler-icon-up xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
-                        </span>
-                    </div>
-                    <div data-sidebar-menu>
-                        ${await sidebarPages({ url, permissions })}
-                    </div>
+            <a href="${getUrl({view: 'settings.profile'})}" data-sidebar-footer>
+                <img data-avatar src="/files/${profile.profile}" alt="Avatar">
+                <div data-sidebar-footer-center>
+                    <div style="font-weight: bold;">${profile.name}</div>
+                    <div style="opacity: 0.7;">@${profile.username}</div>
                 </div>
-                <div data-nested-sidebar ${view.startsWith('blocks.') ? 'data-active' : ''}>
-                    <div data-sidebar-toggler>
-                        <svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M13.39 3a.47.47 0 0 0-.21-.16l-6-2.27a.45.45 0 0 0-.36 0l-6 2.31A.47.47 0 0 0 .61 3a.48.48 0 0 0-.11.3v7.32a.5.5 0 0 0 .32.46l6 2.31h.36l6-2.31a.5.5 0 0 0 .32-.46V3.34a.48.48 0 0 0-.11-.34Z"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M7 13.46V5.5m0 0v7.96M.61 3.04L7 5.5l6.39-2.46"/></svg>
-                        <span data-sidebar-toggler-text>Blocks</span>
-                        <span data-sidebar-toggler-chevron>
-                            <svg data-sidebar-toggler-icon-down xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z"/></svg>
-                            <svg data-sidebar-toggler-icon-up xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
-                        </span>
-                    </div>
-                    <div data-sidebar-menu>
-                        ${await sidebarBlocks({ query, permissions })}
-                    </div>
+                <div data-sidebar-footer-chevron>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12.6 12L8 7.4L9.4 6l6 6l-6 6L8 16.6z"/></svg>
                 </div>
-                <div data-nested-sidebar ${view.startsWith('collections.') ? 'data-active' : ''}>
-                    <div data-sidebar-toggler>
-                        <svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.59 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4m6 14c0 .5-2.13 2-6 2s-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23s4.39-.45 6-1.23zm0-4.55c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2s6 1.5 6 2s-2.13 2-6 2"/></svg>    
-                        <span data-sidebar-toggler-text>Collections</span>
-                        <span data-sidebar-toggler-chevron>
-                            <svg data-sidebar-toggler-icon-down xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z"/></svg>
-                            <svg data-sidebar-toggler-icon-up xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
-                        </span>
-                    </div>
-                    <div data-sidebar-menu>
-                        ${await sidebarCollections({ query, permissions })}
-                    </div>
-                </div>
-                <div data-nested-sidebar ${view.startsWith('settings.') ? 'data-active' : ''}>
-                    <div data-sidebar-toggler>
-                        <svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zM11 20h1.975l.35-2.65q.775-.2 1.438-.587t1.212-.938l2.475 1.025l.975-1.7l-2.15-1.625q.125-.35.175-.737T17.5 12t-.05-.787t-.175-.738l2.15-1.625l-.975-1.7l-2.475 1.05q-.55-.575-1.212-.962t-1.438-.588L13 4h-1.975l-.35 2.65q-.775.2-1.437.588t-1.213.937L5.55 7.15l-.975 1.7l2.15 1.6q-.125.375-.175.75t-.05.8q0 .4.05.775t.175.75l-2.15 1.625l.975 1.7l2.475-1.05q.55.575 1.213.963t1.437.587zm1.05-4.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5M12 12"/></svg>    
-                        <span data-sidebar-toggler-text>Settings</span>
-                        <span data-sidebar-toggler-chevron>
-                            <svg data-sidebar-toggler-icon-down xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z"/></svg>
-                            <svg data-sidebar-toggler-icon-up xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6l-6 6z"/></svg>
-                        </span>
-                    </div>
-                    <div data-sidebar-menu>
-                        ${await sidebarSettings({view})}
-                    </div>
-                </div>
-            </div>
+            </a>
         `
+    }
+
+    async function sidebarItems() {
+        let result = []
+        for(let item of config) {
+            let items;
+            if(item.dynamic) {
+                if(item.items === 'pages') {
+                    items = await sidebarPages({url, permissions})
+                } else if(item.items === 'collections') {
+                    items = await sidebarCollections({ query, permissions })
+                } else if(item.items === 'blocks') {
+                    items = await sidebarBlocks({ query, permissions })
+                } else if(item.items === 'settings') {
+                    items = await sidebarSettings({ view, permissions })
+                }
+            } else {
+                items = item.items
+            }
+
+            result.push({
+                href: item.href,
+                icon: item.icon,
+                items,
+                title: item.title,
+                active: item.href ? item.href === getUrl({view, ...query}) : view.startsWith(item.viewPrefix)
+            })
+        }
+        return SidebarItems(result.map(SidebarItem))
     }
 
     async function pageEditorSidebar() {
@@ -205,6 +224,7 @@ export async function Sidebar({query, url, view, permissions}) {
         <div data-sidebar data-active="${mode}">
             ${sidebarHeader()}
             ${await sidebarItems()}
+            ${await sidebarFooter()}
         </div>
         ${await pageEditorSidebar()}
         <div data-sidebar-mobile>
@@ -219,9 +239,10 @@ export async function Sidebar({query, url, view, permissions}) {
 
         <div data-sidebar-offcanvas>
             ${await sidebarItems()}
-            
+            ${await sidebarFooter()}
         </div>
         <div data-sidebar-offcanvas-backdrop></div>
+
     `
 }
 

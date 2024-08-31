@@ -1,4 +1,5 @@
 import { Button, Form, Page } from "#components";
+import { db } from "#services";
 import { userFields, UsersDataTable } from "../handlers/user.js";
 import { getUrl } from "../helpers.js";
 import { FieldInput } from "./collections.js";
@@ -18,6 +19,7 @@ export async function UserListPage() {
 }
 
 export async function UserCreatePage() {
+    const roles = await db('roles').query().all()
     return Page({
         title: 'Add User',
         back: '?mode=edit&view=settings.users.list',
@@ -32,6 +34,12 @@ export async function UserCreatePage() {
 }
 
 export async function UserUpdatePage({query}) {
+    const roles = await db('roles').query().all()
+    for(let field of userFields) {
+        if(field.slug === 'role') {
+            field.items = roles.map(x =>({text: x.name, value: x.id}))
+        }
+    }
     return [
         Page({
             title: 'Edit User',
@@ -42,7 +50,10 @@ export async function UserUpdatePage({query}) {
                     cancelHref: '?mode=edit&view=settings.users.list',
                     id: query.id,
                     handler: 'user.update',
-                    fields: userFields.filter(x => !x.hidden).map(x => FieldInput(x))
+                    fields: [
+                        `<input name="id" value="${query.id}" type="hidden" />`,
+                        ...userFields.filter(x => !x.hidden).map(x => FieldInput(x))
+                    ]
                 })
             ]
         }),
@@ -55,5 +66,5 @@ export async function UserUpdatePage({query}) {
                 })
             ]
         }),
-    ]
+    ].join('')
 }

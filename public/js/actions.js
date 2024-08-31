@@ -154,7 +154,7 @@ const actions = {
     },
     'change-dynamic-page-content'(el) {
         const view = new URL(window.location.href).searchParams.get('view') ?? ''
-        reload(el.value + '?mode=edit' + (view ? 'view=' + view : ''))
+        reload(el.value + '?mode=edit' + (view ? '&view=' + view : ''))
     },
     async 'module-add-field-choose-type'(el) {
         const value = el.dataset.value
@@ -220,8 +220,21 @@ const actions = {
             action: 'user.delete',
             id: el.dataset.id
         })
-
         // reload('?mode=edit&view=user-edit&id=' + userId)
+    },
+    'open-role-edit'(el) {
+        const roleId = el.dataset.id
+
+        reload('?mode=edit&view=settings.roles.update&id=' + roleId)
+    },
+    'open-role-delete'(el) {
+        openConfirm({
+            title: 'Are you sure?',
+            description: 'Are you sure to remove this role?',
+            action: 'role.delete',
+            id: el.dataset.id
+        })
+        // reload('?mode=edit&view=role-edit&id=' + roleId)
     },
     async 'open-filter-relation-table'(el) {
         const slug = el.dataset.slug

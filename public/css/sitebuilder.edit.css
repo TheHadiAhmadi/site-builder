@@ -139,14 +139,42 @@ iframe {
 }
 
 [data-sidebar-items] {
-    height: calc(100vh - 4rem);
+    height: calc(100vh - 8rem);
     overflow: auto;
     margin-top: -4px;
 }
 
+[data-sidebar-footer] {
+    height: 3.5rem;
+    background: var(--sidebar-item-hover-background);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+[data-sidebar-footer-center] {
+    flex: 1;
+}
+
+[data-avatar] {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    background-color: var(--card-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+[data-sidebar-footer-chevron] {
+    color: var(--sidebar-item-icon-border);
+}
+
 [data-sidebar-items] {
     scrollbar-width: thin;
-    --sidebar-item-hover-background: linear-gradient(to right, var(--sidebar-item-hover-bg), transparent);
 
     scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-track-bg);
     margin-right: 8px;
@@ -343,7 +371,6 @@ iframe {
 
 [data-sidebar-item] {
     border-radius: 4px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -360,6 +387,19 @@ iframe {
     user-select: none;
     /* font-weight: bold; */
     /* border: 1px solid var(--sidebar-item-border); */
+}
+
+[data-sidebar] {
+    --sidebar-item-hover-background: linear-gradient(to right, var(--sidebar-item-hover-bg), transparent);
+}
+
+[data-sidebar-items] > [data-sidebar-item-wrapper] {
+    /* padding: 0.75rem 1.25rem; */
+    padding: 4px;
+}
+[data-sidebar-items] > [data-sidebar-item-wrapper] > [data-sidebar-item] {
+    padding: 0.5rem 1rem;
+    justify-content: flex-start;
 }
 
 [data-sidebar-item][data-active] {
@@ -561,6 +601,10 @@ iframe {
 
 
 @media (max-width: 768px) {
+    [data-sidebar-offcanvas] {
+        --sidebar-item-hover-background: var(--sidebar-item-hover-bg);
+    }
+
     [data-sidebar-mobile] {
         display: flex;
     }
@@ -611,7 +655,6 @@ iframe {
     }
     
     [data-sidebar-items] {
-        --sidebar-item-hover-background: var(--sidebar-item-hover-bg);
         margin-right: 0;
     }
     

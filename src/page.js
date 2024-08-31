@@ -1,6 +1,6 @@
 import hbs from 'handlebars'
 import './handlebars.js'
-import { Button, DeleteConfirm } from './components.js'
+import { Button, DeleteConfirm, EmptyTable, Page } from './components.js'
 import { join } from 'path'
 
 import { db } from "#services";
@@ -14,6 +14,8 @@ import { UserCreatePage, UserListPage, UserUpdatePage } from './pages/users.js';
 import { SettingsAppearancePage, SettingsGeneralPage, SettingsProfilePage } from './pages/settings.js';
 import { BlockCreatePage, BlockUpdatePage, CreateBlockAiModal, UpdateBlockAiModal } from './pages/blocks.js';
 import { Sidebar } from './pages/sidebar.js';
+import { RoleCreatePage, RoleListPage, RoleUpdatePage } from './pages/roles.js';
+import { constants } from 'http2';
 
 let definitions = {}
 
@@ -54,47 +56,125 @@ export async function handleModuleAction({ module, method, body }) {
 }
 
 const pageMap = {
-    '' : PageEditorPage,
-    'iframe': PageEditorPage,
-    'pages.create': PageCreatePage,
-    'pages.update': PageUpdatePage,
-    'blocks.create': BlockCreatePage,
-    'blocks.update': BlockUpdatePage,
-    'collections.create': CollectionCreatePage,
-    'collections.update': CollectionUpdatePage,
-    'collections.data.list': CollectionDataListPage,
-    'collections.data.create': CollectionDataCreatePage,
-    'collections.data.update': CollectionDataUpdatePage,
-    'settings.general': SettingsGeneralPage,
-    'settings.appearance': SettingsAppearancePage,
-    'settings.users.list': UserListPage,
-    'settings.profile': SettingsProfilePage,
-    'settings.users.create': UserCreatePage,
-    'settings.users.update': UserUpdatePage,
+    'pages.edit' : [PageEditorPage, ['pages']],
+    'iframe': [PageEditorPage, ['page_content', 'page_update']],
+    'pages.create': [PageCreatePage, ['page_create']],
+    'pages.update': [PageUpdatePage, ['page_update', 'page_seo']],
+    'blocks.create': [BlockCreatePage, ['block_create']],
+    'blocks.update': [BlockUpdatePage, ['block_update', 'block_delete']],
+    'collections.create': [CollectionCreatePage, ['collection_create']],
+    'collections.update': [CollectionUpdatePage, ['collection_update']],
+    'collections.data.list': [CollectionDataListPage, ['collections', 'collections_sidebar']],
+    'collections.data.create': [CollectionDataCreatePage, ['content_insert']],
+    'collections.data.update': [CollectionDataUpdatePage, ['content_update', 'content_delete']],
+    'settings.general': [SettingsGeneralPage, ['settings_general']],
+    'settings.appearance': [SettingsAppearancePage, ['settings_appearance']],
+    'settings.profile': [SettingsProfilePage, ['settings_profile']],
+    'settings.users.list': [UserListPage, ['users']],
+    'settings.users.create': [UserCreatePage, ['users']],
+    'settings.users.update': [UserUpdatePage, ['users']],
+    'settings.roles.list': [RoleListPage, ['roles']],
+    'settings.roles.create': [RoleCreatePage, ['roles']],
+    'settings.roles.update': [RoleUpdatePage, ['roles']],
 }
 //#region Render body
-export async function renderBody(body, { props, mode, url, view, params, ...query }) {
-    // const permissions = {} 
-    const permissions = {
-        page_create: true,
-        page_update: true,
-        block_create: true,
-        block_update: true,
-        collection_create: true,
-        collection_update: true,
-    }
+export async function renderBody(body, { props, mode, url, view, context, params, ...query }) {
+    let permissions = context.permissions 
+
+    const collections = await db('collections').query().all().then(res => res.filter(x => x.sidebar))
+
+    const sidebar = [
+        permissions.pages && {
+            title: 'Pages', 
+            icon: '<svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M16 0H8C6.9 0 6 .9 6 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6zm4 18H8V2h7v5h5zM4 4v18h16v2H4c-1.1 0-2-.9-2-2V4z"/></svg>',
+            dynamic: true,
+            viewPrefix: 'pages.',
+            items: 'pages'
+        },
+        permissions.blocks && {
+            title: 'Blocks', 
+            icon: '<svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 14 14"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M13.39 3a.47.47 0 0 0-.21-.16l-6-2.27a.45.45 0 0 0-.36 0l-6 2.31A.47.47 0 0 0 .61 3a.48.48 0 0 0-.11.3v7.32a.5.5 0 0 0 .32.46l6 2.31h.36l6-2.31a.5.5 0 0 0 .32-.46V3.34a.48.48 0 0 0-.11-.34Z"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M7 13.46V5.5m0 0v7.96M.61 3.04L7 5.5l6.39-2.46"/></svg>',
+            dynamic: true,
+            viewPrefix: 'blocks.',
+            items: 'blocks'
+        },
+        permissions.collections && {
+            title: 'Collections', 
+            icon: '<svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.59 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4m6 14c0 .5-2.13 2-6 2s-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23s4.39-.45 6-1.23zm0-4.55c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2s6 1.5 6 2s-2.13 2-6 2"/></svg>',
+            dynamic: true,
+            viewPrefix: 'collections.',
+            items: 'collections'
+        },
+        permissions.settings_general && {
+            title: 'Settings', 
+            icon: '<svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zM11 20h1.975l.35-2.65q.775-.2 1.438-.587t1.212-.938l2.475 1.025l.975-1.7l-2.15-1.625q.125-.35.175-.737T17.5 12t-.05-.787t-.175-.738l2.15-1.625l-.975-1.7l-2.475 1.05q-.55-.575-1.212-.962t-1.438-.588L13 4h-1.975l-.35 2.65q-.775.2-1.437.588t-1.213.937L5.55 7.15l-.975 1.7l2.15 1.6q-.125.375-.175.75t-.05.8q0 .4.05.775t.175.75l-2.15 1.625l.975 1.7l2.475-1.05q.55.575 1.213.963t1.437.587zm1.05-4.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5M12 12"/></svg>',
+            active: view.startsWith('settings.'),
+            dynamic: true,
+            viewPrefix: 'settings.',
+            items: 'settings'
+        },
+        ...(permissions.collections_sidebar ? collections.map(collection => {
+            return {
+                title: collection.name,
+                icon: '<svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.59 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4m6 14c0 .5-2.13 2-6 2s-6-1.5-6-2v-2.23c1.61.78 3.72 1.23 6 1.23s4.39-.45 6-1.23zm0-4.55c-1.3.95-3.58 1.55-6 1.55s-4.7-.6-6-1.55V9.64c1.47.83 3.61 1.36 6 1.36s4.53-.53 6-1.36zM12 9C8.13 9 6 7.5 6 7s2.13-2 6-2s6 1.5 6 2s-2.13 2-6 2"/></svg>',
+                href: getUrl({
+                    view: 'collections.data.list',
+                    id: collection.id,
+                })
+            }
+        }) : [])
+    ].filter(Boolean)
 
     await loadModuleDefinitions()
 
     let {page} = await getPage(url.split('?')[0])
     if (!page && (view === 'iframe' || !view)) view = 'pages.create'
+    if(mode === 'edit' && !view) view = 'pages.edit'
+
+    let pageContent;
+
+    try {
+        if(!pageMap[view]) {
+            pageContent = Page({
+                body: EmptyTable({title: "Page Not found!", description: "This page doesn't exists", body: [
+                    Button({href: '?mode=edit', text: "Go Home", color: 'primary'})
+                ]})
+            })
+        } else {
+            const [page, pagePermissions] = pageMap[view] 
+            let access = false
+            if(pagePermissions.length == 0) access = true
+            for(let permission of pagePermissions) {
+                if(permissions[permission]) {
+                    access = true
+                }
+            }
+            if(access) {
+                pageContent = await page({query, view, url, permissions, context})
+            } else {
+                pageContent = Page({
+                    body: EmptyTable({title: "No Access!", description: "You don't have access to this page!", body: [
+                        Button({href: '?mode=edit', text: "Go Home", color: 'primary'})
+                    ]})
+                })
+            }
+        }
+    } catch(err) {
+        console.log(err)
+        pageContent = Page({ 
+            body: EmptyTable({title: "Something went wrong!", description: "there was an error while processing your request.", body: [
+                Button({href: '?mode=edit', text: "Go Home", color: 'primary'})
+            ]})
+        })
+    }
 
     if (mode === 'edit') {
+        console.log('context: ', context)
         return `
             <div data-body>
-                ${await Sidebar({permissions, view, url, query})}
+                ${await Sidebar({permissions, view, url, query, context, config: sidebar})}
                 <div data-main>
-                    ${await pageMap[view]({query, view, url, permissions})}
+                    ${pageContent}
                 </div>
             </div>
             
@@ -154,8 +234,30 @@ async function getPageModules(pageId) {
 }
 
 export async function renderPage(req, res) {
-    const id = Math.random()
-    console.time('page request ' + req.url + ' ' + id)
+    let user = await db('users').query().filter('id', '=', req.cookies.userId).first()
+    console.log(user)
+    if(!user) {
+        res.cookie('userId', '', {httpOnly: true})
+        if(req.query.mode == 'edit' || req.query.mode == 'preview') {
+            return res.redirect('/')
+        }
+    }
+
+    let context = {
+        // handler,
+        user: {
+            id: user.id, 
+            username: user.username, 
+            name: user.name, 
+            email: user.email, 
+            role: user.role,
+            profile: user.profile
+        }
+    }
+    const role = await db('roles').query().filter('id', '=', context.user.role).first()
+
+    context.permissions = role.permissions.reduce((prev, curr) => ({...prev, [curr]: true}), {})
+
     const { page, params } = await getPage(req.params[0])
     const mode = req.query.mode ?? 'view'
     const view = req.query.view ?? ''
@@ -173,7 +275,7 @@ export async function renderPage(req, res) {
                 tailwind,
                 settings: await db('settings').query().first() ?? {},
                 head: '',
-                body: await renderBody([], { ...req.query, mode, url: req.url, view }),
+                body: await renderBody([], { ...req.query, context, mode, url: req.url, view }),
                 title: 'Untitled',
                 theme: 'dark'
             })
@@ -190,6 +292,7 @@ export async function renderPage(req, res) {
             let collection = await db('collections').query().filter('id', '=', page.collectionId).first()
             let query = db('contents').query().filter('_type', '=', page.collectionId)
             for (let param in params) {
+                console.log({param, val: params[param]})
                 query = query.filter(param, '=', params[param])
             }
 
@@ -214,7 +317,7 @@ export async function renderPage(req, res) {
     const html = layouts.default({
         mode,
         head: head ?? '',
-        body: await renderBody(modules, { ...req.query, props, params, mode, url: req.url, view }),
+        body: await renderBody(modules, { ...req.query,context, props, params, mode, url: req.url, view }),
         theme: mode === 'edit' ? 'dark' : 'light',
         tailwind,
         script: page.script,
@@ -226,6 +329,5 @@ export async function renderPage(req, res) {
         settings: await db('settings').query().first() ?? {}
     })
 
-    console.timeEnd('page request ' + req.url + ' ' + id)
     res.send(html)
 }

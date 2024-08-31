@@ -6,7 +6,7 @@ export async function BlockCreatePage() {
     return [
         Page({
             actions: [
-                Button({text: 'Create With AI', color: 'primary', action: "open-create-module-ai-modal"}),
+                permissions.block_create_ai ? Button({text: 'Create With AI', color: 'primary', action: "open-create-module-ai-modal"}) : '',
                 Button({text: 'Cancel', action: "navigation.navigate-to-default-view"})
             ].join(''),
             title: `Create New Block`,
@@ -25,14 +25,14 @@ export async function BlockCreatePage() {
     ].join('')
 }
 
-export async function BlockUpdatePage({query}) {
+export async function BlockUpdatePage({query, permissions}) {
     const block = await db('definitions').query().filter('id', '=', query.id).first()
 
     return [
         Page({
             actions: [
-                Button({text: 'Update With AI', color: 'primary', action: "open-update-module-ai-modal"}),
-                Button({text: 'Delete', color: 'danger', action: "delete-module", dataset: {id: block.id}}),
+                permissions.block_update_ai ? Button({text: 'Update With AI', color: 'primary', action: "open-update-module-ai-modal"}) : '',
+                permissions.block_delete ? Button({text: 'Delete', color: 'danger', action: "delete-module", dataset: {id: block.id}}) : '',
                 Button({text: 'Cancel', action: "navigation.navigate-to-default-view"}),
                 
             ].join(''),

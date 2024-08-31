@@ -1,5 +1,5 @@
 import { html } from "svelite-html";
-import { Button, Checkbox, EmptyTable, Modal, Stack, Table } from "../components.js";
+import { Button, Checkbox, EmptyTable, getText, getValue, Modal, Stack, Table } from "../components.js";
 import { db } from "#services";
 
 export async function getDataTableItems({page = 1, perPage = 10, query, fields, filters, expandRelations = false}) {
@@ -62,7 +62,7 @@ export async function getDataTableItems({page = 1, perPage = 10, query, fields, 
 }
 
 
-export async function CollectionDataTable({collectionId, filters, page, perPage, selectable, relationFilters = false}) {
+export async function CollectionDataTable({collectionId, filters, page, perPage, selectable, actions, relationFilters = false}) {
     const collection = await db('collections').query().filter('id', '=', collectionId).first()
 
     const query = db('contents').query().filter('_type', '=', collection.id)
@@ -70,7 +70,7 @@ export async function CollectionDataTable({collectionId, filters, page, perPage,
     // TODO:
     let items = await getDataTableItems({page, perPage, query, fields: collection.fields, expandRelations: true, filters})
 
-    return DataTable({filters, selectable, items, collectionId: collection.id, fields: collection.fields, relationFilters})
+    return DataTable({filters, selectable, items, collectionId: collection.id, actions, fields: collection.fields, relationFilters})
 }
 
 export function DataTable({filters = [], selectable, items, collectionId, fields, actions = ['edit', 'delete'], handler, relationFilters}) {
@@ -123,7 +123,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
         if(field.type === 'input') return item[field.slug]
         if(field.type === 'textarea') return item[field.slug] ? item[field.slug].slice(0, 100) + (item[field.slug].length > 100 ? '...' : '') : ''
         if(field.type === 'checkbox') return item[field.slug] ? 'Yes' : 'No'
-        if(field.type === 'select') return `<span data-badge>${item[field.slug]}</span>`
+        if(field.type === 'select') return `<span data-badge>${getText(field.items.find(x => getValue(x) === item[field.slug]))}</span>`
         if(field.type === 'file') {
             if(!item[field.slug]) return ''
             
@@ -236,9 +236,9 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                             ${Checkbox({
                                 multiple: true,
                                 name: 'filters.' + field.slug + '.value', 
-                                label: item, 
-                                checked: filtersObject[field.slug]?.value?.includes(item),
-                                value: item
+                                label: getText(item), 
+                                checked: filtersObject[field.slug]?.value?.includes(getValue(item)),
+                                value: getValue(item)
                             })} 
                         </div>
                     `).join('')}

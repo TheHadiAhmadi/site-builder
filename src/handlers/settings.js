@@ -14,5 +14,24 @@ export default {
         } else {
             await db('settings').insert(body)
         }
+    },
+    async loadProfile(body, ctx) {
+        const id = ctx.user.id
+
+        console.log("id", id)
+        return db('users').query().filter('id', '=', id).first()
+    },
+    async updateProfile(body, ctx) {
+        const id = ctx.user.id
+        await db('users').update({
+            id,
+            name: body.name,
+            email: body.email,
+            profile: body.profile,
+
+        })
+        // const id = get current user's id
+        
+
     }
 }
