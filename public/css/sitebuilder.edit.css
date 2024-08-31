@@ -145,7 +145,7 @@ iframe {
 
 [data-sidebar-items] {
     scrollbar-width: thin;
-    --sidebar-item-hover-background: linear-gradient(to right, var(--sidebar-item-hover-bg), transparent)
+    --sidebar-item-hover-background: linear-gradient(to right, var(--sidebar-item-hover-bg), transparent);
 
     scrollbar-color: var(--scrollbar-thumb-bg) var(--scrollbar-track-bg);
     margin-right: 8px;
