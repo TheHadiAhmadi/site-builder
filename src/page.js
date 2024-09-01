@@ -55,7 +55,14 @@ export async function handleModuleAction({ module, method, body }) {
     return res;
 }
 
+function DashboardPage() {
+    return Page({
+        title: 'Dashboard',
+        body: '<div data-alert>Welcome!</div>'
+    })
+}
 const pageMap = {
+    'dashboard': [DashboardPage, []],
     'pages.edit' : [PageEditorPage, ['pages']],
     'iframe': [PageEditorPage, ['page_content', 'page_update']],
     'pages.create': [PageCreatePage, ['page_create']],
@@ -128,8 +135,8 @@ export async function renderBody(body, { props, mode, url, view, context, params
     await loadModuleDefinitions()
 
     let {page} = await getPage(url.split('?')[0])
-    if (!page && (view === 'iframe' || !view)) view = 'pages.create'
-    if(mode === 'edit' && !view) view = 'pages.edit'
+    if (!page && view === 'iframe') view = 'pages.create'
+    if(mode === 'edit' && !view) view = 'dashboard'
 
     let pageContent;
 
@@ -245,18 +252,21 @@ export async function renderPage(req, res) {
 
     let context = {
         // handler,
-        user: {
+        user: user ? {
             id: user.id, 
             username: user.username, 
             name: user.name, 
             email: user.email, 
             role: user.role,
             profile: user.profile
-        }
+        } : null
     }
-    const role = await db('roles').query().filter('id', '=', context.user.role).first()
-
-    context.permissions = role.permissions.reduce((prev, curr) => ({...prev, [curr]: true}), {})
+    if(context.user) {
+        const role = await db('roles').query().filter('id', '=', context.user.role).first()   
+        context.permissions = role.permissions.reduce((prev, curr) => ({...prev, [curr]: true}), {})
+    } else {
+        context.permissions = {}
+    }
 
     const { page, params } = await getPage(req.params[0])
     const mode = req.query.mode ?? 'view'
