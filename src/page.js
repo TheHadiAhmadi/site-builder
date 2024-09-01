@@ -72,7 +72,7 @@ const pageMap = {
     'collections.create': [CollectionCreatePage, ['collection_create']],
     'collections.update': [CollectionUpdatePage, ['collection_update']],
     'collections.data.list': [CollectionDataListPage, ['collections', 'collections_sidebar']],
-    'collections.data.create': [CollectionDataCreatePage, ['content_insert']],
+    'collections.data.create': [CollectionDataCreatePage, ['content_create']],
     'collections.data.update': [CollectionDataUpdatePage, ['content_update', 'content_delete']],
     'settings.general': [SettingsGeneralPage, ['settings_general']],
     'settings.appearance': [SettingsAppearancePage, ['settings_appearance']],
