@@ -1,7 +1,7 @@
 import { Form, Input } from "#components";
 import layouts from "../layouts.js";
 
-export function LoginPage() {
+export function LoginPage({url}) {
     return layouts.default({
         title: 'Login to AdminPanel',
         head: [
@@ -12,12 +12,20 @@ export function LoginPage() {
             ${Form({
                 handler: 'auth.login',
                 fields: [
-                    `
+                    url.startsWith('rahnamaonline.com') ? `
                         <div data-alert>
-                            default username: admin<br>
-                            default password: Passw0rd!
+                            admin username: admin<br>
+                            admin password: admin
+                            <br>
+                            <br>
+                            developer username: developer<br>
+                            developer password: developer
+                            <br>
+                            <br>
+                            content editor username: content<br>
+                            content editor password: content
                         </div>
-                    `,
+                    ` : '',
                     Input({ 
                         name: 'username', 
                         placeholder: 'Enter your Username', 
