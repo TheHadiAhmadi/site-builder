@@ -90,7 +90,7 @@ app.post('/api/login', async (req, res) => {
 })
 app.get('/login', (req, res) => {
 
-    res.send(LoginPage({url: req.url}))
+    res.send(LoginPage({url: req.hostname}))
 })
 
 app.get('/robots.txt', async (req, res) => {
