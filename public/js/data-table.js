@@ -43,8 +43,10 @@ export function DataTable(el) {
             el.addEventListener('click', () => {
                 el.querySelector('[data-button]').click()
             })
-            el.querySelectorAll('[data-button]').addEventListener('click', (ev) => {
-                ev.stopPropagation()
+            el.querySelectorAll('[data-button]').forEach(el => {
+                el.addEventListener('click', (ev) => {
+                    ev.stopPropagation()
+                })
             })
 
             
