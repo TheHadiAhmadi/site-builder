@@ -40,13 +40,14 @@ export function DataTable(el) {
         })
     } else {
         tableRows.forEach(el => {
-            el.querySelectorAll('[data-button]').addEventListener('click', (ev) => {
-                ev.stopPropagation()
-            })
-            
             el.addEventListener('click', () => {
                 el.querySelector('[data-button]').click()
             })
+            el.querySelectorAll('[data-button]').addEventListener('click', (ev) => {
+                ev.stopPropagation()
+            })
+
+            
         })
     }
     
