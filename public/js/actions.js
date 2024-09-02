@@ -194,7 +194,11 @@ const actions = {
     },
     async 'open-add-field-modal'(el) {
         const modal = document.querySelector(`[data-modal="field"]`)
-        modal.dataset.id = modal.querySelector('[name="id"]').value
+
+        if(modal.querySelector('[name="id"]')?.value)
+        {
+            modal.dataset.id = modal.querySelector('[name="id"]')?.value
+        }
 
         modal.querySelector('[data-modal-body]').innerHTML = ''
         const html = await request('collection.getFieldTypeSelector', {})

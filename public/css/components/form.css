@@ -180,6 +180,10 @@
     height: 40px; 
 }
 
+[data-hidden] {
+    display: none;
+}
+
 [data-rich-text-wrapper] {
     display: flex;
     flex-direction: column;
@@ -200,13 +204,88 @@
 
 [data-rich-text] {
     outline: none;
-    padding: 8px 12px;
     flex: 1;
     border-radius: 6px;
     background-color: var(--input-bg);
     transition: all 0.2s ease;
+    overflow: hidden;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+    padding: 0 !important;
 }
 
-[data-hidden] {
-    display: none;
+[data-rich-text-wrapper] .ql-toolbar.ql-snow {
+    border: none;
+
+}
+
+.ql-editor.ql-blank {
+    border: none;
+}
+
+.ql-editor.ql-blank::before {
+    color: var(--color-muted-content) !important;
+}
+
+.ql-container.ql-snow {
+    border: none !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+
+.ql-snow .ql-picker {
+}
+.ql-snow .ql-picker-label {
+    border-radius: 4px;
+    color: var(--color-muted-content) !important;
+}
+
+.ql-snow .ql-expanded .ql-picker-label {
+    border-radius: 4px;
+    border-color: var(--border-color) !important;
+}
+
+.ql-snow .ql-stroke {
+    stroke: var(--color-muted-content) !important;
+}
+.ql-snow .ql-fill {
+    fill: var(--color-muted-content) !important;
+}
+
+.ql-expanded .ql-picker-label {
+    border-color: var(--border-color) !important;
+}
+
+.ql-picker-options {
+    background-color: var(--color-base-300) !important;
+    color: var(--color-default-content);
+    border-radius: 8px;
+    border-color: var(--border-color) !important;
+
+}
+
+.ql-snow button {
+    border-radius: 4px;
+}
+
+.ql-snow button:hover .ql-stroke {
+    stroke: var(--color-default-content) !important;
+}
+
+.ql-snow button:hover .ql-fill {
+    fill: var(--color-default-content) !important;
+}
+
+.ql-snow button:hover {
+    background-color: var(--button-ghost-hover-bg) !important;
+}
+
+.ql-active {
+    background-color: var(--button-ghost-hover-bg) !important;
+}
+/* Rich text dark mode */
+[data-theme="dark"] [data-rich-text-wrapper] .ql-toolbar.ql-snow {
+    color: white;
+}
+[data-theme="dark"] [data-rich-text-wrapper] [data-rich-text] {
+    border: none;
 }

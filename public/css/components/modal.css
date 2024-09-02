@@ -37,6 +37,25 @@
     border: 1px solid var(--border-color);
     transform: scale(0.95);
     opacity: 0;
+    position: relative;
+}
+
+[data-modal-close-btn] {
+    position: absolute;
+    top: 0;
+    right: 00;
+    padding: 1rem;
+    color: var(--color-muted-alt);
+    transition: all 0.3s ease;
+}
+
+[data-modal-close-btn]:hover {
+    color: var(--color-muted-content);
+}
+
+[data-modal-close-icon] {
+    width: 32px;
+    height: 32px;
 }
 
 [data-modal-open] [data-modal-content] {

@@ -52,7 +52,13 @@ export async function BlockUpdatePage({query, permissions}) {
                 }),
             ])
         }),
-        FieldsList({id: block.id, fields: block.props, updateAction: 'module-open-edit-field-modal', action: 'open-module-add-prop-modal', deleteAction: 'delete-settings-field'}),             
+        FieldsList({
+            id: block.id, 
+            fields: block.props, 
+            updateAction: 'module-open-edit-field-modal', 
+            action: 'open-module-add-prop-modal', 
+            deleteAction: 'delete-settings-field'
+        }),             
         FieldModal({ id: block.id }),
         UpdateBlockAiModal({id: block.id}),
         Page({

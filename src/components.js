@@ -167,7 +167,7 @@ export function Form({name ='', handler, fields, cancelAction, startActions = []
             ${Stack({justify: 'end'}, [
                 startActions.join(''),
                 `<div style="margin-inline-start: auto;"></div>`,
-                Button({text: 'Cancel', type: 'button', color: 'default', href: cancelHref, action: cancelAction, dataset: cancelDataset}),
+                (cancelAction || cancelHref) ? Button({text: 'Cancel', type: 'button', color: 'default', href: cancelHref, action: cancelAction, dataset: cancelDataset}) : "",
                 Button({text: 'Submit', type: 'submit', color: 'primary'})
             ])}
         </form>
@@ -249,6 +249,9 @@ export function Modal({name = '', size = 'medium', title, footer, body}) {
     })
     return html`<div${attrs}>
         <div data-modal-content>
+            <button data-modal-close-btn data-action="modal.close">
+                <svg data-modal-close-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 7L7 17M7 7l10 10"/></svg>   
+            </button>
             ${title ? html`
                 <div data-modal-header>
                     <div data-modal-title>${title}</div>

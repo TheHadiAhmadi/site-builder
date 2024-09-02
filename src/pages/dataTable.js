@@ -122,7 +122,17 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
         if(field.type === 'input') return item[field.slug]
         if(field.type === 'textarea') return item[field.slug] ? item[field.slug].slice(0, 100) + (item[field.slug].length > 100 ? '...' : '') : ''
         if(field.type === 'checkbox') return item[field.slug] ? 'Yes' : 'No'
-        if(field.type === 'select') return `<span data-badge>${getText(field.items.find(x => getValue(x) === item[field.slug]))}</span>`
+        if(field.type === 'select') {
+            if(field.multiple) {
+                let items = []
+                for(let val of item[field.slug] ?? []) {
+                    items.push(`<span data-badge>${getText(field.items.find(x => getValue(x) === val))}</span>`)
+                }
+                return Stack({}, items)
+            } else {
+                return item[field.slug] ? `<span data-badge>${getText(field.items.find(x => getValue(x) === item[field.slug]))}</span>` : ''
+            }
+        }
         if(field.type === 'file') {
             if(!item[field.slug]) return ''
             
@@ -161,7 +171,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
 
             return renderFile(item[field.slug])
         }
-        if(field.type === 'rich-text') return '...'
+        if(field.type === 'rich-text') return item[field.slug] ? '...' : ''
         if(field.type === 'relation') {
             if(!item[field.slug]) return ''
 

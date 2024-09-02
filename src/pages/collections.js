@@ -59,6 +59,7 @@ function Relation(field) {
 
 function RichText(field) {
     return Label({
+        symbolic: true,
         text: field.label,
         body: `<div data-rich-text-wrapper><div name="${field.name}" data-rich-text></div></div>`
     })
