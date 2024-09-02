@@ -8,7 +8,13 @@ export function DataTable(el) {
 
     if(selectAllCheckbox) {
         const checkboxes = [...el.querySelectorAll('[data-table] tbody tr td [data-checkbox]')]
+        const tableRows = [...el.querySelectorAll('[data-table] tbody tr')]
 
+        tableRows.forEach(el => {
+            el.addEventListener('click', () => {
+                el.querySelector('[data-checkbox]').click()
+            })
+        })
         selectAllCheckbox.addEventListener('change', (ev) => {
             checkboxes.forEach(el => el.checked = ev.target.checked)
         })
@@ -28,7 +34,7 @@ export function DataTable(el) {
                 }
             })
         })
-    }    
+    }   
     
     form.addEventListener('submit', (e) => {
         e.preventDefault()

@@ -20,6 +20,8 @@
     --sidebar-item-bg: #f1f1f1;
     --sidebar-item-border: #dddddd;
     --sidebar-item-hover-bg: white;
+    --sidebar-footer-background: linear-gradient(to right, var(--sidebar-item-hover-bg), transparent);;
+    --sidebar-footer-background-mobile: white;
     --sidebar-item-shadow-color: black;
     --sidebar-primary-item-hover-color: black;
     --sidebar-item-icon-border: #dddddd;
@@ -55,6 +57,7 @@
     --sidebar-item-icon-border: #3b4f66;
     --sidebar-item-icon-shadow-color: #475569;
     --sidebar-item-icon-bg: #1f2937;
+    --sidebar-footer-background-mobile: var(--color-base-300);
     --body-bg: #111827;
     --body-color: #e5e7eb;
     --scrollbar-track-bg: #1e2635;
@@ -146,12 +149,15 @@ iframe {
 
 [data-sidebar-footer] {
     height: 3.5rem;
-    background: var(--sidebar-item-hover-background);
+    background: var(--sidebar-footer-background);
+    margin-left: 4px;
+    transition: all 0.3s ease;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 0.5rem 1rem;
+    border-radius: 4px;
 }
 
 [data-sidebar-footer-center] {
@@ -359,7 +365,8 @@ iframe {
     flex-direction: column;
     padding-left: 32px;
     padding-right: 16px;
-
+    max-height: 60vh;
+    overflow: auto;
 }
 
 [data-sidebar-primary] [data-secondary-sidebar-item-icon] {
@@ -603,6 +610,7 @@ iframe {
 @media (max-width: 768px) {
     [data-sidebar-offcanvas] {
         --sidebar-item-hover-background: var(--sidebar-item-hover-bg);
+        --sidebar-footer-background: var(--sidebar-footer-background-mobile);
     }
 
     [data-sidebar-mobile] {

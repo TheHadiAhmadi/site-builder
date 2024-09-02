@@ -88,6 +88,11 @@ app.post('/api/login', async (req, res) => {
     })
     return res.redirect('/?mode=edit')
 })
+app.post('/api/logout', (req, res) => {
+    res.cookie('userId', '', {httpOnly: true})
+    res.json({success: true})
+})
+
 app.get('/login', (req, res) => {
 
     res.send(LoginPage({url: req.hostname}))

@@ -72,6 +72,7 @@ export async function SettingsProfilePage({context}) {
     }
     return Page({ 
         title: 'Profile settings', 
+        actions: [Button({text: 'Logout', action: 'logout'})],
         body: Form({
             load: 'settings.loadProfile',
             id: context.id,

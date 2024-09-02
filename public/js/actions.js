@@ -236,6 +236,9 @@ const actions = {
         })
         // reload('?mode=edit&view=role-edit&id=' + roleId)
     },
+    async 'logout'(el) {
+        await fetch('/api/logout', {method: 'POST'}).then(res => reload('/'))
+    },
     async 'open-filter-relation-table'(el) {
         const slug = el.dataset.slug
         const html = await request('table.load', {
