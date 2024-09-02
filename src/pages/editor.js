@@ -26,24 +26,21 @@ export async function PageEditorPage({url, query, view, permissions}) {
     return `
         <div data-name="iframe">
             <div data-content-header>
-                <div>
-                    <span data-page-back></span>
-                    <div data-header-title>
-                        ${view === 'iframe' ? Button({ action: 'open-add-block', outline: true, color: 'primary', text: `
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z"/></svg>
-                            <span data-add-block-button>Add Block</span>
-                        `, dataset: {
-                            'hide-desktop': true
-                        }}) : ''}
-                        ${page?.name ?? 'Untitled'}
-                        ${view === 'iframe' ? `` : `
-                            <a target="_blank" href="${url.split('?')[0]}" data-button data-button-color="primary" data-button-ghost>
-                                Preview
-                                <svg data-icon xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M10.75 1a.75.75 0 0 0 0 1.5h1.69L8.22 6.72a.75.75 0 0 0 1.06 1.06l4.22-4.22v1.69a.75.75 0 0 0 1.5 0V1zM2.5 4v9a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V8.75a.75.75 0 0 1 1.5 0V13a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h4.25a.75.75 0 0 1 0 1.5H3a.5.5 0 0 0-.5.5" clip-rule="evenodd"/></svg>
-                            </a>
-                            
-                        `}
-                    </div>
+                <div data-header-title>
+                    ${view === 'iframe' ? Button({ action: 'open-add-block', outline: true, color: 'primary', text: `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M11 13H5v-2h6V5h2v6h6v2h-6v6h-2z"/></svg>
+                        <span data-add-block-button>Add Block</span>
+                    `, dataset: {
+                        'hide-desktop': true
+                    }}) : ''}
+                    ${page?.name ?? 'Untitled'}
+                    ${view === 'iframe' ? `` : `
+                        <a target="_blank" href="${url.split('?')[0]}" data-button data-button-color="primary" data-button-ghost>
+                            Preview
+                            <svg data-icon xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M10.75 1a.75.75 0 0 0 0 1.5h1.69L8.22 6.72a.75.75 0 0 0 1.06 1.06l4.22-4.22v1.69a.75.75 0 0 0 1.5 0V1zM2.5 4v9a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V8.75a.75.75 0 0 1 1.5 0V13a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h4.25a.75.75 0 0 1 0 1.5H3a.5.5 0 0 0-.5.5" clip-rule="evenodd"/></svg>
+                        </a>
+                        
+                    `}
                 </div>
                 <div data-header-actions>
                     ${page?.dynamic ? await DynamicPageSelect(page, params) : ''}
