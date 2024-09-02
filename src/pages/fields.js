@@ -123,6 +123,17 @@ export function FieldForm({handler, collections, id, mode = 'add', type = ''}) {
         fields.push(
             Checkbox({name: 'multiple', label: 'Multiple'})
         )
+        fields.push(
+            Select({
+                items: [
+                    {value: 'all', text: 'All conditions must be met (AND)'}, 
+                    {value: 'in', text: 'Matches if any condition is met (OR)'},
+                ],
+                label: 'Filter Mode',
+                name: 'filterMode',
+                placeholder: 'Choose filterMode'
+            })
+        )
     }
 
     return Form({
