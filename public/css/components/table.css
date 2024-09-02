@@ -29,12 +29,11 @@
     color: var(--body-color);
     text-align: start;
     transition: all 0.2s ease;
-
     padding: 14px 18px;
     white-space: nowrap;
 }
 [data-table-compact] tbody tr td {
-    padding: 4px 1rem;
+    padding: 8px 1rem;
 }
 
 [data-table] td {
@@ -45,6 +44,7 @@
 
 [data-table] tbody tr:hover td {
     background-color: var(--table-hover-bg); 
+    cursor: pointer;
 }
 
 [data-table-actions] {

@@ -5,10 +5,10 @@ export function DataTable(el) {
     const form = el.querySelector('[data-data-table-filters-form]')
 
     const selectAllCheckbox = el.querySelector('[data-checkbox][name="select-all"]')
+    const tableRows = [...el.querySelectorAll('[data-table] tbody tr')]
 
     if(selectAllCheckbox) {
         const checkboxes = [...el.querySelectorAll('[data-table] tbody tr td [data-checkbox]')]
-        const tableRows = [...el.querySelectorAll('[data-table] tbody tr')]
 
         tableRows.forEach(el => {
             el.addEventListener('click', () => {
@@ -20,6 +20,10 @@ export function DataTable(el) {
         })
 
         checkboxes.forEach(el => {
+            el.addEventListener('click', (event) => {
+                event.stopPropagation()
+            })
+
             el.addEventListener('change', (value) => {
                 const allCheckboxes = checkboxes.map(x => x.checked)
 
@@ -34,7 +38,13 @@ export function DataTable(el) {
                 }
             })
         })
-    }   
+    } else {
+        tableRows.forEach(el => {
+            el.addEventListener('click', () => {
+                el.querySelector('[data-button]').click()
+            })
+        })
+    }
     
     form.addEventListener('submit', (e) => {
         e.preventDefault()

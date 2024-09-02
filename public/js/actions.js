@@ -841,7 +841,7 @@ const actions = {
             if(itemIds.length === 0) {
                 el2.innerHTML = `<span data-badge>No Items</span>`
             } else {
-                el2.innerHTML = `<div data-stack>${itemIds.map(x => `<span data-badge>${x}</span>`).join('')}</div>`
+                el2.innerHTML = `<div data-stack><span data-badge>${itemIds.length} Items</span></div>`
             }
             
         } else {

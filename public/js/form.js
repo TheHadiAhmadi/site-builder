@@ -180,10 +180,10 @@ export function setFormValue(form, value) {
                             if(fieldValue.length === 0) {
                                 el2.innerHTML = `<span data-badge>No Items</span>`
                             } else {
-                                el.innerHTML = `<div data-stack>${fieldValue.map(x => `<span data-badge>${x}</span>`).join('')}</div>`
+                                el.innerHTML = `<div data-stack><span data-badge>${fieldValue.length} Items</span></div>`
                             }
                         } else {
-                            el.innerHTML = `<span data-badge>${fieldValue}</span>`
+                            el.innerHTML = `<span data-badge>1 Item</span>`
                         }
                     }
                 }
