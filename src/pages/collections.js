@@ -162,7 +162,7 @@ export async function CollectionUpdatePage({query}) {
         title: 'Update Collection',
         actions: [
             Button({text: 'View Data', href: '?mode=edit&view=collections.data.list&id=' + collection.id}),
-            Button({text: 'Delete', color: 'danger', action: 'delete-collection', dataset: {id: collection.id}}),
+            Button({text: 'Delete', color: 'danger', outline: true, action: 'delete-collection', dataset: {id: collection.id}}),
         ],
         body: CollectionForm({
                 id: collection.id,
@@ -198,6 +198,7 @@ export async function CollectionDataCreatePage({query}) {
     return Page({
         title: 'Insert ' + collection.name,
         back: '?mode=edit&view=collections.data.list&id=' + collection.id,
+        backText: collection.name + ' List',
         actions: [],
         body: [
             Form({
@@ -221,6 +222,8 @@ export async function CollectionDataUpdatePage({query}) {
     return Page({
         title: 'Update ' + collection.name,
         actions: [],
+        back: '?mode=edit&view=collections.data.list&id=' + collection.id,
+        backText: collection.name + ' List',
         body: [
             Form({ 
                 load: 'content.loadCollectionContent',

@@ -108,7 +108,7 @@ export async function PageCreatePage() {
 }
 
 export async function PageUpdatePage({query, permissions}) {
-    let back = decodeURIComponent(query.back ?? '?mode=edit')
+    let back = decodeURIComponent(query.back ?? '')
     let collections = await db('collections').query().all()
     const page = await db('pages').query().filter('id', '=', query.id).first()
 
@@ -117,7 +117,7 @@ export async function PageUpdatePage({query, permissions}) {
             title: 'Update Page',
             back,
             actions: [
-                permissions.page_delete ? Button({text: 'Delete', action: 'delete-page', color: 'danger', dataset: {id: page.id}}): ""
+                permissions.page_delete ? Button({text: 'Delete', outline: true, action: 'delete-page', color: 'danger', dataset: {id: page.id}}): ""
             ],
             body: Form({
                 name: 'page-update-form',

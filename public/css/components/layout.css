@@ -18,16 +18,17 @@
 
 [data-page-back] {
     color: var(--color-muted-content);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 14px;
+    margin-top: -0.5rem;
+    font-size: 12px;
     font-weight: bold;
 }
 
 [data-page-back] svg {
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
 }
 
 [data-page-back]:hover {
@@ -36,6 +37,7 @@
 
 [data-header-actions] {
     margin-left: auto;
+    padding-top: 1rem;
     display: flex;
     gap: 8px;
     flex-wrap: wrap;

@@ -32,7 +32,7 @@ export async function BlockUpdatePage({query, permissions}) {
         Page({
             actions: [
                 permissions.block_update_ai ? Button({text: 'Update With AI', color: 'primary', action: "open-update-module-ai-modal"}) : '',
-                permissions.block_delete ? Button({text: 'Delete', color: 'danger', action: "delete-module", dataset: {id: block.id}}) : '',
+                permissions.block_delete ? Button({text: 'Delete', color: 'danger', outline: true, action: "delete-module", dataset: {id: block.id}}) : '',
                 Button({text: 'Cancel', action: "navigation.navigate-to-default-view"}),
                 
             ].join(''),
