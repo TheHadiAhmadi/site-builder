@@ -2,7 +2,7 @@ import { Button, File, Form, Input, Modal, Page, Stack, Textarea } from "#compon
 import { db } from "#services"
 import { FieldModal, FieldsList } from "./fields.js"
 
-export async function BlockCreatePage() {
+export async function BlockCreatePage({permissions}) {
     return [
         Page({
             actions: [
