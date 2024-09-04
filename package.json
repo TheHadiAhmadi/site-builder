@@ -1,5 +1,5 @@
 {
-  "name": "create-tailcms",
+  "name": "tailcms",
   "version": "1.0.0",
   "type": "module",
   "bin": "bin/tailcms.js",
