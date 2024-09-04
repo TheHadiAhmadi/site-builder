@@ -1,0 +1,46 @@
+name: Publish NPM Package
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  pages: write
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.event.head_commit.message, 'Release') }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      # setup git user
+      - run: git config user.name "$GITHUB_ACTOR"
+      - run: git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      # incremnet package version and create a commit
+      - run: npm version prerelease --preid=next -m "Release %s"
+
+      - run: git push
+
+  publish-npm:
+    runs-on: ubuntu-latest
+    # if: ${{ startsWith(github.event.head_commit.message, 'Release') }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+      - run: npm install --force
+      
+      - run: npm publish --tag next
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

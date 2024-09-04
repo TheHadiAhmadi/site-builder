@@ -1,7 +1,8 @@
 {
-  "name": "site-builder",
+  "name": "create-tailcms",
   "version": "1.0.0",
   "type": "module",
+  "bin": "bin/tailcms.js",
   "imports": {
     "#services": "./services/index.js",
     "#modules": "./modules/index.js",

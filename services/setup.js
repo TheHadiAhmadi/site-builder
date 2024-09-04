@@ -1,5 +1,5 @@
 import {cpSync, existsSync, mkdirSync, readFileSync, rmSync} from 'node:fs'
-import db from "./db.js"
+import {db} from "./db.js"
 import JSZip from 'jszip'
 import { copyFile, mkdir, writeFile } from 'node:fs/promises'
 import { slugify } from '../src/handlers/content.js'
@@ -465,6 +465,7 @@ export async function setupCms(req, res) {
     } else {
         // inset default modules
         for(let key in defaultModules) {
+            console.log(db)
             const res = await db('definitions').insert({
                 name: key,
                 props: defaultModules[key].props,
