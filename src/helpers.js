@@ -3,11 +3,14 @@ import hbs from 'handlebars'
 import { join } from 'path'
 
 export function getUrl(query) {
-    let res = `?mode=edit`
+    let res = ''
     for (let key in query) {
         res += '&' + key + '=' + query[key]
     }
-    return res
+    if(res) {
+        return res.replace('&', '?')
+    } 
+    return ''
 }
 
 export async function getPage(slug) {

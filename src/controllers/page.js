@@ -1,4 +1,5 @@
 import { db } from "#services"
+import hbs from 'handlebars'
 import { getPage } from "#helpers"
 import layouts from "../layouts.js"
 import { renderBody } from "../page.js"
@@ -14,7 +15,7 @@ async function getPageModules(pageId) {
 
 export const renderPageController = async (req, res) => {
     const { page, params } = await getPage(req.params[0])
-    const mode = req.query.mode ?? 'view'
+    const mode = req.url.startsWith('/admin') ? 'edit' : (req.query.mode ?? 'view')
     const view = req.query.view ?? ''
     const settings = await db('settings').query().first() ?? {}
 

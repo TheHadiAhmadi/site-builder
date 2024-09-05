@@ -61,7 +61,7 @@ async function sidebarPages({ url, permissions }) {
     return `
         <div data-sidebar-body>
             ${await Promise.all(pages.map(async x => `
-                <div data-sidebar-item ${currentPage?.id === x.id ? 'data-active' : ''} data-sidebar-page-item data-action="navigation.link" data-href="${await getPageSlug(x)}?mode=edit&view=pages.edit">
+                <div data-sidebar-item ${currentPage?.id === x.id ? 'data-active' : ''} data-sidebar-page-item data-action="navigation.link" data-href="?view=pages.edit&slug=${encodeURIComponent(await getPageSlug(x))}">
                     <div data-page-item-start>
                         <span  style="white-space: nowrap;">${x.name}</span>
                         <span data-page-item-slug>${x.slug}</span>

@@ -20,11 +20,11 @@ export async function RoleListPage() {
 export async function RoleCreatePage() {
     return Page({
         title: 'Add Role',
-        back: '?mode=edit&view=settings.roles.list',
+        back: '?view=settings.roles.list',
         body: [
             Form({
                 handler: 'role.insert',
-                cancelHref: '?mode=edit&view=settings.roles.list',
+                cancelHref: '?view=settings.roles.list',
                 fields: roleFields.filter(x => !x.hidden).map(x => FieldInput(x))
             })
         ]
@@ -35,11 +35,11 @@ export async function RoleUpdatePage({query}) {
     return [
         Page({
             title: 'Edit Role',
-            back: '?mode=edit&view=settings.roles.list',
+            back: '?view=settings.roles.list',
             body: [
                 Form({
                     load: 'role.load',
-                    cancelHref: '?mode=edit&view=settings.roles.list',
+                    cancelHref: '?view=settings.roles.list',
                     id: query.id,
                     handler: 'role.update',
                     fields: [

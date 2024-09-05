@@ -22,11 +22,11 @@ export async function UserCreatePage() {
     const roles = await db('roles').query().all()
     return Page({
         title: 'Add User',
-        back: '?mode=edit&view=settings.users.list',
+        back: '?view=settings.users.list',
         body: [
             Form({
                 handler: 'user.insert',
-                cancelHref: '?mode=edit&view=settings.users.list',
+                cancelHref: '?view=settings.users.list',
                 fields: userFields.filter(x => !x.hidden || x.slug === 'password').map(x => FieldInput(x))
             })
         ]
@@ -43,11 +43,11 @@ export async function UserUpdatePage({query}) {
     return [
         Page({
             title: 'Edit User',
-            back: '?mode=edit&view=settings.users.list',
+            back: '?view=settings.users.list',
             body: [
                 Form({
                     load: 'user.load',
-                    cancelHref: '?mode=edit&view=settings.users.list',
+                    cancelHref: '?view=settings.users.list',
                     id: query.id,
                     handler: 'user.update',
                     fields: [

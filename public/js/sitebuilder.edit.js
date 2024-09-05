@@ -14,22 +14,33 @@ function onInit() {
     hydrate(document)
     const iframeElement = document.querySelector('iframe')
 
-    window.addEventListener("message", function(event) {
-        if(event.data?.type === 'hydrate') {
-            onIframeInit()   
-        }
-    });
-
-    if(iframeElement && iframeElement.src.includes('mode=preview')) {
-        initSortable()
-        
-        setTimeout(() => {
-            onIframeInit()
-        }, 2000)
+    console.log('onInit')
+    if(!document.body.hasAttribute('hydrated-message'))
+    {
+        document.body.setAttribute('hydrated-message', '')
+        window.addEventListener("message", function(event) {
+            if(event.data?.type === 'hydrate') {
+                onIframeInit()   
+            }
+            if(event.data?.type === 'navigate') {
+                console.log('navigate')
+                const view = new URL(window.location.href).searchParams.get('view') ?? ''
+                const url = `/admin?view=${view}&slug=${encodeURIComponent(event.data.href)}`   
+                reload(url)
+            }
+        });
     }
-}
-
-function onRequest(e) {
+        
+        if(iframeElement && iframeElement.src.includes('mode=preview')) {
+            initSortable()
+            
+            setTimeout(() => {
+                onIframeInit()
+            }, 2000)
+        }
+    }
+    
+    function onRequest(e) {
     const res = e.detail
 
     if(res.reload) {

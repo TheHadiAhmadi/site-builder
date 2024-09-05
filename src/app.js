@@ -1,17 +1,12 @@
 import express from 'express'
 import { setDb } from '#services'
-import handlers from './handlers.js'
-import {readdir} from 'node:fs/promises'
 import { renderPageController } from './controllers/page.js'
 import cookieParser from 'cookie-parser'
 import { LoginPage } from './pages/login.js'
-import { SetupPage } from './pages/setup.js'
 import { setupCms} from '../services/setup.js'
 import hbs from 'handlebars'
-import JSZip from 'jszip'
-import path, { basename } from 'node:path'
-import { fileURLToPath, URL } from 'url';
-import { getExportFiles } from '../services/export.js'
+import path from 'node:path'
+import { fileURLToPath } from 'url';
 import { exportSiteController } from './controllers/export.js'
 import { loginController, logoutController } from './controllers/login.js'
 import { queryController } from './controllers/query.js'
@@ -94,9 +89,9 @@ export function createApp({functions, db}) {
         return res.end(result)
     })
 
-    app.get('/admin', (req, res) => {
-        res.redirect('?mode=edit')
-    })
+    // app.get('/admin', (req, res) => {
+    //     res.redirect('/?mode=edit')
+    // })
 
     //#region Functions
     for (let key in functions) {

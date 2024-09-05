@@ -84,7 +84,7 @@ export async function createModule(body) {
     }
 
     return {
-        // redirect: '?mode=edit&view=iframe'
+        // redirect: '?view=iframe'
         id: res?.id ?? '',
         success: true
     }

@@ -17,7 +17,7 @@ export default {
         const res = await db('contents').insert(body)
 
         return {
-            redirect: `?mode=edit&view=collections.data.list&id=${body._type}`
+            redirect: `?view=collections.data.list&id=${body._type}`
         }
     },
     async updateCollectionContent(body) {
@@ -26,7 +26,7 @@ export default {
         await db('contents').update(body)
 
         return {
-            redirect: `?mode=edit&view=collections.data.list&id=${body._type}`
+            redirect: `?view=collections.data.list&id=${body._type}`
         }
     },
     async loadCollectionContent(body) {

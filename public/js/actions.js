@@ -64,9 +64,6 @@ const navigationActions = {
     link(el) {
         reload(el.dataset.href)
     },
-    'navigate-to-default-view'() {
-        reload(window.location.pathname + '?mode=edit')
-    },
     'navigate-back'() {
         history.back()
         setTimeout(() => {
@@ -154,7 +151,7 @@ const actions = {
     },
     'change-dynamic-page-content'(el) {
         const view = new URL(window.location.href).searchParams.get('view') ?? ''
-        reload(el.value + '?mode=edit' + (view ? '&view=' + view : ''))
+        reload('/admin?slug=' + encodeURIComponent(el.value) + (view ? '&view=' + view : ''))
     },
     async 'module-add-field-choose-type'(el) {
         const value = el.dataset.value
@@ -215,7 +212,7 @@ const actions = {
     'open-user-edit'(el) {
         const userId = el.dataset.id
 
-        reload('?mode=edit&view=settings.users.update&id=' + userId)
+        reload('?view=settings.users.update&id=' + userId)
     },
     'open-user-delete'(el) {
         openConfirm({
@@ -224,12 +221,12 @@ const actions = {
             action: 'user.delete',
             id: el.dataset.id
         })
-        // reload('?mode=edit&view=user-edit&id=' + userId)
+        // reload('?view=user-edit&id=' + userId)
     },
     'open-role-edit'(el) {
         const roleId = el.dataset.id
 
-        reload('?mode=edit&view=settings.roles.update&id=' + roleId)
+        reload('?view=settings.roles.update&id=' + roleId)
     },
     'open-role-delete'(el) {
         openConfirm({
@@ -238,7 +235,7 @@ const actions = {
             action: 'role.delete',
             id: el.dataset.id
         })
-        // reload('?mode=edit&view=role-edit&id=' + roleId)
+        // reload('?view=role-edit&id=' + roleId)
     },
     async 'logout'(el) {
         await fetch('/api/logout', {method: 'POST'}).then(res => reload('/'))
@@ -574,7 +571,7 @@ const actions = {
 
 
         
-        // reload(`?mode=edit&moduleId=` + moduleId)
+        // reload(`?moduleId=` + moduleId)
         const settings = await request('module.loadSettings', {id: moduleId, slug: decodeURIComponent(location.pathname)})
         const template = await request('module.getSettingsTemplate', {id: moduleId})
 
@@ -608,10 +605,9 @@ const actions = {
     },
     async 'add-section'(el, ev) {
         ev.stopPropagation()
-        // const order = el.dataset.order
 
         function getPageId() {
-            return document.querySelector('iframe').contentDocument.querySelector('[data-body]').dataset.pageId
+            return document.querySelector('[data-page-id]').dataset.pageId
         }
 
         function getIndex() {

@@ -85,6 +85,6 @@ export async function updateSeo(body) {
 
 
     return {
-        redirect: '?mode=edit&view=iframe'
+        redirect: '?view=iframe'
     }
 }

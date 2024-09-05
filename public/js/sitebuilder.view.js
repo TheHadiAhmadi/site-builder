@@ -29,3 +29,16 @@ function getParentModule(el) {
     if(el.dataset.moduleId) return el;
     return getParentModule(el.parentElement)
 }
+
+
+document.querySelectorAll('a[href]').forEach(el => {
+    if(el.hasAttribute('hydrated')) return
+    el.setAttribute('hydrated', '')
+    el.addEventListener('click', (ev) => {
+        const href = el.getAttribute('href')
+        if(href.startsWith('/') && !href.startsWith('/files/')) {
+            ev.preventDefault()
+            window.parent.postMessage({type: 'navigate', href})
+        }
+    })
+})

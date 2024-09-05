@@ -95,7 +95,7 @@ export default {
         await db('users').insert(body)
 
         return {
-            redirect: '?mode=edit&view=settings.users.list'
+            redirect: '?view=settings.users.list'
         }
     },
     async update(body) {

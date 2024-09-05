@@ -134,8 +134,8 @@ export async function renderBody(body, { props, mode, url, view, context, params
 
     await loadModuleDefinitions()
 
-    let {page} = await getPage(url.split('?')[0])
-    if (!page && view === 'iframe') view = 'pages.create'
+    // let {page} = await getPage(url.split('?')[0])
+    // if (!page && view === 'iframe') view = 'pages.create'
     if(mode === 'edit' && !view) view = 'dashboard'
 
     let pageContent;
@@ -223,7 +223,7 @@ export async function renderBody(body, { props, mode, url, view, context, params
     }
 
     return `
-        <div data-body data-page-id="${page?.id}">
+        <div data-body>
             ${(await Promise.all(body.map(x => renderModule(x, { props, mode, definitions, permissions, request })))).join('')}
             ${previewContent}
         </div>

@@ -163,7 +163,7 @@ export default {
         await db('roles').insert(body)
 
         return {
-            redirect: '?mode=edit&view=settings.roles.list'
+            redirect: '?view=settings.roles.list'
         }
     },
     async update(body) {

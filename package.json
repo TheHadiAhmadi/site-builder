@@ -10,7 +10,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --ext js index.js",
+    "dev": "node bin/tailcms.js dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
