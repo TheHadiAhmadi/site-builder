@@ -64,3 +64,41 @@ export async function getPageSlug(page) {
     }
     return page.slug
 }
+
+export function attributes(object, dataset) {
+    let result = ''
+
+    for(let key in object) {
+        if(object[key] === false) continue
+        if(object[key] || object[key] == '') {
+            if(object[key] === true || object[key] == '') {
+                result += ` ${key}`
+            }
+            result += ` ${key}="${object[key]}"`
+        }
+    }
+
+    for(let key in dataset ?? {}) {
+        if(dataset[key] === false) continue
+        if(dataset[key] || dataset[key] == '') {
+            if(dataset[key] === true || dataset[key] == '') {
+                result += ` data-${key}`
+            }
+            result += ` data-${key}="${dataset[key]}"`
+        }
+    }
+    
+    return result; 
+}
+
+export function getText(option) {
+    return typeof option === 'object' ? option.text : option
+}
+
+export function getValue(option) {
+    return typeof option === 'object' ? option.value : option
+}
+
+export function isSelected(option) {
+    return typeof option === 'object' && option.selected
+}

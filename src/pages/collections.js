@@ -1,7 +1,8 @@
 import { db } from "#services";
-import { Button, Card, CardBody, Checkbox, EmptyTable, File, Form, getText, getValue, Input, isSelected, Label, Modal, Page, Select, Stack, Table, Textarea } from "../components.js"
+import { Button, Card, CardBody, Checkbox, EmptyTable, File, Form, Input, Label, Modal, Page, Select, Stack, Table, Textarea } from "#components"
 import { CollectionDataTable, DataTable } from "./dataTable.js";
 import { FieldModal, FieldsList } from "./fields.js";
+import { getText, getValue, isSelected } from "#helpers";
 
 export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
     let load;

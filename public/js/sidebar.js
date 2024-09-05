@@ -10,7 +10,6 @@ export function NestedSidebar(el) {
         document.querySelectorAll('[data-nested-sidebar]').forEach(el => {
             delete el.dataset.active
         })
-        console.log(shouldClose)
 
         if(shouldClose) {
             delete el.dataset.active

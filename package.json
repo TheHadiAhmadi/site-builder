@@ -5,9 +5,8 @@
   "bin": "bin/tailcms.js",
   "imports": {
     "#services": "./services/index.js",
-    "#modules": "./modules/index.js",
-    "#components": "./src/components.js",
-    "#modules/*": "./modules/*"
+    "#components": "./src/components/index.js",
+    "#helpers": "./src/helpers.js"
   },
   "main": "index.js",
   "scripts": {

@@ -1,6 +1,6 @@
 import hbs from 'handlebars'
 import './handlebars.js'
-import { Button, DeleteConfirm, EmptyTable, Page } from './components.js'
+import { Button, DeleteConfirm, EmptyTable, Page } from '#components'
 import { join } from 'path'
 
 import { db } from "#services";
@@ -9,7 +9,7 @@ import { CollectionCreatePage, CollectionDataCreatePage, CollectionDataListPage,
 import { PageCreatePage, PageUpdatePage } from './pages/pages.js';
 import {PageEditorPage} from './pages/editor.js'
 import { normalizeCollectionContent, renderModule } from './renderModule.js';
-import { getPage, getPageSlug, getUrl } from './helpers.js';
+import { getPage, getPageSlug, getUrl } from "#helpers";
 import { UserCreatePage, UserListPage, UserUpdatePage } from './pages/users.js';
 import { SettingsAppearancePage, SettingsGeneralPage, SettingsProfilePage } from './pages/settings.js';
 import { BlockCreatePage, BlockUpdatePage, CreateBlockAiModal, UpdateBlockAiModal } from './pages/blocks.js';
@@ -176,7 +176,6 @@ export async function renderBody(body, { props, mode, url, view, context, params
     }
 
     if (mode === 'edit') {
-        console.log('context: ', context)
         return `
             <div data-body>
                 ${await Sidebar({permissions, view, url, query, context, config: sidebar})}
@@ -231,113 +230,3 @@ export async function renderBody(body, { props, mode, url, view, context, params
     `
 }
 //#endregion
-
-async function getPageModules(pageId) {
-    return db('modules')
-        .query()
-        .filter('pageId', '=', pageId)
-        .all()
-        .then(res => res.sort((a, b) => a.order > b.order ? 1 : -1))
-}
-
-export async function renderPage(req, res) {
-    let user = await db('users').query().filter('id', '=', req.cookies.userId).first()
-    console.log(user)
-    if(!user) {
-        res.cookie('userId', '', {httpOnly: true})
-        if(req.query.mode == 'edit' || req.query.mode == 'preview') {
-            return res.redirect('/')
-        }
-    }
-
-    let context = {
-        // handler,
-        user: user ? {
-            id: user.id, 
-            username: user.username, 
-            name: user.name, 
-            email: user.email, 
-            role: user.role,
-            profile: user.profile
-        } : null
-    }
-    if(context.user) {
-        const role = await db('roles').query().filter('id', '=', context.user.role).first()   
-        context.permissions = role.permissions.reduce((prev, curr) => ({...prev, [curr]: true}), {})
-    } else {
-        context.permissions = {}
-    }
-
-    const { page, params } = await getPage(req.params[0])
-    const mode = req.query.mode ?? 'view'
-    const view = req.query.view ?? ''
-
-    let props = {}
-    props.settings = await db('settings').query().first() ?? {}
-    const tailwind = JSON.stringify({ darkMode: 'class' })
-
-    if (!page) {
-        if (mode == 'edit') {
-
-            const html = layouts.default({
-                mode,
-                theme: mode === 'edit' ? 'dark' : 'light',
-                tailwind,
-                settings: await db('settings').query().first() ?? {},
-                head: '',
-                body: await renderBody([], { ...req.query, context, mode, url: req.url, view }),
-                title: 'Untitled',
-                theme: 'dark'
-            })
-
-            return res.send(html)
-        } else {
-            return res.send('404');
-        }
-    }
-
-    if (page.dynamic) {
-        props.params = params
-        if (page.collectionId) {
-            let collection = await db('collections').query().filter('id', '=', page.collectionId).first()
-            let query = db('contents').query().filter('_type', '=', page.collectionId)
-            for (let param in params) {
-                console.log({param, val: params[param]})
-                query = query.filter(param, '=', params[param])
-            }
-
-            props.pageContent = await query.first()
-            props.pageContent = await normalizeCollectionContent(collection, props.pageContent);
-            console.log(props)
-            props.collection = collection
-        }
-    }
-
-    let { head } = page;
-    let modules = await getPageModules(page.id)
-
-    page.lang ??= 'en'
-    page.dir ??= 'ltr'
-
-    const seo = {}
-    for (let key in page.seo) {
-        seo[key] = hbs.compile(page.seo[key])({ ...props, content: props.pageContent, pageContent: undefined })
-    }
-
-    const html = layouts.default({
-        mode,
-        head: head ?? '',
-        body: await renderBody(modules, { ...req.query,context, props, params, mode, url: req.url, view }),
-        theme: mode === 'edit' ? 'dark' : 'light',
-        tailwind,
-        script: page.script,
-        style: page.style,
-        dir: page.dir,
-        lang: page.lang,
-        include_site_head: page.include_site_head,
-        seo,
-        settings: await db('settings').query().first() ?? {}
-    })
-
-    res.send(html)
-}

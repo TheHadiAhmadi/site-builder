@@ -3,7 +3,6 @@ import { db } from '#services';
 import { getDataTableItems } from './pages/dataTable.js';
 
 export async function normalizeCollectionContent(collection, item, depth = 1) {
-    console.log('normalize collection content: ', {collection, item, depth})
     for(let field of collection.fields) {
         if(item[field.slug] && field.type === 'relation' && depth < 3) {
             item[field.slug] = await loadRelationFieldType(item[field.slug], field, depth + 1)
@@ -130,7 +129,6 @@ export async function renderModule(module, {props, mode, definitions, permission
         for (let key in module.links) {
             const parts = module.links[key].split('.');
             if(parts.length > 1) {
-                console.log("link to " + key, module.props, parts, props.pageContent)
                 module.props[key] = parts.reduce((prev, curr) => prev[curr], 
                 { 
                     settings, 
@@ -142,9 +140,7 @@ export async function renderModule(module, {props, mode, definitions, permission
         }
     }
     
-    console.log({module})
     await loadModuleProps(definition, module)
-    console.log({module})
 
     
     let rendered;

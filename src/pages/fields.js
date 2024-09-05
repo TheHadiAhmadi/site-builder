@@ -1,4 +1,4 @@
-import { Button, Checkbox, EmptyTable, Form, Input, Modal, Page, Select, Stack, Table, Textarea } from "../components.js"
+import { Button, Checkbox, EmptyTable, Form, Input, Modal, Page, Select, Stack, Table, Textarea } from "#components"
 
 const fieldTypes = [
     { text: 'Input', value: 'input' },
@@ -13,7 +13,6 @@ const fieldTypes = [
 ]
 
 function fieldTypeText(key) {
-    console.log(key)
     return fieldTypes.find(x => x.value === key)?.text ?? '---'
 }
 

@@ -1,5 +1,5 @@
 import { db } from "#services"
-import { Button, Checkbox, File, Form, Input, Label, Modal, Page, Select, Stack, TabItem, Tabs, Textarea } from "../components.js"
+import { Button, Checkbox, File, Form, Input, Label, Modal, Page, Select, Stack, TabItem, Tabs, Textarea } from "#components"
 
 function PageSeoFields() {
     return Stack({vertical: true, gap: 'lg'}, [

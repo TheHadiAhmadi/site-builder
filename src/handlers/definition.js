@@ -53,15 +53,12 @@ export default {
         if(field.type === 'select')
             field.items = field.items.split('\n').map(x => x.trim())
         
-        console.log(field)
         definition.props = definition.props.map(x => {
             if(x.slug === field.slug) {
                 return field
             }
             return x
         })
-
-        console.log(JSON.stringify(definition))
 
         const res = await db('definitions').update(definition)
 

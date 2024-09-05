@@ -101,7 +101,6 @@ export default {
     async update(body) {
         delete body.password
 
-        console.log(body)
         await db('users').update(body)
     },
     async setPassword(body) {

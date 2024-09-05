@@ -270,7 +270,6 @@ const actions = {
 
         let itemIds = [...modal.querySelectorAll('td [data-checkbox]')].filter(x => x.checked).map(item => item.value)
         
-        console.log(itemIds)
         const table = document.querySelector(`[data-page] > [data-data-table]`)
 
         const input = table.querySelector(`[name="filters.${modal.dataset.slug}.value"]`)
@@ -330,7 +329,6 @@ const actions = {
         const form = modal.querySelector('[data-form]')
 
         async function submit() {
-            console.log('submit')
             form.dataset.load = ''
 
             await request('ai.updateModule', {
@@ -553,7 +551,6 @@ const actions = {
         }
     },
     async 'open-module-settings'(el, ev) {
-        console.log('open-moudule-settings action', el)
         ev.stopPropagation()
 
         const mod = getParentModule(el)
@@ -601,7 +598,6 @@ const actions = {
         })
     },
     'toggle-sidebar'() {
-        console.log('toggle offcanvas')
         const offcanvas = document.querySelector('[data-sidebar-offcanvas]')
 
         if(offcanvas.dataset.open) {
@@ -867,7 +863,6 @@ const actions = {
 
         const fieldMultiple = el.dataset.fieldMultiple  == 'true'
         let value = el.nextElementSibling.value
-        console.log({value})
         if(value.startsWith('{') ||value.startsWith('[') ) {
             value = JSON.parse(value)
         }
@@ -906,17 +901,13 @@ const actions = {
             setTimeout(() => {
 
                 if(value) {
-                    console.log(fieldMultiple)
                     
                     if(!value.filters) {
                         if(fieldMultiple) {
                             for(let item of value) {
-                                console.log(item, modal.querySelectorAll(`[name="data-table-select"]`).forEach(el => el.value))
                                 modal.querySelector(`[name="data-table-select"][value="${item}"]`).click()
                             }
                         } else {
-                            console.log(value, modal.querySelectorAll(`[name="data-table-select"]`).forEach(el => el.value))
-
                             modal.querySelector(`[name="data-table-select"][value="${value}"]`).click()
                         }
                     }

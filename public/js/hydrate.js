@@ -28,6 +28,5 @@ components.register('nested-sidebar',NestedSidebar)
 
 
 export function hydrate(el) {
-    console.log('hydrate', el)
     components.init(el)
 }

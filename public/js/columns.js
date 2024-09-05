@@ -13,8 +13,6 @@ export function Columns(element, {
 
     let dir = document.body.dataset.dir ?? 'ltr'
 
-    console.log({dir})
-
     function initColumn(el) {
         let resizer;
         let dragging = false
@@ -37,9 +35,6 @@ export function Columns(element, {
                 let field = 'cols'
                 
                 const diffLength = event.x - x
-                console.log({x, cols: el.dataset.cols})
-
-                console.log({diffLength, dir, colHalf: oneColWidth/2}, diffLength < -oneColWidth/2, diffLength > oneColWidth / 2)
                 if(dir === 'ltr') {
                     if(diffLength < -oneColWidth/2 || diffLength > oneColWidth / 2) {
                         if(el.dataset[field] == 0) {
@@ -49,17 +44,10 @@ export function Columns(element, {
                             el.dataset[field] = el.dataset['cols']
                         }
                         if(diffLength < -oneColWidth / 2) {
-                            console.log({x, cols: el.dataset.cols})
-
-                                console.log('smaller')
                                 el.dataset[field] = +(el.dataset[field]) - 1
                                 x = x - oneColWidth
                                 resized +=1
                         } else {
-                            console.log({x, cols: el.dataset.cols})
-
-                                console.log('larger')
-
                                 el.dataset[field] = +(el.dataset[field]) + 1
                                 x = x + oneColWidth
                                 resized -=1

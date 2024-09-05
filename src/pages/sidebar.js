@@ -1,7 +1,7 @@
 import { Button } from "#components"
 import { db } from "#services"
 import { html } from "svelite-html"
-import { getPage, getPageSlug, getUrl } from "../helpers.js"
+import { getPage, getPageSlug, getUrl } from "#helpers"
 
 async function sidebarBlocks({ query, permissions }) {
     // const modules = Object.keys(definitions).map(key => definitions[key]).filter(x => !['Section', 'Columns', 'RichText'].includes(x.name))

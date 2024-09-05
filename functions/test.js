@@ -9,7 +9,7 @@ export default {
             name: 'Collection'
         }
     ],
-    run(req) {
-        console.log('TEST: ', {req})
+    action(req, context) {
+        // 
     }
 }

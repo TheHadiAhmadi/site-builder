@@ -4,7 +4,6 @@ import { initSortable, initSortableIframe } from "./sortable.js"
 import { initColumns } from './columns.js'
 
 function onIframeInit() {
-    console.log('onIframeInit')
     let iframeElement = document.querySelector('iframe')
     hydrate(iframeElement.contentDocument)
     initColumns()
@@ -25,7 +24,6 @@ function onInit() {
         initSortable()
         
         setTimeout(() => {
-            console.log('calling onIframeInit')
             onIframeInit()
         }, 2000)
     }

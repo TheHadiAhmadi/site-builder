@@ -1,6 +1,6 @@
 import { Button } from "#components"
 import { db } from "#services"
-import { getPage, getSlug, getUrl } from "../helpers.js"
+import { getPage, getSlug, getUrl } from "#helpers"
 import hbs from 'handlebars'
 
 async function DynamicPageSelect(page, params) {

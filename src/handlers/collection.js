@@ -52,15 +52,12 @@ export default {
         if(field.type === 'select')
             field.items = field.items.split('\n').map(x => x.trim())
         
-        console.log(field)
         collection.fields = collection.fields.map(x => {
             if(x.slug === field.slug) {
                 return field
             }
             return x
         })
-
-        console.log(JSON.stringify(collection))
 
         const res = await db('collections').update(collection)
 

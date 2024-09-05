@@ -39,6 +39,7 @@ export function LoginPage({url}) {
                     }),
                 ]
             })}
-        </div>`
+        </div>`,
+        tailwind: JSON.stringify({})
     })
 }

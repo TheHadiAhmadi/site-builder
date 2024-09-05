@@ -111,7 +111,6 @@ export function getFormValue(formEl) {
 export function flatObject(object, prefix = '') {
     let flat = {}
     for(let key in object) {
-        console.log(object, prefix, key)
 
         if(typeof object[key] == 'object') {
             const flatted = flatObject(object[key], prefix + key + '.')
@@ -126,11 +125,9 @@ export function flatObject(object, prefix = '') {
 }
 
 export function setFormValue(form, value) {
-    console.log('setFormValue', value)
     if(!form) return;
     let formValue = flatObject(value)    
 
-    form.querySelectorAll('[name]').forEach(input => {console.log(input.getAttribute('name'))})
     form.querySelectorAll('[name]').forEach(input => {
         const name = input.getAttribute('name')
         const val = name.split('.').reduce((p, c) => p?.[c], value)
@@ -139,12 +136,10 @@ export function setFormValue(form, value) {
             if(input.hasAttribute('data-file-label')) {
                 // input.setValue(formValue[name])
                 setTimeout(() => {
-                    console.log('setValue', input.setValue, {input})
                     input.setValue(value[name])
                 }, 100)
 
             } else if(input.hasAttribute('data-checkbox')) {
-                console.log('set value for checkbox', name, val)
                 if(input.hasAttribute('data-checkbox-multiple')) {
                     if(input.value === 'true' || input.value === 'false') {
                         input.checked = val?.includes(input.value)

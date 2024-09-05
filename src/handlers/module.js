@@ -1,7 +1,7 @@
 import { db } from "#services"
 import { join } from 'path'
 import { html } from "svelite-html"
-import { Form } from "../components.js"
+import { Form } from "#components"
 import { FieldInput } from "../pages/collections.js"
 
 function DynamicFieldInput(field, fields, linked, module, collections) {
@@ -241,7 +241,6 @@ export default {
 
                 let query = db('contents').query().filter('_type', '=', collection.id)
                 for(let key in params) {
-                    console.log('filter', key, params[key])
                     query = query.filter(key, '=', params[key])
                 }
                 const content = await query.first()

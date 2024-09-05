@@ -1,6 +1,7 @@
 import { html } from "svelite-html";
-import { Button, Checkbox, EmptyTable, getText, getValue, Modal, Stack, Table } from "../components.js";
+import { Button, Checkbox, EmptyTable, Modal, Stack, Table } from "#components";
 import { db } from "#services";
+import { getText, getValue } from "#helpers";
 
 export async function getDataTableItems({page = 1, perPage = 10, query, fields, filters, expandRelations = false}) {
 

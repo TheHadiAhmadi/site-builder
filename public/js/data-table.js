@@ -7,14 +7,17 @@ export function DataTable(el) {
     const selectAllCheckbox = el.querySelector('[data-checkbox][name="select-all"]')
     const tableRows = [...el.querySelectorAll('[data-table] tbody tr')]
 
+    tableRows.forEach(el => {
+        console.log('row: ', el)
+        el.addEventListener('click', () => {
+            el.querySelector('[data-checkbox]')?.click()
+            el.querySelector('[data-radio]')?.click()
+        })
+    })
+
     if(selectAllCheckbox) {
         const checkboxes = [...el.querySelectorAll('[data-table] tbody tr td [data-checkbox]')]
 
-        tableRows.forEach(el => {
-            el.addEventListener('click', () => {
-                el.querySelector('[data-checkbox]').click()
-            })
-        })
         selectAllCheckbox.addEventListener('change', (ev) => {
             checkboxes.forEach(el => el.checked = ev.target.checked)
         })
@@ -41,18 +44,19 @@ export function DataTable(el) {
     } else {
         tableRows.forEach(el => {
             el.addEventListener('click', () => {
-                el.querySelector('[data-button]').click()
+                el.querySelector('[data-button]')?.click()
             })
             el.querySelectorAll('[data-button]').forEach(el => {
                 el.addEventListener('click', (ev) => {
                     ev.stopPropagation()
                 })
             })
-
-            
         })
     }
     
+
+   
+
     form.addEventListener('submit', (e) => {
         e.preventDefault()
         load()        
@@ -136,13 +140,11 @@ export function DataTable(el) {
         icon.addEventListener('click', (e) => {
             e.stopPropagation()
             const value = getFormValue(form)
-            console.log(value.filters[icon.dataset.name])
             if(value.filters[icon.dataset.name].operator === 'in') {
                 value.filters[icon.dataset.name].value = []
             } else {
                 value.filters[icon.dataset.name].value = '';
             }
-            console.log(JSON.stringify({value}, null, 2))
             setFormValue(el, value)
             load()
         })

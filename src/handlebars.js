@@ -33,7 +33,6 @@ Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
 });
 
 Handlebars.registerHelper('formatDate', function (date, format) {
-    console.log("format", format)
     if(typeof format === 'string') {
         return moment(date).format(format);
     }

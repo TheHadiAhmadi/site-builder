@@ -25,12 +25,9 @@ export function FileUploader(el) {
     el.appendChild(element)
     
     function setValue(id) {
-        console.log('setValue', id)
         if(Array.isArray(id)) {
-            console.log('mode:', mode)
             let items;
             if(mode === 'add') {
-                console.log(JSON.parse(element.value), id)
                 items = [...JSON.parse(element.value), ...id]
             } else {
                 items = id
@@ -61,7 +58,6 @@ export function FileUploader(el) {
                     wrapper.remove()
                     const value = JSON.parse(element.value)
                     const newValue = value.filter(x => x !== item)
-                    console.log({newValue, value, item})
                     element.value = JSON.stringify(newValue)
                 })
                 
@@ -75,7 +71,6 @@ export function FileUploader(el) {
 
             }
         } else {
-            console.log('setValue', {id, imagePreview})
             if(imagePreview) {
                 imagePreview.setAttribute('src', '/files/' + id)
             }
@@ -93,7 +88,6 @@ export function FileUploader(el) {
     })
     
     el.querySelector('[data-file]').addEventListener('change', async event => {
-        console.log('multiple: ', multiple)
         
         if(multiple) {
             let value = []

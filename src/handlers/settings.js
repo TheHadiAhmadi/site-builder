@@ -18,7 +18,6 @@ export default {
     async loadProfile(body, ctx) {
         const id = ctx.user.id
 
-        console.log("id", id)
         return db('users').query().filter('id', '=', id).first()
     },
     async updateProfile(body, ctx) {

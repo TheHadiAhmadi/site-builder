@@ -9,6 +9,4 @@ export function RichText(el) {
         theme: 'snow'
 
     })
-
-    console.log({instance})
 }

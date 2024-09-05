@@ -66,7 +66,6 @@ export async function setupCms(req, res) {
         mkdirSync('./uploads')
     }
     async function importUsers(users) {
-        console.log("importUsers", users)
         const adminUser = users.find(user => user.username === 'admin');
         const admin = await db('users').insert({
             name: adminUser ? adminUser.name : 'Admin',
@@ -99,7 +98,6 @@ export async function setupCms(req, res) {
     }
 
     async function importRoles(roles) {
-        console.log("importRoles", roles)
         const adminRole = await db('roles').insert({
             name: 'Admin',
             permissions: (roleFields.find(x => x.slug === 'permissions')?.items ?? []).map( x => x.value)
@@ -145,7 +143,6 @@ export async function setupCms(req, res) {
                 let index = 0
                 let afterInsertActions = []
                 for(let module of modules) {
-                    console.log(module)
                     for(let prop of _definitions[module.definition]?.props ?? []) {
                         if(!module.props) continue;
                         const value = module.props[prop.slug]
@@ -234,7 +231,6 @@ export async function setupCms(req, res) {
                             order: 0,
                         })
                     } else {
-                        console.log(_definitions, module)
                         res2 = await db('modules').insert({
                             definitionId: _definitions[module.definition].id,
                             moduleId,
@@ -245,7 +241,6 @@ export async function setupCms(req, res) {
                         })
                     }
 
-                    console.log(afterInsertActions)
                     for(let action of afterInsertActions) {
                         if(action.type === 'insert-module') {
                             const res = await addModules(action.value ?? [], res2.id)
@@ -465,7 +460,6 @@ export async function setupCms(req, res) {
     } else {
         // inset default modules
         for(let key in defaultModules) {
-            console.log(db)
             const res = await db('definitions').insert({
                 name: key,
                 props: defaultModules[key].props,

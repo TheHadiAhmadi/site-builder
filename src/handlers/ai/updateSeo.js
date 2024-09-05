@@ -75,17 +75,13 @@ export async function updateSeo(body) {
     const systemPrompt = generateUpdateSeoSystemPrompt({collection, page, settings, content: firstContent ?? {}})
 
     const payload = await generateResponse(systemPrompt, userPrompt)
-    
-    console.log(payload)
     if(payload.seo) {
-    
-    page.seo = payload.seo
-    
-    await db('pages').update(page)
-} else {
-    console.log('something went wrong')
-    console.log(payload)
-}
+        page.seo = payload.seo
+        await db('pages').update(page)
+    } else {
+        console.log('something went wrong')
+        console.log(payload)
+    }
 
 
     return {

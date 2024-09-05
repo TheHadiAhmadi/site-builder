@@ -29,7 +29,6 @@ async function isDirectoryEmpty(dirPath) {
 }
 
 async function initProject(cwd) {
-    console.log(cwd)
     if (!await isDirectoryEmpty(cwd)) {
         throw new Error('This directory is not empty!');
     }
@@ -98,7 +97,6 @@ async function runDev(cwd) {
     let functionsFiles = await readdir(functionsFolder);
     let functions = {};
     for (let func of functionsFiles) {
-        console.log(func, path.join(functionsFolder, func))
         const module = await import(path.join(functionsFolder, func));
         functions[module.default.name] = module.default;
     }
