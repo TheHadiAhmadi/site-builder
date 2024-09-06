@@ -10,6 +10,7 @@ const fieldTypes = [
     { text: 'Rich Text', value: 'rich-text' },
     { text: 'Relation', value: 'relation' },
     { text: 'Collection', value: 'collection', hidden: true },
+    { text: 'Function', value: 'function' },
 ]
 
 function fieldTypeText(key) {

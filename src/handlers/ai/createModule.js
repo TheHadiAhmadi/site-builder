@@ -35,6 +35,9 @@ function generateCreateModuleSystemPrompt({ collections, name }) {
     type CheckboxProp = { "type": "checkbox", "slug": "string", "label": "string" }
     type SelectProp = { "type": "select", "slug": "string", "label": "string", "multiple": "boolean", "items": "string[]" }
     type RelationProp = { "type": "relation", "slug": "string", "label": "string", "collectionId": "string", "multiple": "boolean" }
+    type FunctionProp = { "type": "function", "slug": "string", "label": "string" }
+
+    Function types are used for form submission. form actions should be /api/fn/{{function}}. and always use POST method.
 
     Available Handlebars helpers: 
     eq, ifCond, truncateText, formatDate, json, uppercase, lowercase, times, join, safeString, default

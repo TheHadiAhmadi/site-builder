@@ -66,7 +66,7 @@ function RichText(field) {
     })
 }
 
-export function FieldInput(field, collections = []) {
+export function FieldInput(field, collections = [], functions = {}) {
     let options = {
         name: field.slug, 
         label: field.label,
@@ -112,6 +112,15 @@ export function FieldInput(field, collections = []) {
 
         return Select({name, placeholder, label, items})
     }
+
+    function FunctionField({name, label, placeholder}) {
+        return Select({
+            name,
+            placeholder: 'Choose a Function',
+            label,
+            items: Object.keys(functions).map(x => ({value: x, text: functions[x].name}))
+        })
+    }
     
     const inputs = {
         input: Input,
@@ -122,6 +131,7 @@ export function FieldInput(field, collections = []) {
         relation: Relation,
         'rich-text': RichText,
         collection: CollectionField,
+        function: FunctionField,
         hidden: (options) => Label({text: options.label})
     }
     
@@ -212,7 +222,7 @@ export async function CollectionDataListPage({query}) {
     })
 }
 
-export async function CollectionDataCreatePage({query}) {
+export async function CollectionDataCreatePage({query, functions}) {
     const collection = await db('collections').query().filter('id', '=', query.id).first()
     const collections = await db('collections').query().all()
 
@@ -230,14 +240,14 @@ export async function CollectionDataCreatePage({query}) {
                 cancelHref: back,
                 fields: [
                     `<input type="hidden" value="${collection.id}" name="_type">`, 
-                    collection.fields.filter(x => !x.hidden).map(field => FieldInput(field, collections)).join('')
+                    collection.fields.filter(x => !x.hidden).map(field => FieldInput(field, collections, functions)).join('')
                 ],
             }),
         ]
     })
 }
 
-export async function CollectionDataUpdatePage({query}) {
+export async function CollectionDataUpdatePage({query, functions}) {
     const data = await db('contents').query().filter('id', '=', query.id).first()
     const collection = await db('collections').query().filter('id', '=', data._type).first()
     const collections = await db('collections').query().first()
@@ -261,7 +271,7 @@ export async function CollectionDataUpdatePage({query}) {
                 fields: [
                     '<input type="hidden" value="' + id + '" name="id">',
                     '<input type="hidden" value="' + data._type + '" name="_type">',
-                    collection.fields.filter(x => !x.hidden).map(field => FieldInput(field, collections)).join('')
+                    collection.fields.filter(x => !x.hidden).map(field => FieldInput(field, collections, functions)).join('')
                 ],
             }),
         ]

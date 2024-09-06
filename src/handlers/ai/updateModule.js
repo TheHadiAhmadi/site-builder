@@ -23,7 +23,10 @@ function generateUpdateModuleSystemPrompt({ collections, definition }) {
         - SelectProp: { "type": "select", "slug": "string", "label": "string", "multiple": boolean, "items": string[] }
         - RichTextProp: { "type": "rich-text", "slug": "string", "label": "string" }
         - RelationProp: { "type": "relation", "slug": "string", "label": "string", "collectionId": "string", "multiple": boolean }
+        - FunctionProp: { "type": "function", "slug": "string", "label": "string" }
 
+        Function types are used for form submission. form actions should be /api/fn/{{function}}. and always use POST method.
+        
       - **Available Handlebars helpers**: 
         eq, ifCond, truncateText, formatDate, json, uppercase, lowercase, times, join, safeString, default
 

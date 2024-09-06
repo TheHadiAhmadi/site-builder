@@ -1,15 +1,19 @@
+import { db } from "#services"
+
 export default {
     name: 'Test function',
     slug: 'test_function',
-    mode: 'action',
-    props: [
-        {
-            slug: 'collection',
-            type: 'collection',
-            name: 'Collection'
-        }
-    ],
-    action(req, context) {
+    // props: [
+    //     {
+    //         slug: 'collection',
+    //         type: 'collection',
+    //         name: 'Collection'
+    //     }
+    // ],
+    action(body, context) {
+
+        console.log(body, context)
         // 
+        return {}
     }
 }

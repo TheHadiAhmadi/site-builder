@@ -173,6 +173,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
             return renderFile(item[field.slug])
         }
         if(field.type === 'rich-text') return item[field.slug] ? '...' : ''
+        if(field.type === 'function') return item[field.slug] ?? ''
         if(field.type === 'relation') {
             if(!item[field.slug]) return ''
 

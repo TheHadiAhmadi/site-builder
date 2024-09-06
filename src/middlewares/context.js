@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export function contextMiddleware() {
+export function contextMiddleware({functions}) {
+    console.log('functions: ', functions)
     return async (req, res, next) => {
         
         let user = await db('users').query().filter('id', '=', req.cookies.userId).first()
@@ -19,6 +20,7 @@ export function contextMiddleware() {
         }
     
         let context = {
+            functions,
             user: user ? {
                 id: user.id, 
                 username: user.username, 

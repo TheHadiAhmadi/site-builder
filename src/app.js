@@ -27,7 +27,7 @@ export function createApp({functions, db}) {
     app.use(express.static(path.join(__dirname, '../public')))
     app.use(express.static('./public'))
 
-    app.use('/', contextMiddleware())
+    app.use('/', contextMiddleware({functions}))
     
     // File upload
     app.use('/files', express.static('./uploads'))
@@ -91,9 +91,16 @@ export function createApp({functions, db}) {
 
     //#region Functions
     for (let key in functions) {
-        // app.post('/api/ + key, (req, res) => {
-            // call function with req.context, req.body, ...
-        // })
+        if(functions[key].action) {
+
+            app.post('/api/fn/' + key, async (req, res) => {
+                // call function with req.context, req.body, ...
+                
+                const resp = await functions[key].action(req.body, req.context)
+                
+                return res.json(resp)
+            })
+        }
     }
 
     // OR?

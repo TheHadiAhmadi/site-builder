@@ -4,7 +4,7 @@ import { html } from "svelite-html"
 import { Form } from "#components"
 import { FieldInput } from "../pages/collections.js"
 
-function DynamicFieldInput(field, fields, linked, module, collections) {
+function DynamicFieldInput(field, fields, linked, module, collections, functions = {}) {
     function getLinkedText(key) {
         return fields.find(x => x.slug === key)?.label ?? key
     }
@@ -85,10 +85,10 @@ function DynamicFieldInput(field, fields, linked, module, collections) {
         options.type = 'hidden'
     }
     
-    return FieldInput(options, collections)
+    return FieldInput(options, collections, functions)
 }
 
-function sidebarModuleSettings(definition, module, collection, collections) {
+function sidebarModuleSettings(definition, module, collection, collections, functions) {
     const fields = []
     fields.push({slug: 'settings.logo', label: 'Site\'s Logo', type: 'file', multiple: false, file_type: 'image'})
     fields.push({slug: 'settings.favicon', label: 'Site\'s Favicon', type: 'file', multiple: false, file_type: 'image'})
@@ -120,7 +120,7 @@ function sidebarModuleSettings(definition, module, collection, collections) {
                     fields:  [
                         `<input type="hidden" name="slug" value="">`,
                         `<input type="hidden" name="id" value="${module.id}">`,
-                        (definition.props ?? []).map(prop => DynamicFieldInput(prop, fields, module.links?.[prop.slug], module, collections)).join('')
+                        (definition.props ?? []).map(prop => DynamicFieldInput(prop, fields, module.links?.[prop.slug], module, collections, functions)).join('')
                     ],
                     cancelAction: 'close-module-settings'
                 }): `
@@ -183,7 +183,7 @@ export default {
             links: {}
         })
     },
-    async getSettingsTemplate(body) {
+    async getSettingsTemplate(body, {functions} = {}) {
         const moduleId = body.id
         const module = await db('modules').query().filter('id', '=', moduleId).first();
         const page = await getPageFromModule(module);
@@ -200,7 +200,7 @@ export default {
                     
                 }
                 
-                const res = sidebarModuleSettings(definition, module, collection, collections)
+                const res = sidebarModuleSettings(definition, module, collection, collections, functions)
                 
                 return res;
             }
@@ -208,7 +208,7 @@ export default {
 
         } 
         
-        const res = sidebarModuleSettings(definition, module, null, collections)
+        const res = sidebarModuleSettings(definition, module, null, collections, functions)
         return res
     },
     async loadSettings(body) {
