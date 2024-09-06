@@ -98,7 +98,7 @@ async function runDev(cwd) {
     let functions = {};
     for (let func of functionsFiles) {
         const module = await import(path.join(functionsFolder, func));
-        functions[module.default.name] = module.default;
+        functions[module.default.slug] = module.default;
     }
     const config = {
         db: {
