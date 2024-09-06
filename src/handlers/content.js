@@ -30,7 +30,6 @@ export default {
         }
     },
     async loadCollectionContent(body) {
-        console.log('Load', body)
         const res = await db('contents').query().filter('id', '=', body.id).first()
 
         return res;

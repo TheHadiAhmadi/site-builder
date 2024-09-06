@@ -46,7 +46,6 @@ export function contextMiddleware({functions}) {
 
         if(req.method === 'POST') return next()
         if(req.url.endsWith('/') && req.url !== '/') {
-            console.log('here', req.query.mode, req.url)
             // req.url = req.url.slice(0, -1)
         }
     

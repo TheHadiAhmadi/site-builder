@@ -8,7 +8,6 @@ export function DataTable(el) {
     const tableRows = [...el.querySelectorAll('[data-table] tbody tr')]
 
     tableRows.forEach(el => {
-        console.log('row: ', el)
         el.addEventListener('click', () => {
             el.querySelector('[data-checkbox]')?.click()
             el.querySelector('[data-radio]')?.click()

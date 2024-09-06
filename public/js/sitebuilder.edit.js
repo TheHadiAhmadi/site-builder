@@ -14,7 +14,6 @@ function onInit() {
     hydrate(document)
     const iframeElement = document.querySelector('iframe')
 
-    console.log('onInit')
     if(!document.body.hasAttribute('hydrated-message'))
     {
         document.body.setAttribute('hydrated-message', '')
@@ -23,7 +22,6 @@ function onInit() {
                 onIframeInit()   
             }
             if(event.data?.type === 'navigate') {
-                console.log('navigate')
                 const view = new URL(window.location.href).searchParams.get('view') ?? ''
                 const url = `/admin?view=${view}&slug=${encodeURIComponent(event.data.href)}`   
                 reload(url)

@@ -95,6 +95,7 @@ export function createApp({functions, db}) {
 
             app.post('/api/fn/' + key, async (req, res) => {
                 // call function with req.context, req.body, ...
+                console.log(req.body)
                 
                 const resp = await functions[key].action(req.body, req.context)
                 
@@ -102,17 +103,6 @@ export function createApp({functions, db}) {
             })
         }
     }
-
-    // OR?
-    // app.post('/fn/:slug', async(req, res) => {
-    //     const method = req.params.slug
-        
-    //     const resp = await functions[method].run({
-    //         body: req.body,
-    //         query: req.query
-    //     })
-    //     res.json(resp ?? {reload: true})
-    // })
 
     //#endregion
     app.post('/api/query', queryController)
