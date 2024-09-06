@@ -17,7 +17,7 @@ export default {
         const res = await db('contents').insert(body)
 
         return {
-            redirect: `?view=collections.data.list&id=${body._type}`
+            success: true
         }
     },
     async updateCollectionContent(body) {
@@ -26,10 +26,11 @@ export default {
         await db('contents').update(body)
 
         return {
-            redirect: `?view=collections.data.list&id=${body._type}`
+            success: true
         }
     },
     async loadCollectionContent(body) {
+        console.log('Load', body)
         const res = await db('contents').query().filter('id', '=', body.id).first()
 
         return res;

@@ -42,15 +42,15 @@ export function Components() {
         init(doc) {
             for(let key in components) {
                 if(doc.hasAttribute && doc.hasAttribute(`data-${key}`)) {
-                    if(!doc.dataset.hydrated) {
-                        doc.dataset.hydrated = true
+                    if(!doc.dataset[key.replace(/-/g, '') + `Hydrated`]) {
+                        doc.dataset[key.replace(/-/g, '') + `Hydrated`] = true
                         components[key](doc)
                     }
                 }
                 
                 doc.querySelectorAll(`[data-${key}]`).forEach((el) => {
-                    if(!el.dataset.hydrated) {
-                        el.dataset.hydrated = true
+                    if(!el.dataset[key.replace(/-/g, '') + `Hydrated`]) {
+                        el.dataset[key.replace(/-/g, '') + `Hydrated`] = true
                         components[key](el)
                     }
                 })

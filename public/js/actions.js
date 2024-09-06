@@ -149,6 +149,18 @@ const actions = {
             submitButton.addEventListener('click', onButtonClick)
         }
     },
+    async 'collection-data-create-submit'(el, ev) {
+        const value = getFormValue(el);
+        el.dataset.load = ''
+        await request('content.insertCollectionContent', value)
+        document.querySelector('[data-page-back]').click()
+    },
+    async 'collection-data-update-submit'(el, ev) {
+        const value = getFormValue(el);
+        el.dataset.load = ''
+        await request('content.updateCollectionContent', value)
+        document.querySelector('[data-page-back]').click()
+    },
     'change-dynamic-page-content'(el) {
         const view = new URL(window.location.href).searchParams.get('view') ?? ''
         reload('/admin?slug=' + encodeURIComponent(el.value) + (view ? '&view=' + view : ''))
@@ -910,8 +922,6 @@ const actions = {
                 }
             })
         })
-
-
     },
     'choose-collection'(el) {
         const mod = getParentModule(el)
@@ -941,20 +951,6 @@ const actions = {
 
         request('module.update', res)
     },
-    async 'create-collection-modal-submit'(el) {
-        delete document.querySelector('[data-modal="choose-collection"]').dataset.modalOpen
-        const moduleId = document.querySelector('[data-modal="create-collection"]').dataset.moduleId
-
-        const data = getFormValue(el)
-
-        delete data._handler
-        const collection = await request('createCollectionForModule', data)
-
-        const res = await request('getModule', {id: moduleId})
-        res.collectionId = collection.id
-
-        request('updateModule', res)
-    }
 }
 
 export function Action(el) {

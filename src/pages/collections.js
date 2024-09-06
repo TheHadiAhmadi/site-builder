@@ -216,7 +216,7 @@ export async function CollectionDataCreatePage({query}) {
     const collection = await db('collections').query().filter('id', '=', query.id).first()
     const collections = await db('collections').query().all()
 
-    const filters = JSON.parse(decodeURIComponent(query.filters))
+    const filters = JSON.parse(decodeURIComponent(query.filters ?? '[]'))
     const back = '?view=collections.data.list&id=' + collection.id + '&' + filters.map(x => `${x.field}=${encodeURIComponent(JSON.stringify(x.value))}`).join('&')
     
     return Page({
@@ -226,7 +226,7 @@ export async function CollectionDataCreatePage({query}) {
         actions: [],
         body: [
             Form({
-                handler: 'content.insertCollectionContent',
+                onSubmit: 'collection-data-create-submit',
                 cancelHref: back,
                 fields: [
                     `<input type="hidden" value="${collection.id}" name="_type">`, 
@@ -256,7 +256,7 @@ export async function CollectionDataUpdatePage({query}) {
             Form({ 
                 load: 'content.loadCollectionContent',
                 id,
-                handler: 'content.updateCollectionContent',
+                onSubmit: 'collection-data-update-submit',
                 cancelHref: back,
                 fields: [
                     '<input type="hidden" value="' + id + '" name="id">',

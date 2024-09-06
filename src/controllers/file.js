@@ -1,6 +1,7 @@
+import { db } from "#services"
 import multer from "multer"
 import { existsSync } from 'node:fs'
-import { mkdir } from "node:fs/promises"
+import { mkdir, writeFile } from "node:fs/promises"
 
 export const fileUploadController = async (req, res) => {
     var mult = multer({})

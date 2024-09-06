@@ -243,15 +243,16 @@ export function Form(el) {
             setFormValue(el, res)
         })
     }
-
-    el.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const body = getFormValue(e.target)
-
-        const handler = body._handler;
-        delete body._handler
-        
-        const res = await request(handler, body);
-    });
+    if(el.dataset.trigger != 'submit') {
+        el.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const body = getFormValue(e.target)
+            
+            const handler = body._handler;
+            delete body._handler
+            
+            const res = await request(handler, body);
+        });
+    }
 }
