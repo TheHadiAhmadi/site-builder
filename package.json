@@ -1,6 +1,6 @@
 {
   "name": "tailcms",
-  "version": "1.0.1-next.9",
+  "version": "1.0.1-next.10",
   "type": "module",
   "bin": "bin/tailcms.js",
   "main": "./services/index.js",
