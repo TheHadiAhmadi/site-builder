@@ -3,12 +3,12 @@
   "version": "1.0.1-next.7",
   "type": "module",
   "bin": "bin/tailcms.js",
+  "main": "./services/index.js",
   "imports": {
     "#services": "./services/index.js",
     "#components": "./src/components/index.js",
     "#helpers": "./src/helpers.js"
   },
-  "main": "index.js",
   "scripts": {
     "dev": "node bin/tailcms.js dev",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,5 +1,4 @@
 import express from 'express'
-import { setDb } from '#services'
 import { renderPageController } from './controllers/page.js'
 import cookieParser from 'cookie-parser'
 import { LoginPage } from './pages/login.js'
@@ -13,6 +12,7 @@ import { queryController } from './controllers/query.js'
 import { fileUploadController } from './controllers/file.js'
 import { publishController } from './controllers/publish.js'
 import { contextMiddleware } from './middlewares/context.js'
+import { setDb } from '../services/db.js'
 
 // Get the directory of the current file
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

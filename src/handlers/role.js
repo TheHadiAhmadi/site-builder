@@ -65,6 +65,10 @@ export const roleFields = [
                 value: 'page_delete'
             },
             {
+                text: 'Functions',
+                value: 'functions'
+            },
+                {
                 text: 'Blocks',
                 value: 'blocks'
             },

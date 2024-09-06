@@ -149,6 +149,18 @@ const actions = {
             submitButton.addEventListener('click', onButtonClick)
         }
     },
+    'open-update-function-modal'(el) {
+        const modal = document.querySelector('[data-modal="update-function"]')
+
+        modal.modalOpen = true
+
+        setFormValue(modal, {
+            id: el.dataset.id, 
+            name: el.dataset.name, 
+            status: el.dataset.status
+        })
+
+    },
     async 'collection-data-create-submit'(el, ev) {
         const value = getFormValue(el);
         el.dataset.load = ''

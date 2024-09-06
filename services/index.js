@@ -1,1 +1,1 @@
-export { db, setDb} from './db.js'
+export { db } from './db.js'
