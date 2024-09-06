@@ -89,10 +89,6 @@ export function createApp({functions, db}) {
         return res.end(result)
     })
 
-    // app.get('/admin', (req, res) => {
-    //     res.redirect('/?mode=edit')
-    // })
-
     //#region Functions
     for (let key in functions) {
         // app.post('/api/ + key, (req, res) => {

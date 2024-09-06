@@ -14,7 +14,7 @@ export const loginController = async (req, res) => {
     res.cookie('userId', user.id, {
         httpOnly: true
     })
-    return res.redirect('/?mode=edit')
+    return res.redirect('/admin')
 }
 
 export const logoutController = (req, res) => {

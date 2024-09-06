@@ -100,6 +100,22 @@ export function DataTable(el) {
             }
         }
 
+        if(true) {
+            const currentUrl = new URL(window.location.href);
+            const searchParams = new URLSearchParams(currentUrl.search);
+
+            // Add or update parameters
+            filters.forEach(filter => {
+                searchParams.set(filter.field, JSON.stringify(filter.value));
+            });
+
+            // Update the URL with new parameters
+            currentUrl.search = searchParams.toString();
+
+            // Push the updated URL to the history
+            window.history.pushState({}, null, currentUrl.toString());
+        }
+        
         el.dataset.filters = JSON.stringify(filters)
 
         let res;

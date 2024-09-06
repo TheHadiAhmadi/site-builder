@@ -10,7 +10,7 @@ export default {
         await db('pages').insert(body)
 
         return {
-            redirect: body.slug + '?mode=edit'
+            redirect: '/admin?view=pages.edit&slug=' + encodeURIComponent(body.slug)
         }        
     },
     async load(body) {
@@ -41,7 +41,7 @@ export default {
             deleteModule(module)
         }
         return {
-            redirect: '?mode=edit'
+            redirect: '/admin'
         }
     }
 }

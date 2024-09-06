@@ -272,7 +272,7 @@ const actions = {
         const input = table.querySelector(`[name="filters.${modal.dataset.slug}.value"]`)
         input.value = JSON.stringify(itemIds)
 
-        table.querySelector('[data-search="true"]').click()
+        table.querySelector('[data-search]').click()
 
     },
     async 'choose-filter-relation-filters'(el) {
@@ -296,7 +296,7 @@ const actions = {
         const input =  table.querySelector(`[name="filters.${slug}.value"]`)
         
         input.value = JSON.stringify(result)       
-        table.querySelector('[data-search="true"]').click() 
+        table.querySelector('[data-search]').click() 
     },
     async 'add-field-choose-type'(el) {
         const value = el.dataset.value

@@ -517,6 +517,6 @@ export async function setupCms(req, res) {
         }
     }
 
-    res.redirect('?mode=edit')
+    res.redirect('/admin')
 }
 

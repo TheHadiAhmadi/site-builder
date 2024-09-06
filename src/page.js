@@ -144,7 +144,7 @@ export async function renderBody(body, { props, mode, url, view, context, params
         if(!pageMap[view]) {
             pageContent = Page({
                 body: EmptyTable({title: "Page Not found!", description: "This page doesn't exists", body: [
-                    Button({href: '?mode=edit', text: "Go Home", color: 'primary'})
+                    Button({href: '/admin', text: "Go Home", color: 'primary'})
                 ]})
             })
         } else {
@@ -161,7 +161,7 @@ export async function renderBody(body, { props, mode, url, view, context, params
             } else {
                 pageContent = Page({
                     body: EmptyTable({title: "No Access!", description: "You don't have access to this page!", body: [
-                        Button({href: '?mode=edit', text: "Go Home", color: 'primary'})
+                        Button({href: '/admin', text: "Go Home", color: 'primary'})
                     ]})
                 })
             }
@@ -170,7 +170,7 @@ export async function renderBody(body, { props, mode, url, view, context, params
         console.log(err)
         pageContent = Page({ 
             body: EmptyTable({title: "Something went wrong!", description: "there was an error while processing your request.", body: [
-                Button({href: '?mode=edit', text: "Go Home", color: 'primary'})
+                Button({href: '/admin', text: "Go Home", color: 'primary'})
             ]})
         })
     }

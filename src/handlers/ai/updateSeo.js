@@ -1,7 +1,5 @@
 import { db } from "#services";
-import { renderBody } from "../../page.js";
-import { renderModule } from "../../renderModule.js";
-import { generateResponse } from "../ai.js";
+import { generateResponse } from "#helpers";
 
 function generateUpdateSeoSystemPrompt({ collection, page, settings, content }) {
     return `

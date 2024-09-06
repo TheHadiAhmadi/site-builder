@@ -1,5 +1,5 @@
 import { db } from "#services";
-import { generateResponse } from "../ai.js";
+import { generateResponse } from "#helpers";
 
 function generateCreateModuleSystemPrompt({ collections, name }) {
     return `

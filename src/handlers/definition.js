@@ -7,7 +7,7 @@ export default {
         await db('definitions').insert(body)
 
         return {            
-            redirect: '?mode=edit'
+            redirect: '/admin'
         }
     },
     async update(body) {
@@ -94,7 +94,7 @@ export default {
             await db('modules').remove(module.id)
         }
         return {
-            redirect: '?mode=edit'
+            redirect: '/admin'
         }
     }
     

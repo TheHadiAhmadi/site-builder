@@ -99,7 +99,7 @@ export default {
         }
 
         return {
-            redirect: '?mode=edit'
+            redirect: '/admin'
         }
     }
 }
