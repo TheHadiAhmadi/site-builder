@@ -1,6 +1,6 @@
 import { Button, Card, CardBody, File, Form, Input, Label, Page, Textarea } from "#components";
 import { db } from "#services";
-import { FieldInput } from "./collections.js";
+import { FieldInput } from "./field-input.js";
 
 export async function SettingsGeneralPage() {
     return Page({

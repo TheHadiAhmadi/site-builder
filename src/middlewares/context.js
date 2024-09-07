@@ -5,7 +5,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
+    
 export function contextMiddleware({functions}) {
     return async (req, res, next) => {
         console.log(`[${req.method}] ${req.url}`)
@@ -14,7 +14,7 @@ export function contextMiddleware({functions}) {
     
         if(!user) {
             res.cookie('userId', '', {httpOnly: true})
-            if(req.query.mode == 'edit' || req.query.mode == 'preview') {
+            if(req.url.startsWith('/admin')) {
                 return res.redirect('/login')
             }
         }
@@ -49,7 +49,7 @@ export function contextMiddleware({functions}) {
             req.url = req.url.slice(0, -1)
         }
     
-        const blocks = await db('definitions').query().all()
+        const blocks = await db('blocks').query().all()
     
         // Check if initialized
         if(blocks.length == 0) {

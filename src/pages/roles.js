@@ -1,7 +1,7 @@
 import { Button, Form, Page } from "#components";
 import { roleFields, RolesDataTable } from "../handlers/role.js";
 import { getUrl } from "#helpers";
-import { FieldInput } from "./collections.js";
+import { FieldInput } from "./field-input.js";
 
 export async function RoleListPage() {
     return Page({

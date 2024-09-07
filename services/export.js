@@ -5,15 +5,15 @@ const files = {}
 const functionFiles = []
 
 async function exportModule(module) {
-    const definition  = await db('definitions').query().filter('id', '=', module.definitionId).first()
+    const block  = await db('blocks').query().filter('id', '=', module.blockId).first()
 
-    if(definition.name === 'Section') {
+    if(block.name === 'Section') {
         const columns = await db('modules').query().filter('moduleId', '=', module.id).first()
 
         module.props['content'] = await exportModules({moduleId: columns.id})
 
     } else {
-        for(let prop of definition.props ?? []) {
+        for(let prop of block.props ?? []) {
             if(prop.type == 'file') {
                 if(prop.multiple) {
                     for(let item of module.props[prop.slug] ?? []) {
@@ -31,8 +31,8 @@ async function exportModule(module) {
         }
     }
 
-    module.definition = definition.name
-    delete module.definitionId
+    module.block = block.name
+    delete module.blockId
 
     delete module.id
     delete module.pageId
@@ -106,7 +106,7 @@ async function exportFunctionFiles() {
 }
 
 async function exportBlocks() {
-    let blocks = await db('definitions').query().all()
+    let blocks = await db('blocks').query().all()
     blocks = blocks.filter(x => x.name !== 'Rich Text' && x.name !== 'Columns' && x.name !== 'Section')
     
     for(let block of blocks) {

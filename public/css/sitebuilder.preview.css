@@ -21,14 +21,14 @@ body {
     background-color: white;
 }
 
-[data-body] [data-definition-id] {
+[data-body] [data-block-id] {
     background-color: #0026ff40;
     overflow: hidden;
     color: transparent;
     height: 32px;
     width: 100%;
 }
-[data-body] [data-definition-id] [data-definition-icon] {
+[data-body] [data-block-id] [data-block-icon] {
     /* background-color: red; */
     display: none;
 }

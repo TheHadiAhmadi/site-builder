@@ -1,6 +1,18 @@
 import { attributes } from "#helpers"
 
-export function Button({href, ghost = false, icon = false, text, color = 'default', block, action, outline = false, size="medium", dataset = {} , type="button"}) {
+export function Button({
+    href,
+    ghost = false,
+    icon = false,
+    text,
+    color = 'default',
+    block,
+    action,
+    outline = false,
+    size = "medium",
+    dataset = {},
+    type = "button"
+}) {
     let tag = href ? 'a' : 'button'
     let attrs = attributes({
         href,

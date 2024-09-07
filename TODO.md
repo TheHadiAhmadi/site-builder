@@ -75,7 +75,7 @@
 - [ ] Enable/Disable function feature
 - [ ] UnInstall function
 - [ ] <form method="POST" action="contact_us.send_message"></form> // action example
-- [ ] module: { id: string, definitionId: string, load: 'cars.load', props: {}, links: {}}  // load example
+- [ ] module: { id: string, blockId: string, load: 'cars.load', props: {}, links: {}}  // load example
 
 ## File Management
 

@@ -4,8 +4,7 @@ import { html } from "svelite-html"
 import { getPage, getPageSlug, getUrl } from "#helpers"
 
 async function sidebarBlocks({ query, permissions }) {
-    // const modules = Object.keys(definitions).map(key => definitions[key]).filter(x => !['Section', 'Columns', 'RichText'].includes(x.name))
-    const blocks = (await db('definitions').query().all()).filter(x => !['Section', 'Columns', 'RichText'].includes(x.name))
+    const blocks = (await db('blocks').query().all()).filter(x => !['Section', 'Columns', 'RichText'].includes(x.name))
     return `
             <div data-sidebar-body>
                 ${blocks.map(x => `<a href="${getUrl({ view: 'blocks.update', id: x.id })}" data-sidebar-item ${query.id === x.id ? 'data-active' : ''}>
@@ -146,6 +145,8 @@ export async function Sidebar({query, url, view, permissions, config, context}) 
     async function sidebarFooter() {
         const profile = context.user
 
+        if(!profile) return ''
+
         return `
             <a href="${getUrl({view: 'settings.profile'})}" data-sidebar-footer>
                 ${profile.profile ? `<img data-avatar src="/files/${profile.profile}" alt="Avatar">` : `<span data-avatar>${profile.name[0].toUpperCase()}</span>`}
@@ -221,6 +222,8 @@ export async function Sidebar({query, url, view, permissions, config, context}) 
         return ''
     }
 
+    if(!context.user) return '';
+
     return `
         <div data-sidebar data-active="${mode}">
             ${sidebarHeader()}
@@ -248,16 +251,16 @@ export async function Sidebar({query, url, view, permissions, config, context}) 
 }
 
 async function BlockList() {
-    const blocks = (await db('definitions').query().all()).filter(x => !['Section', 'Columns'].includes(x.name))
+    const blocks = (await db('blocks').query().all()).filter(x => !['Section', 'Columns'].includes(x.name))
 
     return `
-        <div data-definitions>
+        <div data-blocks>
             <span data-alert>
                 <svg class="margin-right: 0.5rem" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M11 17h2v-6h-2zm1-8q.425 0 .713-.288T13 8t-.288-.712T12 7t-.712.288T11 8t.288.713T12 9m0 13q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8"/></svg>
                 <span>Drag and drop blocks to page!</span>
             </span>
             
-            ${blocks.map(x => `<div data-definition-module data-definition-id="${x.id}">
+            ${blocks.map(x => `<div data-block-module data-block-id="${x.id}">
                 <span>${x.name}</span>
             </div>`).join('')}
         </div>

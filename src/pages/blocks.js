@@ -12,7 +12,7 @@ export async function BlockCreatePage({permissions}) {
             title: `Create New Block`,
             body: [
                 Form({
-                    handler: 'definition.create',
+                    handler: 'block.create',
                     fields: [
                         Input({label: 'Name', placeholder: 'Enter Block name', name: 'name'}),
                         Textarea({label: 'Template', rows: 15, placeholder: 'Enter Block template (Handlebars)', name: 'template'}),
@@ -26,7 +26,7 @@ export async function BlockCreatePage({permissions}) {
 }
 
 export async function BlockUpdatePage({query, permissions}) {
-    const block = await db('definitions').query().filter('id', '=', query.id).first()
+    const block = await db('blocks').query().filter('id', '=', query.id).first()
 
     return [
         Page({
@@ -39,9 +39,9 @@ export async function BlockUpdatePage({query, permissions}) {
             title: `Update Block (${block.name})`,
             body: Stack({vertical: true, gap: 'lg'}, [
                 Form({
-                    load: 'definition.load',
+                    load: 'block.load',
                     id: block.id,
-                    handler: 'definition.update',
+                    handler: 'block.update',
                     fields: [
                         `<input type="hidden" name="id" value="" />`,
                         Input({label: 'Name', placeholder: 'Enter Module name', name: 'name'}),

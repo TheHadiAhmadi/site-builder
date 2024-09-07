@@ -12,21 +12,22 @@ export function SetupPage({templates}) {
             ${Form({
                 handler: 'setup.setup',
                 fields: [
+                    `<h1>Setup CMS</h1>`,
                     Input({ 
                         name: 'password', 
                         placeholder: 'Enter Admin Password', 
                         label: 'Admin Password'
                     }),
-                    Select({
-                        items: templates, 
-                        name: 'template', 
-                        placeholder: 'Choose a template', 
-                        label: 'Template'
-                    }),
-                    File({
-                        name: 'file', 
-                        label: 'Import zip'
-                    })
+                    // Select({
+                    //     items: templates, 
+                    //     name: 'template', 
+                    //     placeholder: 'Choose a template', 
+                    //     label: 'Template'
+                    // }),
+                    // File({
+                    //     name: 'file', 
+                    //     label: 'Import zip'
+                    // })
                 ]
             })}
         </div>`

@@ -2,7 +2,7 @@ import { db } from "#services"
 import { join } from 'path'
 import { html } from "svelite-html"
 import { Form } from "#components"
-import { FieldInput } from "../pages/collections.js"
+import { FieldInput } from "../pages/field-input.js"
 
 function DynamicFieldInput(field, fields, linked, module, collections, functions = {}) {
     function getLinkedText(key) {
@@ -88,7 +88,7 @@ function DynamicFieldInput(field, fields, linked, module, collections, functions
     return FieldInput(options, collections, functions)
 }
 
-function sidebarModuleSettings(definition, module, collection, collections, functions) {
+function sidebarModuleSettings(block, module, collection, collections, functions) {
     const fields = []
     fields.push({slug: 'settings.logo', label: 'Site\'s Logo', type: 'file', multiple: false, file_type: 'image'})
     fields.push({slug: 'settings.favicon', label: 'Site\'s Favicon', type: 'file', multiple: false, file_type: 'image'})
@@ -112,7 +112,7 @@ function sidebarModuleSettings(definition, module, collection, collections, func
 
     return html`
             <div data-sidebar-module-settings-body>
-                ${definition.props?.length ? Form({
+                ${block.props?.length ? Form({
                     name: 'module-settings',
                     cancelAction: 'close-module-settings',
                     handler: 'module.saveSettings',
@@ -120,7 +120,7 @@ function sidebarModuleSettings(definition, module, collection, collections, func
                     fields:  [
                         `<input type="hidden" name="slug" value="">`,
                         `<input type="hidden" name="id" value="${module.id}">`,
-                        (definition.props ?? []).map(prop => DynamicFieldInput(prop, fields, module.links?.[prop.slug], module, collections, functions)).join('')
+                        (block.props ?? []).filter(x => !x.hidden).map(prop => DynamicFieldInput(prop, fields, module.links?.[prop.slug], module, collections, functions)).join('')
                     ],
                     cancelAction: 'close-module-settings'
                 }): `
@@ -146,7 +146,7 @@ export default {
     async create(body) {
         await db('modules').insert({
             moduleId: body.moduleId,
-            definitionId: body.definitionId,
+            blockId: body.blockId,
             order: body.order,
             cols: 12,
             props: {},
@@ -160,11 +160,11 @@ export default {
         await db('modules').remove(body.id)
     },
     async createSection(body) {
-        const definitions = await db('definitions').query().all();
+        const blocks = await db('blocks').query().all();
 
         const mod = await db('modules').insert({
             pageId: body.pageId,
-            definitionId: definitions.find(x => x.name === 'Section').id,
+            blockId: blocks.find(x => x.name === 'Section').id,
             order: body.order,
             props: {
                 fullWidth: false,
@@ -174,7 +174,7 @@ export default {
 
         const mod2 = await db('modules').insert({
             moduleId: mod.id,
-            definitionId: definitions.find(x => x.name === 'Columns').id,
+            blockId: blocks.find(x => x.name === 'Columns').id,
             order: 0,
             props: {
                 cols: [],
@@ -187,7 +187,7 @@ export default {
         const moduleId = body.id
         const module = await db('modules').query().filter('id', '=', moduleId).first();
         const page = await getPageFromModule(module);
-        const definition = await db('definitions').query().filter('id', '=', module.definitionId).first();
+        const block = await db('blocks').query().filter('id', '=', module.blockId).first();
         const collections = await db('collections').query().all()
         
         if(page?.collectionId) {
@@ -200,7 +200,7 @@ export default {
                     
                 }
                 
-                const res = sidebarModuleSettings(definition, module, collection, collections, functions)
+                const res = sidebarModuleSettings(block, module, collection, collections, functions)
                 
                 return res;
             }
@@ -208,7 +208,7 @@ export default {
 
         } 
         
-        const res = sidebarModuleSettings(definition, module, null, collections, functions)
+        const res = sidebarModuleSettings(block, module, null, collections, functions)
         return res
     },
     async loadSettings(body) {
@@ -351,7 +351,7 @@ export default {
             await db('settings').update(settings)
         }
 
-        await db('modules').update({...original, props})
+        await db('modules').update({...original, props: {...original.props, ...props}})
     },
 
     async updateOrders(body) {

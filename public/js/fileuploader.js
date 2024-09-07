@@ -105,8 +105,24 @@ export function FileUploader(el) {
             const res = await fetch('/api/file/upload', {method: 'POST', body: form}).then(res => res.json())
             setValue(res.id)
         }
-
-        
-
     })
+    el.addEventListener('paste', async (event) => {
+        const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.startsWith('image/')) {
+                const file = items[i].getAsFile();
+                const form = new FormData();
+                form.set('file', file);
+                const res = await fetch('/api/file/upload', { method: 'POST', body: form }).then(res => res.json());
+                const id = res.id;
+                
+                if (multiple) {
+                    let currentValue = JSON.parse(element.value) || [];
+                    setValue([...currentValue, id]);
+                } else {
+                    setValue(id);
+                }
+            }
+        }
+    });
 }

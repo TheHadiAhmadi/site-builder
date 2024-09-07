@@ -113,7 +113,7 @@ const actions = {
 
                 let body = { 
                     slug: window.location.pathname, 
-                    definitionId: res.id, 
+                    blockId: res.id, 
                     order: 1,
                     moduleId: el.parentNode.dataset.slot
                 }
@@ -182,9 +182,9 @@ const actions = {
 
         const modal = document.querySelector(`[data-modal="field"]`)
 
-        const formHtml = await request('definition.getFieldForm', {
+        const formHtml = await request('block.getFieldForm', {
             type: value,
-            handler: 'definition.addField',
+            handler: 'block.addField',
             mode: 'add',
             id: modal.dataset.id
         })
@@ -202,7 +202,7 @@ const actions = {
         modal.dataset.id = modal.querySelector('[name="id"]').value
 
         modal.querySelector('[data-modal-body]').innerHTML = ''
-        const html = await request('definition.getFieldTypeSelector', {})
+        const html = await request('block.getFieldTypeSelector', {})
 
         modal.querySelector('[data-modal-title]').textContent = 'Choose a type'
         modal.querySelector('[data-modal-body]').innerHTML = html
@@ -439,9 +439,9 @@ const actions = {
         const modal = document.querySelector(`[data-modal="field"]`)
         modal.dataset.id = modal.querySelector('[name="id"]').value
         
-        const formHtml = await request('definition.getFieldForm', {
+        const formHtml = await request('block.getFieldForm', {
             type: field.type,
-            handler: 'definition.setField',
+            handler: 'block.setField',
             mode: 'edit',
             id: modal.dataset.id
         })
@@ -469,7 +469,7 @@ const actions = {
         openConfirm({
             title: 'Are you sure?',
             description: 'Are you sure to remove this field?',
-            action: 'definition.removeField',
+            action: 'block.removeField',
             id: el.dataset.id,
             slug: el.dataset.slug
         })
@@ -518,17 +518,15 @@ const actions = {
             id: mod.dataset.moduleId,
             slug: decodeURIComponent(location.pathname),
             fullWidth: !isFullWidth,
-            paddingTop: +section.style.paddingTop.replace('px', ''),
-            paddingBottom: +section.style.paddingBottom.replace('px', ''),
         })
     },
     'open-edit-module-ai'(el) {
         document.querySelector('[data-modal="update-ai"]').dataset.modalOpen = true
 
-        const definitionId = el.dataset.id
+        const blockId = el.dataset.id
 
         const form = document.querySelector('[data-modal="update-ai"] [data-form]')
-        setFormValue(form, { id: definitionId})
+        setFormValue(form, { id: blockId})
 
 
         async function onTextareaKeyDown(e) {
@@ -560,7 +558,7 @@ const actions = {
             form.dataset.load = ''
 
             await request('ai.updateModule', {
-                id: definitionId,
+                id: blockId,
                 template: form.querySelector('[name="template"]').value ?? ''
             }).then(res => {
                 delete document.querySelector('[data-modal="update-ai"]').dataset.modalOpen
@@ -782,8 +780,8 @@ const actions = {
         ev.stopPropagation()
         openConfirm({
             title: 'Are you sure?',
-            description: 'Are you sure to remove this module definition?',
-            action: 'definition.delete',
+            description: 'Are you sure to remove this module block?',
+            action: 'block.delete',
             id: el.dataset.id
         })
     },

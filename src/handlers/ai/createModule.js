@@ -79,7 +79,7 @@ export async function createModule(body) {
         payload.prompt = {
             template: [template]
         }
-        res = await db('definitions').insert(payload)
+        res = await db('blocks').insert(payload)
     
     } else {
         console.log('something went wrong')

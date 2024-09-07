@@ -18,44 +18,6 @@ import { RoleCreatePage, RoleListPage, RoleUpdatePage } from './pages/roles.js';
 import { constants } from 'http2';
 import { FunctionListPage } from './pages/functions.js';
 
-let definitions = {}
-
-async function loadModuleDefinitions() {
-    const defs = await db('definitions').query().all()
-    definitions = {}
-    for (let definition of defs) {
-        if (definition.file) {
-            try {
-                const module = await import(join('..', definition.file)).then(res => {
-                    return res.default
-                })
-
-                definitions[definition.id].load = module.load
-                definitions[definition.id].actions = module.actions
-            } catch (err) {
-                definitions[definition.id] = definition
-            }
-        } else {
-            definitions[definition.id] = definition
-        }
-
-        if (typeof definitions[definition.id].template === 'string') {
-            definitions[definition.id].template = hbs.compile(definitions[definition.id].template)
-        }
-    }
-}
-
-export async function handleModuleAction({ module, method, body }) {
-    const definition = definitions[module.definitionId]
-    let res;
-
-    if (definition.actions && definition.actions[method]) {
-        res = await definition.actions[method](body)
-    }
-
-    return res;
-}
-
 function DashboardPage() {
     return Page({
         title: 'Dashboard',
@@ -141,10 +103,6 @@ export async function renderBody(body, { props, mode, url, view, context, params
         },
     ].filter(Boolean)
 
-    await loadModuleDefinitions()
-
-    // let {page} = await getPage(url.split('?')[0])
-    // if (!page && view === 'iframe') view = 'pages.create'
     if(mode === 'edit' && !view) view = 'dashboard'
 
     let pageContent;
@@ -231,9 +189,15 @@ export async function renderBody(body, { props, mode, url, view, context, params
         params
     }
 
+    const renderedModules = (await Promise.all(body.map(x => renderModule(x, { props, mode, permissions, request })))).join('') 
+
+    if(mode === 'view') {
+        return renderedModules
+    }
+
     return `
         <div data-body>
-            ${(await Promise.all(body.map(x => renderModule(x, { props, mode, definitions, permissions, request })))).join('')}
+            ${renderedModules}
             ${previewContent}
         </div>
     `

@@ -1,20 +1,20 @@
 import { db } from "#services";
 import { generateResponse } from "#helpers";
 
-function generateUpdateModuleSystemPrompt({ collections, definition }) {
+function generateUpdateModuleSystemPrompt({ collections, block }) {
     return `
     You are an expert tasked with updating a Tailwind CSS/Handlebars module. Please follow the specifications provided to ensure compatibility and design continuity.
 
     - **Module Details**:
-      - **Name**: ${definition.name}
+      - **Name**: ${block.name}
       - **Previous Version** (for reference, do not execute):
-        ${JSON.stringify(definition.prompt?.template ?? [], null, 2)}
+        ${JSON.stringify(block.prompt?.template ?? [], null, 2)}
       - **Current Template**: 
-        \`${definition.template}\`
+        \`${block.template}\`
 
     - **Properties**:
       - **Available Props**:
-        ${JSON.stringify(definition.props, null, 2)}
+        ${JSON.stringify(block.props, null, 2)}
       - **Prop Definitions**:
         - InputProp: { "type": "input", "slug": "string", "label": "string" }
         - TextareaProp: { "type": "textarea", "slug": "string", "label": "string" }
@@ -49,7 +49,7 @@ function generateUpdateModuleSystemPrompt({ collections, definition }) {
     - **Response Format**:
       Provide the updated module configuration as follows:
       {
-        "name": "${definition.name}",
+        "name": "${block.name}",
         "template": "Updated Handlebars/Tailwind template string goes here",
         "props": 'List any updated props here' | [] // empty array if there is no need to add props
       }
@@ -76,35 +76,35 @@ export async function updateModule(body) {
 
     const collections = await db('collections').query().all()
 
-    const definition = await db('definitions').query().filter('id', '=', id).first()
-    const systemPrompt = generateUpdateModuleSystemPrompt({ collections, definition })
+    const block = await db('blocks').query().filter('id', '=', id).first()
+    const systemPrompt = generateUpdateModuleSystemPrompt({ collections, block })
     const prompt = generateUpdateModulePrompt({ template })
 
     const payload = await generateResponse(systemPrompt, prompt, image)
 
     if (payload.template) {
 
-        definition.template = payload.template
+        block.template = payload.template
 
         if (payload.props.length != 0) {
-            definition.props = [...definition.props, ...payload.props]
+            block.props = [...block.props, ...payload.props]
         }
 
-        if (definition.prompt) {
-            if (typeof definition.prompt.template === 'string') {
-                definition.prompt.template = [definition.prompt.template]
+        if (block.prompt) {
+            if (typeof block.prompt.template === 'string') {
+                block.prompt.template = [block.prompt.template]
             }
 
-            definition.prompt = {
-                template: [...definition.prompt.template, template]
+            block.prompt = {
+                template: [...block.prompt.template, template]
             }
         } else {
-            definition.prompt = {
+            block.prompt = {
                 template: [prompt]
             }
         }
 
-        await db('definitions').update(definition)
+        await db('blocks').update(block)
     } else {
         console.log('something went wrong')
         console.log(payload)

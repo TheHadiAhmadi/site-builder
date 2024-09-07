@@ -80,23 +80,23 @@ export function initSortableIframe() {
 }
 
 export function initSortable() {
-    const definitionsElement = document.querySelector('[data-definitions]')
-    Sortable.get(definitionsElement)?.destroy()
+    const blocksElement = document.querySelector('[data-blocks]')
+    Sortable.get(blocksElement)?.destroy()
     
-    new Sortable(definitionsElement, {
+    new Sortable(blocksElement, {
         group: {
             name: 'modules',
             pull: 'clone',
             put: false,
         },
         sort: false,
-        draggable: '[data-definition-id]',
+        draggable: '[data-block-id]',
         animation: 150,
         async onEnd(event) {
-            if(event.to == definitionsElement) return;
+            if(event.to == blocksElement) return;
             const body = { 
                 slug: window.location.pathname, 
-                definitionId: event.item.dataset.definitionId, 
+                blockId: event.item.dataset.blockId, 
                 order: event.newIndex + 1,
                 moduleId: event.to.dataset.columns
             }

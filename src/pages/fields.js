@@ -11,6 +11,8 @@ const fieldTypes = [
     { text: 'Relation', value: 'relation' },
     { text: 'Collection', value: 'collection', hidden: true },
     { text: 'Function', value: 'function' },
+    { text: 'Color', value: 'color' },
+    { text: 'Date Time', value: 'date' },
 ]
 
 function fieldTypeText(key) {

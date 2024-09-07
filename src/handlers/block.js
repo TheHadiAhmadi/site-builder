@@ -4,7 +4,7 @@ import { FieldForm, FieldTypeSelector } from "../pages/fields.js"
 export default {
     async create(body) {
         body.props ??= []
-        await db('definitions').insert(body)
+        await db('blocks').insert(body)
 
         return {            
             redirect: '/admin'
@@ -14,21 +14,21 @@ export default {
         body.settings ??= []
         body.contentType ??= []
         body.multiple ??= false
-        await db('definitions').update(body)
+        await db('blocks').update(body)
 
         return {
             pageReload: true
         }
     },
     async load(body) {
-        const res = await db('definitions').query().filter('id', '=', body.id).first()
+        const res = await db('blocks').query().filter('id', '=', body.id).first()
         return res
     },
     async getByModuleId(body) {
         const module = await db('modules').query().filter('id', '=', body.moduleId).first();
 
-        const definition = await db('definitions').query().filter('id', '=', module.definitionId).first()
-        return definition
+        const block = await db('blocks').query().filter('id', '=', module.blockId).first()
+        return block
     },
     async addField(body) {
         const {id, ...field} = body
@@ -36,11 +36,11 @@ export default {
         if(field.type === 'select')
             field.items = field.items.split('\n').map(x => x.trim())
         
-        const definition = await db('definitions').query().filter('id', '=', id).first()
+        const block = await db('blocks').query().filter('id', '=', id).first()
 
-        definition.props.push(field)
+        block.props.push(field)
 
-        await db('definitions').update(definition)
+        await db('blocks').update(block)
 
         return {
             pageReload: true
@@ -48,29 +48,29 @@ export default {
     },
     async setField(body) {
         const {id, ...field} = body
-        const definition = await db('definitions').query().filter('id', '=', id).first()
+        const block = await db('blocks').query().filter('id', '=', id).first()
 
         if(field.type === 'select')
             field.items = field.items.split('\n').map(x => x.trim())
         
-        definition.props = definition.props.map(x => {
+        block.props = block.props.map(x => {
             if(x.slug === field.slug) {
                 return field
             }
             return x
         })
 
-        const res = await db('definitions').update(definition)
+        const res = await db('blocks').update(block)
 
         return {
             pageReload: true
         }
     },
     async removeField(body) {
-        const original = await db('definitions').query().filter('id', '=', body.id).first()
+        const original = await db('blocks').query().filter('id', '=', body.id).first()
         original.props = original.props.filter(x => x.slug !== body.slug)
 
-        await db('definitions').update(original)
+        await db('blocks').update(original)
 
     },
     async getFieldTypeSelector(body) {
@@ -87,8 +87,8 @@ export default {
         return FieldForm({mode, collections, handler, type, id})
     },
     async delete(body) {
-        await db('definitions').remove(body.id)
-        const modules = await db('modules').query().filter('definitionId', '=', body.id).all()
+        await db('blocks').remove(body.id)
+        const modules = await db('modules').query().filter('blockId', '=', body.id).all()
 
         for(let module of modules) {
             await db('modules').remove(module.id)

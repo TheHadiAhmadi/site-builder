@@ -295,12 +295,12 @@ iframe {
     /* background-color: var(--sidebar-bg); */
 }
 
-[data-definitions] {
+[data-blocks] {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
-[data-definition-module] {
+[data-block-module] {
     padding: 0.5rem 1rem;
     width: 100%;
     transition: all 0.2s ease;
@@ -445,10 +445,10 @@ iframe {
     pointer-events: all;
 }
 
-.sortable-chosen [data-definition-icon]:not(:hover) {
+.sortable-chosen [data-block-icon]:not(:hover) {
     display: none;
 }
-.sortable-ghost [data-definition-icon]:not(:hover) {
+.sortable-ghost [data-block-icon]:not(:hover) {
     display: none;
 }
 

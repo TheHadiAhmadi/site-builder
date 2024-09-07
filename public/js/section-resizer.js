@@ -33,12 +33,9 @@ export function SectionResizer(element) {
         dragging = false;
         if(changed) {
             setTimeout(async () => {
-                const fullWidth = section.hasAttribute('data-section-full-width')
-
                 await request('module.saveSettings', {
                     id: element.parentElement.parentElement.dataset.moduleId,
                     slug: window.location.pathname,
-                    fullWidth,
                     paddingTop: +section.style.paddingTop.replace('px', ''),
                     paddingBottom: +section.style.paddingBottom.replace('px', ''),
                 })

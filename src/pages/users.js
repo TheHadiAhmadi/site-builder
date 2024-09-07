@@ -2,7 +2,7 @@ import { Button, Form, Page } from "#components";
 import { db } from "#services";
 import { userFields, UsersDataTable } from "../handlers/user.js";
 import { getUrl } from "#helpers";
-import { FieldInput } from "./collections.js";
+import { FieldInput } from "./field-input.js";
 
 export async function UserListPage() {
     return Page({
