@@ -77,9 +77,7 @@ export default {
 
         {{{head}}}
 
-        {{#if include_site_head}}
-            {{{settings.head}}}
-        {{/if}}
+        {{{settings.head}}}
     </head>
     <body data-dir="{{dir}}">
         <div>
