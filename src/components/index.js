@@ -1,6 +1,7 @@
 export * from './Button.js'
 export * from './Card.js'
 export * from './Checkbox.js'
+export * from './CodeEditor.js'
 export * from './DeleteConfirm.js'
 export * from './File.js'
 export * from './Form.js'

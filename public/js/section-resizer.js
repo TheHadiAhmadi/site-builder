@@ -1,4 +1,4 @@
-import { request } from "./form.js";
+import { request } from "./request.js";
 
 export function SectionResizer(element) {
     const section = element.parentElement.querySelector('[data-section]')

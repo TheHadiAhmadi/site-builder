@@ -128,7 +128,7 @@ export async function PageUpdatePage({query, permissions}) {
                 load: 'page.load',
                 id: page.id,
                 fields: [
-                    `<input type="hidden" name="id" value="${page.id}" />`,
+                    `<input data-input type="hidden" name="id" value="${page.id}" />`,
                     Tabs({
                         items: ['General', 'Seo', 'Head'], 
                         body: [
@@ -154,7 +154,7 @@ function UpdateSeoAiModal({id}) {
             cancelAction: 'modal.close',
             handler: 'ai.updateSeo',
             fields: [
-                `<input type="hidden" name="id" value="${id}">`,
+                `<input data-input type="hidden" name="id" value="${id}">`,
                 Textarea({name: 'prompt', label: 'Prompt', rows: 5, placeholder: 'on which keywords and search queries should We focus while filling seo fields?'})
             ]
         })

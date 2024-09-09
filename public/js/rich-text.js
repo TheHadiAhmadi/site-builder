@@ -9,4 +9,12 @@ export function RichText(el) {
         theme: 'snow'
 
     })
+
+    el.setValue = (val) => {
+        instance.root.innerHTML = val
+    }
+
+    el.getValue = () => {
+        return instance.root.innerHTML
+    }
 }

@@ -51,7 +51,7 @@ export async function UserUpdatePage({query}) {
                     id: query.id,
                     handler: 'user.update',
                     fields: [
-                        `<input name="id" value="${query.id}" type="hidden" />`,
+                        `<input name="id" value="${query.id}" data-input type="hidden" />`,
                         ...userFields.filter(x => !x.hidden).map(x => FieldInput(x))
                     ]
                 })

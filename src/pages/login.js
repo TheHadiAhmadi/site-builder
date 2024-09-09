@@ -4,6 +4,7 @@ import layouts from "../layouts.js";
 export function LoginPage({url}) {
     return layouts.default({
         title: 'Login to AdminPanel',
+        mode: 'view',
         head: [
             '<link rel="stylesheet" href="/pages/login/style.css">',
             '<script type="module" src="/js/login.js"></script>'

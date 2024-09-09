@@ -66,9 +66,12 @@ export function FileUploader(el) {
                 imagesContainer.appendChild(wrapper)
 
                 delete element.dataset.fileInput
-                element.dataset.json = ''
+                element.dataset.json = true
                 element.value = JSON.stringify(items)
 
+                element.getValue = () => {
+                    return JSON.parse(element.value)
+                }
             }
         } else {
             if(imagePreview) {
@@ -80,6 +83,13 @@ export function FileUploader(el) {
 
     el.setValue = setValue
     element.setValue = setValue
+
+    function getValue() {
+        return element.value
+    }
+
+    el.getValue = getValue
+    element.getValue = getValue
 
     el.querySelector('[data-file-remove]')?.addEventListener('click', e => {
         e.stopPropagation();

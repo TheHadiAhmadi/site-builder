@@ -69,7 +69,7 @@ function ChangeFunctionStatusModal() {
             cancelAction: 'modal.close',
             card: false,
             fields: [
-                `<input name="id" type="hidden" value="">`,
+                `<input name="id"  data-input type="hidden" value="">`,
                 Input({
                     name: 'name',
                     label: 'Function Name',

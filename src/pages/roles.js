@@ -43,7 +43,7 @@ export async function RoleUpdatePage({query}) {
                     id: query.id,
                     handler: 'role.update',
                     fields: [
-                        `<input name="id" value="${query.id}" type="hidden" />`,
+                        `<input name="id" value="${query.id}"  data-input type="hidden" />`,
                         ...roleFields.filter(x => !x.hidden).map(x => FieldInput(x))
                     ]
                     

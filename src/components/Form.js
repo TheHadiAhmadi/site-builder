@@ -9,7 +9,7 @@ export function Form({name ='', handler, fields, cancelAction, startActions = []
 
     const form = html`
         <form${onSubmit ? ` data-action="${onSubmit}" data-trigger="submit"` : ''} data-form="${name}" ${load ? `data-load="${load}" data-id=${id}` : ''}>
-            <input type="hidden" name="_handler" value="${handler}"/>
+            <input data-input type="hidden" name="_handler" value="${handler}"/>
             ${fields}
             ${Stack({justify: 'end'}, [
                 startActions.join(''),

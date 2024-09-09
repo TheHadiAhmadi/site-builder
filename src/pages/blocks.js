@@ -1,5 +1,6 @@
 import { Button, File, Form, Input, Modal, Page, Stack, Textarea } from "#components"
 import { db } from "#services"
+import { CodeEditor } from "#components"
 import { FieldModal, FieldsList } from "./fields.js"
 
 export async function BlockCreatePage({permissions}) {
@@ -15,7 +16,7 @@ export async function BlockCreatePage({permissions}) {
                     handler: 'block.create',
                     fields: [
                         Input({label: 'Name', placeholder: 'Enter Block name', name: 'name'}),
-                        Textarea({label: 'Template', rows: 15, placeholder: 'Enter Block template (Handlebars)', name: 'template'}),
+                        CodeEditor({label: 'Template', lang: 'hbs', placeholder: 'Enter Block template (Handlebars)', name: 'template'}),
                     ],
                     cancelAction: 'navigation.navigate-to-default-view'
                 })
@@ -43,10 +44,9 @@ export async function BlockUpdatePage({query, permissions}) {
                     id: block.id,
                     handler: 'block.update',
                     fields: [
-                        `<input type="hidden" name="id" value="" />`,
+                        `<input data-input type="hidden" name="id" value="" />`,
                         Input({label: 'Name', placeholder: 'Enter Module name', name: 'name'}),
-                        Textarea({label: 'Template', rows: 15, placeholder: 'Enter Module template (Handlebars)', name: 'template'}),
-                        
+                        CodeEditor({label: 'Template', lang: 'hbs', placeholder: 'Enter Module template (Handlebars)', name: 'template'}),
                     ],
                     cancelAction: 'navigation.navigate-to-default-view'
                 }),
@@ -129,7 +129,7 @@ export function UpdateBlockAiModal({id}) {
                 })
             ],
             fields: [
-                `<input type="hidden" name="id" value="${id}">`,
+                `<input data-input type="hidden" name="id" value="${id}">`,
                 Textarea({name: 'template', label: 'Prompt', rows: 5, placeholder: 'Which changes do you want to apply for this module?'}),
                 File({name: 'image', label: "Image", type: 'image', multiple: false, hidden: true}),
             ]

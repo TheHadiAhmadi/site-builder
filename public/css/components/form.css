@@ -35,7 +35,7 @@
     font-weight: 600; 
 }
 
-[data-input], [data-textarea], [data-select] {
+[data-input], [data-textarea], [data-code-editor], [data-select] {
     width: 100%;
     font-size: 14px;
     padding: 8px 12px; 
@@ -45,14 +45,20 @@
     color: var(--body-color);
     transition: all 0.2s ease; 
 }
-[data-input]:disabled, [data-textarea]:disabled, [data-select]:disabled {
+[data-input]:disabled, [data-textarea]:disabled,[data-code-editor]:disabled, [data-select]:disabled {
     opacity: 0.6;
 }
 
-[data-input]:focus, [data-textarea]:focus, [data-select]:focus {
+[data-input]:focus, [data-textarea]:focus,[data-code-editor]:focus, [data-select]:focus {
     border-color: var(--input-focus-border);
     box-shadow: 0 0 0 3px var(--input-focus-shadow); 
     outline: none;
+}
+
+[data-code-editor] {
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 300px;
+    max-height: 80vh;
 }
 
 [data-file-label] {

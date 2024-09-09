@@ -1,0 +1,127 @@
+:root {
+    --background: #f3f3f3;
+    --text: #444;
+    --comment: #697070;
+    --punctuation-tag: #444a;
+    --tag-attr-name: #444;
+    --attribute: #800;
+    --deletion-number-quote-selector-class-id-string-template-tag-type: #800;
+    --section-title: #800;
+    --link-operator-regexp-selector-attr-pseudo-symbol-template-variable-variable: #ab5656;
+    --literal: #695;
+    --addition-built-in-bullet-code: #397300;
+    --meta: #1f7199;
+    --meta-string: #38a;
+}
+
+[data-theme="dark"] {
+    --background: #2e2e2e;
+    --text: #ccc;
+    --comment: #8c8c8c;
+    --punctuation-tag: #aaa;
+    --tag-attr-name: #ccc;
+    --attribute: #ff6347;
+    --deletion-number-quote-selector-class-id-string-template-tag-type: #ff6347;
+    --section-title: #ff6347;
+    --link-operator-regexp-selector-attr-pseudo-symbol-template-variable-variable: #ff8c00;
+    --literal: #bada55;
+    --addition-built-in-bullet-code: #90ee90;
+    --meta: #00bfff;
+    --meta-string: #1e90ff;
+}
+
+pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em;
+    background: var(--background);
+    color: var(--text);
+}
+
+code.hljs {
+    padding: 3px 5px;
+}
+
+.hljs {
+    background: var(--background);
+    color: var(--text);
+}
+
+.hljs-comment {
+    color: var(--comment);
+}
+
+.hljs-punctuation,
+.hljs-tag {
+    color: var(--punctuation-tag);
+}
+
+.hljs-tag .hljs-attr,
+.hljs-tag .hljs-name {
+    color: var(--tag-attr-name);
+}
+
+.hljs-attribute,
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta .hljs-keyword,
+.hljs-name,
+.hljs-selector-tag {
+    font-weight: 700;
+    color: var(--attribute);
+}
+
+.hljs-deletion,
+.hljs-number,
+.hljs-quote,
+.hljs-selector-class,
+.hljs-selector-id,
+.hljs-string,
+.hljs-template-tag,
+.hljs-type {
+    color: var(--deletion-number-quote-selector-class-id-string-template-tag-type);
+}
+
+.hljs-section,
+.hljs-title {
+    color: var(--section-title);
+    font-weight: 700;
+}
+
+.hljs-link,
+.hljs-operator,
+.hljs-regexp,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-symbol,
+.hljs-template-variable,
+.hljs-variable {
+    color: var(--link-operator-regexp-selector-attr-pseudo-symbol-template-variable-variable);
+}
+
+.hljs-literal {
+    color: var(--literal);
+}
+
+.hljs-addition,
+.hljs-built_in,
+.hljs-bullet,
+.hljs-code {
+    color: var(--addition-built-in-bullet-code);
+}
+
+.hljs-meta {
+    color: var(--meta);
+}
+
+.hljs-meta .hljs-string {
+    color: var(--meta-string);
+}
+
+.hljs-emphasis {
+    font-style: italic;
+}
+
+.hljs-strong {
+    font-weight: 700;
+}

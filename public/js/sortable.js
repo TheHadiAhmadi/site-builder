@@ -1,4 +1,4 @@
-import { request } from "./form.js";
+import { request } from "./request.js";
 import './sortable.min.js'
 
 export async function updateModules() {

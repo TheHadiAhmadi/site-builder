@@ -118,8 +118,8 @@ function sidebarModuleSettings(block, module, collection, collections, functions
                     handler: 'module.saveSettings',
                     card: false,
                     fields:  [
-                        `<input type="hidden" name="slug" value="">`,
-                        `<input type="hidden" name="id" value="${module.id}">`,
+                        `<input data-input type="hidden" name="slug" value="">`,
+                        `<input data-input type="hidden" name="id" value="${module.id}">`,
                         (block.props ?? []).filter(x => !x.hidden).map(prop => DynamicFieldInput(prop, fields, module.links?.[prop.slug], module, collections, functions)).join('')
                     ],
                     cancelAction: 'close-module-settings'

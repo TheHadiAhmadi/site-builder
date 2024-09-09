@@ -64,3 +64,48 @@ export function getParentModule(el) {
     if(el.dataset.moduleId) return el;
     return getParentModule(el.parentElement)
 }
+
+
+function setNestedValue(obj, key, value) {
+    if (key.indexOf('.') > -1) {
+        const parts = key.split('.');
+        const firstPart = parts.shift();
+
+        if (!obj[firstPart]) {
+            obj[firstPart] = isNaN(parts[0]) ? {} : [];
+        }
+
+        setNestedValue(obj[firstPart], parts.join('.'), value);
+    } else {
+        if (Array.isArray(obj)) {
+            obj[parseInt(key, 10)] = value;
+        } else {
+            obj[key] = value;
+        }
+    }
+}
+
+export function getFormValue(formEl) {
+    const body = {}
+
+    for(let input of formEl.querySelectorAll('[name]')) {
+        const name = input.getAttribute('name')
+        const value = input.getValue()
+        setNestedValue(body, name, value)
+    }
+
+    return body
+}
+
+export function setFormValue(form, value) {
+    if(!form) return;
+
+    form.querySelectorAll('[name]').forEach(input => {
+        const name = input.getAttribute('name')
+        const val = name.split('.').reduce((p, c) => p?.[c], value)
+
+        if(val || val == '' || val == 0 || val == []) {
+            input.setValue(val)
+        }
+    })
+}

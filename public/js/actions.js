@@ -1,5 +1,5 @@
-import { getFormValue, request, setFormValue } from "./form.js"
-import { getParentModule, reload, reloadIframe } from "./helpers.js"
+import { request } from "./request.js"
+import { getFormValue, setFormValue, getParentModule, reload, reloadIframe } from "./helpers.js"
 import { hydrate } from "./hydrate.js"
 import { updateModules } from "./sortable.js"
 
@@ -139,13 +139,13 @@ const actions = {
         const textarea = form.querySelector('[name="template"]')
         const submitButton = form.querySelector('button[type="submit"]')
         
-        if(textarea.dataset.hydrated !== 'true') {
-            textarea.dataset.hydrated = true
+        if(textarea.dataset.modalTextareaHydrated !== 'true') {
+            textarea.dataset.modalTextareaHydrated = true
             textarea.addEventListener('keydown', onTextareaKeyDown)
         }
 
-        if(submitButton.dataset.hydrated !== 'true') {
-            submitButton.dataset.hydrated = true
+        if(submitButton.dataset.submitButtonHydrated !== 'true') {
+            submitButton.dataset.submitButtonHydrated = true
             submitButton.addEventListener('click', onButtonClick)
         }
     },
@@ -378,13 +378,13 @@ const actions = {
         const textarea = form.querySelector('[name="template"]')
         const submitButton = form.querySelector('button[type="submit"]')
         
-        if(textarea.dataset.hydrated !== 'true') {
-            textarea.dataset.hydrated = true
+        if(textarea.dataset.modalTextareaHydrated !== 'true') {
+            textarea.dataset.modalTextareaHydrated = true
             textarea.addEventListener('keydown', onTextareaKeyDown)
         }
 
-        if(submitButton.dataset.hydrated !== 'true') {
-            submitButton.dataset.hydrated = true
+        if(submitButton.dataset.submitButtonHydrated !== 'true') {
+            submitButton.dataset.submitButtonHydrated = true
             submitButton.addEventListener('click', onButtonClick)
         }
         
@@ -543,13 +543,13 @@ const actions = {
         const textarea = form.querySelector('[name="template"]')
         const submitButton = form.querySelector('button[type="submit"]')
 
-        if(textarea.dataset.hydrated !== 'true') {
-            textarea.dataset.hydrated = true
+        if(textarea.dataset.modalTextareaHydrated !== 'true') {
+            textarea.dataset.modalTextareaHydrated = true
             textarea.addEventListener('keydown', onTextareaKeyDown)
         }
 
-        if(submitButton.dataset.hydrated !== 'true') {
-            submitButton.dataset.hydrated = true
+        if(submitButton.dataset.submitButtonHydrated !== 'true') {
+            submitButton.dataset.submitButtonHydrated = true
             submitButton.addEventListener('click', onButtonClick)
         }
         

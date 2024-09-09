@@ -253,7 +253,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                             })} 
                         </div>
                     `).join('')}
-                <input type="hidden" data-input name="filters.${field.slug}.operator" value="in"/>
+                <input data-input type="hidden" data-input name="filters.${field.slug}.operator" value="in"/>
                 </div>
             ` + submitButton
         }
@@ -271,7 +271,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
                             })} 
                         </div>
                     `).join('')}
-                <input type="hidden" data-input name="filters.${field.slug}.operator" value="in"/>
+                <input data-input type="hidden" data-input name="filters.${field.slug}.operator" value="in"/>
                 </div>
             ` + submitButton
         }
@@ -279,7 +279,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
             return `
             <div data-dropdown-item>
                 <input data-input name="filters.${field.slug}.value" placeholder="Search by ${field.label}..." value="${filtersObject[field.slug]?.value ?? ''}"/>
-                <input type="hidden" data-input name="filters.${field.slug}.operator" value="like"/>
+                <input data-input type="hidden" data-input name="filters.${field.slug}.operator" value="like"/>
             </div>
             ` + submitButton
         }
@@ -318,7 +318,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
         if(field.type === 'relation') {
             return `
                 <input type="hidden" data-json name="filters.${field.slug}.value" value='${JSON.stringify(filtersObject[field.slug]?.value ?? [])}'>
-                <input type="hidden" data-input name="filters.${field.slug}.operator" value="in"/>
+                <input data-input type="hidden" data-input name="filters.${field.slug}.operator" value="in"/>
                 <button type="button" ${hasFilter ? `data-data-table-button-has-value` : ''} data-data-table-filter-button data-action="open-filter-relation-table" data-slug="${field.slug}" data-collection-id="${field.collectionId}">
                     ${field.label}${hasFilter ? `: ${filterValue}
                         <div data-data-table-filter-button-icon data-name="${field.slug}">

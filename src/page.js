@@ -155,6 +155,8 @@ export async function renderBody(body, { props, mode, url, view, context, params
             ${RelationFieldModal()}
             ${UpdateBlockAiModal({ id: null })}
             ${CreateBlockAiModal({ id: null })}
+            <script src="/js/highlight.js"></script>
+            <script src="/js/highlight.hbs.js"></script>
             <script src="/js/sortable.min.js"></script>
             <script src="/js/quill.library.js"></script>
             <script type="module" src="/js/sitebuilder.edit.js"></script>

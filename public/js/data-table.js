@@ -1,7 +1,9 @@
-import { getFormValue, request, setFormValue } from "./form.js"
+import { request } from "./request.js"
+import { getFormValue, setFormValue } from "./helpers.js"
 import { hydrate } from "./hydrate.js";
 
 export function DataTable(el) {
+    console.log("DataTable", el)
     const form = el.querySelector('[data-data-table-filters-form]')
 
     const selectAllCheckbox = el.querySelector('[data-checkbox][name="select-all"]')
@@ -144,7 +146,7 @@ export function DataTable(el) {
         el.innerHTML = template.content.querySelector('[data-data-table]').innerHTML
 
         setTimeout(() => {
-            delete el.parentElement.querySelector('[data-data-table]').dataset.hydrated
+            delete el.parentElement.querySelector('[data-data-table]').dataset.datatableHydrated
             hydrate(el.parentElement.querySelector('[data-data-table]'))
         })
     }

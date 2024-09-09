@@ -20,6 +20,7 @@ export default {
         </script>
 
         {{#eq mode 'edit'}}
+            <link rel="stylesheet" href="/css/hljs.css">
             <link rel="stylesheet" href="/css/components/quill.snow.css">
             <link rel="stylesheet" href="/css/sitebuilder.edit.css">
              <link rel="preconnect" href="https://fonts.googleapis.com">

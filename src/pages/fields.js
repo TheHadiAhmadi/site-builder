@@ -23,7 +23,7 @@ export function FieldModal({id}) {
     return Modal({
         name: 'field', 
         title: '---',
-        body: `<input type="hidden" name="id" value="${id}"/>`     
+        body: `<input data-input type="hidden" name="id" value="${id}"/>`     
     })
 }
 
@@ -46,8 +46,8 @@ export function FieldTypeSelector({action = 'add-field-choose-type'} = {}) {
 
 export function FieldForm({handler, collections, id, mode = 'add', type = ''}) {
     let fields = [
-        `<input name="id" value="${id}" type="hidden">`,
-        `<input name="type" value="${type}" type="hidden">`,
+        `<input name="id" value="${id}" data-input type="hidden">`,
+        `<input name="type" value="${type}"  data-input type="hidden">`,
         Input({
             name: 'slug', 
             disabled: mode === 'edit',

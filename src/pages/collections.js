@@ -20,7 +20,7 @@ export function CollectionForm({id, fields, handler, cancelAction, onSubmit}) {
             id,
             onSubmit,
             fields: [
-                (id ? `<input type="hidden" name="id" value="${id}">` : ''),
+                (id ? `<input data-input type="hidden" name="id" value="${id}">` : ''),
                 Input({
                     name: 'name', 
                     label: 'Name', 
@@ -135,7 +135,7 @@ export async function CollectionDataCreatePage({query, functions}) {
                 onSubmit: 'collection-data-create-submit',
                 cancelHref: back,
                 fields: [
-                    `<input type="hidden" value="${collection.id}" name="_type">`, 
+                    `<input data-input type="hidden" value="${collection.id}" name="_type">`, 
                     collection.fields.filter(x => !x.hidden).map(field => FieldInput(field, collections, functions)).join('')
                 ],
             }),
@@ -165,8 +165,8 @@ export async function CollectionDataUpdatePage({query, functions}) {
                 onSubmit: 'collection-data-update-submit',
                 cancelHref: back,
                 fields: [
-                    '<input type="hidden" value="' + id + '" name="id">',
-                    '<input type="hidden" value="' + data._type + '" name="_type">',
+                    '<input data-input type="hidden" value="' + id + '" name="id">',
+                    '<input data-input type="hidden" value="' + data._type + '" name="_type">',
                     collection.fields.filter(x => !x.hidden).map(field => FieldInput(field, collections, functions)).join('')
                 ],
             }),

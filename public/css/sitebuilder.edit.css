@@ -365,7 +365,7 @@ iframe {
     flex-direction: column;
     padding-left: 32px;
     padding-right: 16px;
-    max-height: 60vh;
+    max-height: 40vh;
     overflow: auto;
 }
 
