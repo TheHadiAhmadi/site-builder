@@ -66,7 +66,7 @@ export function getParentModule(el) {
 }
 
 
-function setNestedValue(obj, key, value) {
+export function setNestedValue(obj, key, value) {
     if (key.indexOf('.') > -1) {
         const parts = key.split('.');
         const firstPart = parts.shift();
@@ -104,6 +104,7 @@ export function setFormValue(form, value) {
         const name = input.getAttribute('name')
         const val = name.split('.').reduce((p, c) => p?.[c], value)
 
+        console.log(input)
         if(val || val == '' || val == 0 || val == []) {
             input.setValue(val)
         }

@@ -1,4 +1,4 @@
-import { setFormValue } from "/js/form.js";
+import { setFormValue } from "/js/helpers.js";
 
 document.querySelector('[data-form]').action = '/api/login'
 document.querySelector('[data-form]').method = 'POST'

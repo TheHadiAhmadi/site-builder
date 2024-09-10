@@ -1,4 +1,5 @@
 import { request } from "./request.js";
+import {setFormValue, getFormValue} from './helpers.js'
 
 export function Form(el) {
     if(el.dataset.load) {
@@ -25,6 +26,7 @@ export function Form(el) {
 }
 
 export function FormInput(el) {
+    console.log('FormInput')
     el.setValue = (val) => el.value = val
     el.getValue = () => el.value
 }

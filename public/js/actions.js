@@ -608,12 +608,12 @@ const actions = {
         moduleSettingsSidebar.innerHTML = template
 
         settings.slug = decodeURIComponent(location.pathname)
-        setFormValue(moduleSettingsSidebar, settings)
         delete moduleSettingsSidebar.querySelector('[data-form]').dataset.load
         document.querySelector('[data-sidebar]').dataset.active = 'module-settings'
         setTimeout(() => {
             // (moduleSettingsSidebar)
             hydrate(moduleSettingsSidebar)
+            setFormValue(moduleSettingsSidebar, settings)
         })
     },
     'toggle-sidebar'() {
