@@ -78,7 +78,6 @@ export const renderPageController = async (req, res) => {
         style: page.style,
         dir: page.dir,
         lang: page.lang,
-        include_site_head: page.include_site_head,
         seo,
         settings
     })
