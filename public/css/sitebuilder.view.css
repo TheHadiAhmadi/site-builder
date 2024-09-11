@@ -2,11 +2,8 @@
 @import './components/html.css';
 @import './section.default.css';
 
-[data-module-id] {
-    display: contents;
-}
-[data-module-content] {
-    display: contents;
+[data-dir="rtl"] {
+    direction: rtl;
 }
 
 [data-section]:has(.sticky) {
