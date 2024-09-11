@@ -175,7 +175,7 @@ const actions = {
     },
     'change-dynamic-page-content'(el) {
         const view = new URL(window.location.href).searchParams.get('view') ?? ''
-        reload('/admin?slug=' + encodeURIComponent(el.value) + (view ? '&view=' + view : ''))
+        reload('/admin?' + el.value + (view ? '&view=' + view : ''))
     },
     async 'module-add-field-choose-type'(el) {
         const value = el.dataset.value
@@ -233,11 +233,6 @@ const actions = {
             hydrate(el)
         })
     },
-    'open-user-edit'(el) {
-        const userId = el.dataset.id
-
-        reload('?view=settings.users.update&id=' + userId)
-    },
     'open-user-delete'(el) {
         openConfirm({
             title: 'Are you sure?',
@@ -245,12 +240,14 @@ const actions = {
             action: 'user.delete',
             id: el.dataset.id
         })
-        // reload('?view=user-edit&id=' + userId)
     },
-    'open-role-edit'(el) {
-        const roleId = el.dataset.id
-
-        reload('?view=settings.roles.update&id=' + roleId)
+    'open-page-delete'(el) {
+        openConfirm({
+            title: 'Are you sure?',
+            description: 'Are you sure to remove this page?',
+            action: 'page.delete',
+            id: el.dataset.id
+        })
     },
     'open-role-delete'(el) {
         openConfirm({

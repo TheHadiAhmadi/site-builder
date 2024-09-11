@@ -5,6 +5,7 @@ import { LoginPage } from './pages/login.js'
 import { setupCms} from '../services/setup.js'
 import hbs from 'handlebars'
 import path from 'node:path'
+import { fakeValue} from './helpers.js'
 import { fileURLToPath } from 'url';
 import { exportSiteController } from './controllers/export.js'
 import { loginController, logoutController } from './controllers/login.js'
@@ -13,6 +14,7 @@ import { fileUploadController } from './controllers/file.js'
 import { publishController } from './controllers/publish.js'
 import { contextMiddleware } from './middlewares/context.js'
 import { setDb } from '../services/db.js'
+import layouts from './layouts.js';
 
 // Get the directory of the current file
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -32,6 +34,10 @@ export function createApp({functions, db}) {
     // File upload
     app.use('/files', express.static('./uploads'))
     app.get('/files/:name', (req, res) => {
+        console.log('files name: ', req.params.name)
+        if(req.params.name === 'placeholder') {
+            return res.sendFile(path.resolve(__dirname, '../public', 'images', 'placeholder.jpg'))
+        }
         res.sendFile(path.resolve('./uploads/' + req.params.name.split('.')[0]))
     })
 
@@ -112,6 +118,28 @@ export function createApp({functions, db}) {
     app.post('/api/logout', logoutController)
     app.post('/api/publish', publishController)
     app.post('/api/export', exportSiteController)
+    
+    app.get('/preview/:id', async (req, res) => {
+        const block = await db('blocks').query().filter('id', '=', req.params.id).first()
+
+        const props = {}
+        for(let prop of block.props ?? []) {
+            props[prop.slug] = await fakeValue(prop)
+        }
+
+        const settings = await db('settings').query().first() ?? {}
+        console.log(props)
+        const rendered = hbs.compile(block.template)(props)
+        return res.end(layouts.default({
+            head: settings.head,
+            mode: 'view',
+            tailwind: JSON.stringify({darkMode: 'class'}),
+            dir: 'ltr',
+            theme: 'light',
+            body: rendered
+        }))
+    })
+    
     app.get('/*', renderPageController)
     
     app.start = (port) => {

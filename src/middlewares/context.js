@@ -57,6 +57,10 @@ export function contextMiddleware({functions}) {
             return res.end(SetupPage({templates}))
         }
 
+        if(req.query.mode === 'edit' && !req.url.startsWith('/admin')) {
+            return res.redirect('/admin')
+        }
+
         return next()
     }
 }

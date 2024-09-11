@@ -86,6 +86,10 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
     }, {})
 
     const ActionButtons = (item) => {
+        if(typeof actions === 'function') {
+            return Stack({}, actions(item).map(x => Button({...x, size: 'small', icon: true, ghost: true})))
+        }
+        // TODO: remove this usage
         return Stack({}, actions.map(action => {
             if(action === 'edit') {
                 return Button({
@@ -123,6 +127,7 @@ export function DataTable({filters = [], selectable, items, collectionId, fields
         if(field.type === 'input') return item[field.slug]
         if(field.type === 'textarea') return item[field.slug] ? item[field.slug].slice(0, 100) + (item[field.slug].length > 100 ? '...' : '') : ''
         if(field.type === 'checkbox') return item[field.slug] ? 'Yes' : 'No'
+        if(field.type === 'collection') return item[field.slug] ? item[field.slug] : ''
         if(field.type === 'select') {
             if(field.multiple) {
                 let items = []

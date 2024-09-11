@@ -1,5 +1,7 @@
 import { db } from "#services"
 import { Button, Checkbox, File, Form, Input, Label, Modal, Page, Select, Stack, TabItem, Tabs, Textarea } from "#components"
+import { getUrl } from "#helpers"
+import { PagesDataTable } from "../handlers/page.js"
 
 function PageSeoFields() {
     return Stack({vertical: true, gap: 'lg'}, [
@@ -91,6 +93,20 @@ function PageEditFields({ collections }) {
             ]
         }),
     ])
+}
+
+export async function PageListPage() {
+    return Page({
+        title: 'Pages',
+        actions: [
+            Button({
+                href: getUrl({ view: 'pages.create' }),
+                color: 'primary',
+                text: 'Add page'
+            })
+        ],
+        body: await PagesDataTable({})
+    })
 }
 
 export async function PageCreatePage() {

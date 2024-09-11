@@ -14,6 +14,20 @@ import { CodeEditor } from "./code-editor.js"
 
 const components = Components()
 
+function BlockPreview(el) {
+    console.log('block preview')
+    const darkBtn = el.querySelector('[data-preview-action="dark"]')
+    const lightBtn = el.querySelector('[data-preview-action="light"]')
+    const desktopBtn = el.querySelector('[data-preview-action="desktop"]')
+    const mobileBtn = el.querySelector('[data-preview-action="mobile"]')
+
+    const iframe = el.querySelector('iframe')
+
+    // set iframe src based on state...
+    
+}
+
+components.register('block-preview', BlockPreview)
 components.register('form', Form)
 components.register('checkbox', FormCheckbox)
 components.register('json', FormJson)

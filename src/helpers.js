@@ -3,6 +3,7 @@ import hbs from 'handlebars'
 import { join } from 'path'
 import {readFile} from 'fs/promises'
 import { OpenAI } from 'openai'
+import { faker } from "@faker-js/faker";
 
 export async function fileToBase64(filePath) {
     try {
@@ -165,3 +166,55 @@ export function getValue(option) {
 export function isSelected(option) {
     return typeof option === 'object' && option.selected
 }
+
+export async function fakeValue(field) {
+    switch (field.type) {
+        case 'input':
+            if (field.input_type === 'email') {
+                return faker.internet.email();
+            }
+            if (field.input_type === 'number') {
+                return faker.number.int({ min: 0, max: 1000 });
+            }
+            const len = faker.number.int({ max: 5 })
+
+            return faker.lorem.words(len); // Default for text inputs
+        case 'textarea':
+            return faker.lorem.paragraphs(2);
+        case 'select':
+            let length = field.items.length
+            const random = faker.number.int({ max: length })
+            console.log(random, field.items)
+            return field.items[random]
+        case 'checkbox':
+            return faker.datatype.boolean();
+        case 'file':
+            if(field.multiple) {
+                return [{id: 'placeholder'},{id: 'placeholder'},{id: 'placeholder'},{id: 'placeholder'}]
+            }
+            return {id: 'placeholder'}
+            // return faker.system.fileName(); // This could be more sophisticated depending on the use case
+        case 'relation':
+            const data = await db('contents').query().filter('_type', '=', field.collectionId).paginate(1, 10)
+            // return 
+            return field.multiple ? data.data.slice(5) : data.data[0]; // Simulating an ID or multiple IDs
+            
+        case 'rich-text':
+            return faker.lorem.paragraphs(2);
+        case 'collection':
+            return []
+            // return field.items && field.items.length > 0 ? faker.random.arrayElement(field.items.map(item => item.value)) : '';
+        case 'function':
+            return null;
+            // return field.items && field.items.length > 0 ? faker.random.arrayElement(field.items.map(item => item.value)) : '';
+        case 'color':
+            return faker.color.rgb(); // Generate a random RGB color
+        case 'date':
+            return faker.date.recent().toISOString(); // Generate a recent date in ISO format
+        case 'hidden':
+            return ''; // Typically hidden fields don't need fake data
+        default:
+            return ''; // Default case for any unspecified field types
+    }
+}
+

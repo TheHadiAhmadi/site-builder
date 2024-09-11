@@ -6,7 +6,7 @@ import { join } from 'path'
 import { db } from "#services";
 import layouts from "./layouts.js";
 import { CollectionCreatePage, CollectionDataCreatePage, CollectionDataListPage, CollectionDataUpdatePage, CollectionUpdatePage, RelationFieldModal } from './pages/collections.js';
-import { PageCreatePage, PageUpdatePage } from './pages/pages.js';
+import { PageCreatePage, PageListPage, PageUpdatePage } from './pages/pages.js';
 import {PageEditorPage} from './pages/editor.js'
 import { normalizeCollectionContent, renderModule } from './renderModule.js';
 import { getPage, getPageSlug, getUrl } from "#helpers";
@@ -26,6 +26,7 @@ function DashboardPage() {
 }
 const pages = {
     'dashboard': [DashboardPage, []],
+    'pages.list' : [PageListPage, ['pages']],
     'pages.edit' : [PageEditorPage, ['pages']],
     'iframe': [PageEditorPage, ['page_content', 'page_update']],
     'pages.create': [PageCreatePage, ['page_create']],
@@ -59,9 +60,10 @@ export async function renderBody(body, { props, mode, url, view, context, params
         permissions.pages && {
             title: 'Pages', 
             icon: '<svg data-sidebar-toggler-icon xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M16 0H8C6.9 0 6 .9 6 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6zm4 18H8V2h7v5h5zM4 4v18h16v2H4c-1.1 0-2-.9-2-2V4z"/></svg>',
-            dynamic: true,
+            // dynamic: true,
+            href: getUrl({view: 'pages.list'}),
             viewPrefix: 'pages.',
-            items: 'pages'
+            // items: 'pages'
         },
         permissions.blocks && {
             title: 'Blocks', 

@@ -72,6 +72,7 @@ export function FieldInput(field, collections = [], functions = {}) {
         if(multiple) {
             return Label({
                 text: label, 
+                symbolic: true,
                 body: items.map(item => Checkbox({multiple: true, name, checked: isSelected(item), multiple: true, label: getText(item), value: getValue(item)}))
             })
         }

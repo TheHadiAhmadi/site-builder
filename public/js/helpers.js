@@ -5,7 +5,7 @@ export async function reloadIframe() {
         return reload(window.location.href)   
     }
 
-    const res = await fetch(new URL(window.location.href).searchParams.get('slug') + '?mode=preview').then(res => res.text())
+    const res = await fetch(iframeElement.getAttribute('src')).then(res => res.text())
 
     const template = document.createElement('template')
     template.innerHTML = res
